@@ -7,7 +7,7 @@ React component boilerplate
 Don't use it.
 
 Seriously, just write your own boilerplate, it's not that hard.
-I'm sure it's already outdated anyway. Like any boilerplate.
+I'm sure this one is already outdated anyway. Like any boilerplate.
 
 ### Don't tell me what to do. How to install it?
 

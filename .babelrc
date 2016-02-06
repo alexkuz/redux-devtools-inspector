@@ -1,14 +1,15 @@
 {
-  "stage": 0,
-  "optional": "runtime",
-  "plugins": [
-    "react-transform"
-  ],
-  "extra": {
-    "react-transform": [{
-      "target": "react-transform-webpack-hmr",
-      "imports": ["react"],
-      "locals": ["module"]
-    }]
+  "presets": ["es2015", "stage-0", "react"],
+  "plugins": ["transform-runtime"],
+  "env": {
+    "development": {
+      "plugins": [["react-transform", {
+        "transforms": [{
+          "transform": "react-transform-hmr",
+          "imports": ["react"],
+          "locals": ["module"]
+        }]
+      }]]
+    }
   }
 }

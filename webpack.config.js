@@ -64,10 +64,11 @@ module.exports = {
     }]
   },
   devServer: isProduction ? null : {
-    quiet: true,
+    quiet: false,
     port: 3000,
     hot: true,
     stats: {
+      chunkModules: false,
       colors: true
     },
     historyApiFallback: true

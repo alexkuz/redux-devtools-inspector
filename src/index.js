@@ -1,1 +1,1 @@
-export default from './Component';
+export default from './DevtoolsInspector';

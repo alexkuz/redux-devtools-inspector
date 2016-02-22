@@ -1,7 +1,7 @@
 {
-  "name": "react-devtools-inspector",
+  "name": "redux-devtools-inspector",
   "version": "0.1.1",
-  "description": "React DevTools Diff Monitor",
+  "description": "Redux DevTools Diff Monitor",
   "scripts": {
     "build-lib": "babel src --out-dir lib",
     "build-demo": "NODE_ENV=production webpack -p",
@@ -59,13 +59,14 @@
   "author": "Alexander <alexkuz@gmail.com> (http://kuzya.org/)",
   "license": "MIT",
   "dependencies": {
+    "@alexkuz/react-json-tree": "^0.5.3",
     "css-loader": "^0.23.1",
     "dateformat": "^1.0.12",
     "jsondiffpatch": "^0.1.41",
     "jss": "^3.3.0",
     "jss-nested": "^1.0.2",
     "jss-vendor-prefixer": "^1.0.1",
-    "react-json-tree": "git+https://github.com/alexkuz/react-json-tree.git",
+    "react-pure-render": "^1.0.2",
     "react-themeable": "^1.0.1",
     "style-loader": "^0.13.0"
   }

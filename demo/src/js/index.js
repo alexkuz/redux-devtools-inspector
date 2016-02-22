@@ -20,7 +20,7 @@ const DevTools = createDevTools(
 
 const enhancer = compose(
   applyMiddleware(createLogger()),
-  DevTools.instrument()
+  window.devToolsExtension ? window.devToolsExtension() : DevTools.instrument()
 );
 
 const store = createStore(reducers, {}, enhancer);
@@ -29,7 +29,7 @@ render(
   <Provider store={store}>
     <div>
       <DemoApp />
-      <DevTools />
+      {!window.devToolsExtension && <DevTools />}
     </div>
   </Provider>,
   document.getElementById('root')

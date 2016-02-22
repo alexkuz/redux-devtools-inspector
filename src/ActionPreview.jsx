@@ -2,7 +2,7 @@ import React from 'react';
 import themeable from './themeable';
 import { create as createJSONDiff } from 'jsondiffpatch';
 import formatters from 'jsondiffpatch/src/main-formatters';
-import JSONTree from 'react-json-tree';
+import JSONTree from '@alexkuz/react-json-tree';
 
 import 'jsondiffpatch/public/formatters-styles/html.css';
 

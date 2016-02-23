@@ -1,8 +1,6 @@
 # redux-devtools-inspector
 
-Another Redux state monitor for [Redux DevTools](https://github.com/gaearon/redux-devtools)
-
-The intention for this monitor is to provide a convinient way to inspect "real world" app states, that could be complicated and deeply nested.
+A state monitor for [Redux DevTools](https://github.com/gaearon/redux-devtools) that provides a convenient way to inspect "real world" app states that could be complicated and deeply nested.
 
 ![](2016-02-23.at.16.16.png)
 
@@ -14,7 +12,7 @@ npm install --save-dev redux-devtools-inspector
 
 ### Usage
 
-You can use `LogMonitor` as the only monitor in your app:
+You can use `Inspector` as the only monitor in your app:
 
 ##### `containers/DevTools.js`
 
@@ -24,7 +22,7 @@ import { createDevTools } from 'redux-devtools';
 import Inspector from 'redux-devtools-inspector';
 
 export default createDevTools(
-  <LogMonitor />
+  <Inspector />
 );
 ```
 
@@ -37,13 +35,15 @@ Consult the [`DockMonitor` README](https://github.com/gaearon/redux-devtools-doc
 
 ### Features
 
-Inspector has a list of actions and a preview panel, which shows a state after selected action and a diff with previous state. If no actions selected, the last state is shown.
+The inspector displays a list of actions and a preview panel which shows the state after the selected action and a diff with the previous state. If no actions are selected, the last state is shown.
+
+You may pin a certain part of the state to only track its changes.
 
 ### Props
 
 Name                  | Description
 -------------         | -------------
-`theme`               | An object, containing classnames or style objects, that are used to style `Inspector` (similar to [react-themeable](https://github.com/markdalgleish/react-themeable)).
+`theme`               | An object, containing classnames or style objects that are used to style `Inspector` (similar to [react-themeable](https://github.com/markdalgleish/react-themeable)).
 
 ### License
 

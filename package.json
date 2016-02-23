@@ -62,14 +62,12 @@
   "dependencies": {
     "@alexkuz/react-json-tree": "^0.5.3",
     "babel-runtime": "^6.3.19",
-    "css-loader": "^0.23.1",
     "dateformat": "^1.0.12",
     "jsondiffpatch": "^0.1.41",
     "jss": "^3.3.0",
     "jss-nested": "^1.0.2",
     "jss-vendor-prefixer": "^1.0.1",
     "react-pure-render": "^1.0.2",
-    "react-themeable": "^1.0.1",
-    "style-loader": "^0.13.0"
+    "react-themeable": "^1.0.1"
   }
 }

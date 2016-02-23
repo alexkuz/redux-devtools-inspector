@@ -6,8 +6,6 @@ import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
 import deepMap from './deepMap';
 
-import 'jsondiffpatch/public/formatters-styles/html.css';
-
 const jsonDiff = createJSONDiff({});
 
 function getInspectedState(state, path, purgeFunctions) {

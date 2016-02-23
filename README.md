@@ -2,7 +2,7 @@
 
 A state monitor for [Redux DevTools](https://github.com/gaearon/redux-devtools) that provides a convenient way to inspect "real world" app states that could be complicated and deeply nested.
 
-![](2016-02-23.at.16.16.png)
+![](demo.gif)
 
 ### Installation
 

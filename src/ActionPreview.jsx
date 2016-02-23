@@ -1,12 +1,12 @@
 import React from 'react';
 import themeable from './themeable';
-import { create as createJSONDiff } from 'jsondiffpatch';
+import { DiffPatcher } from 'jsondiffpatch/src/diffpatcher';
 import JSONTree from '@alexkuz/react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
 import deepMap from './deepMap';
 
-const jsonDiff = createJSONDiff({});
+const jsonDiff = new DiffPatcher({});
 
 function getInspectedState(state, path, purgeFunctions) {
   state = path.length ?

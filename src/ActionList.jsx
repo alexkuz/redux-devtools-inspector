@@ -16,8 +16,9 @@ const ActionList = ({
   selectedActionId, onSelect, onSearch, searchValue
 }) => {
   const createTheme = themeable({ ...theme, ...defaultTheme });
+  const lowerSearchValue = searchValue.toLowerCase();
   const filteredActionIds = searchValue ? actionIds.filter(
-    id => actions[id].action.type.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
+    id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1
   ) : actionIds;
 
   return (
@@ -25,7 +26,6 @@ const ActionList = ({
          {...createTheme('actionList', isWideLayout && 'actionListWide')}>
       <input {...createTheme('actionListSearch')}
              onChange={e => onSearch(e.target.value)}
-             value={searchValue}
              placeholder='filter...' />
       {filteredActionIds.map(actionId =>
         <div key={actionId}

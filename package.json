@@ -44,6 +44,7 @@
     "raw-loader": "^0.5.1",
     "react": "^0.14.7",
     "react-bootstrap": "^0.28.2",
+    "react-dom": "^0.14.7",
     "react-pure-render": "^1.0.2",
     "react-redux": "^4.4.0",
     "react-transform-hmr": "^1.0.2",
@@ -67,6 +68,7 @@
     "jss": "^3.3.0",
     "jss-nested": "^1.0.2",
     "jss-vendor-prefixer": "^1.0.1",
+    "lodash.debounce": "^4.0.3",
     "react-pure-render": "^1.0.2",
     "react-themeable": "^1.0.1"
   }

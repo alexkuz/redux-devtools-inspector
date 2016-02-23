@@ -16,7 +16,7 @@ const ActionList = ({
   selectedActionId, onSelect, onSearch, searchValue
 }) => {
   const createTheme = themeable({ ...theme, ...defaultTheme });
-  const lowerSearchValue = searchValue.toLowerCase();
+  const lowerSearchValue = searchValue && searchValue.toLowerCase();
   const filteredActionIds = searchValue ? actionIds.filter(
     id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1
   ) : actionIds;

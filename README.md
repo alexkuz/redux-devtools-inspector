@@ -14,7 +14,7 @@ npm install --save-dev redux-devtools-inspector
 
 ### Usage
 
-You can use `LogMonitor` as the only monitor in your app:
+You can use `Inspector` as the only monitor in your app:
 
 ##### `containers/DevTools.js`
 
@@ -24,7 +24,7 @@ import { createDevTools } from 'redux-devtools';
 import Inspector from 'redux-devtools-inspector';
 
 export default createDevTools(
-  <LogMonitor />
+  <Inspector />
 );
 ```
 

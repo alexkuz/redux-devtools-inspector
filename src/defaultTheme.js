@@ -5,45 +5,157 @@ import jssNested from 'jss-nested';
 jss.use(jssVendorPrefixer());
 jss.use(jssNested());
 
+const TEXT_COLOR = '#666';
 const BACKGROUND_COLOR = '#FFF';
 const SELECTED_BACKGROUND_COLOR = '#F0F0F0';
 const HEADER_BACKGROUND_COLOR = '#FAFAFA';
+const BORDER_COLOR = '#DDD';
+const ACTION_TIME_BACK_COLOR = '#EEE';
+const ACTION_TIME_COLOR = '#777';
+const PIN_COLOR = '#AAA';
+const ITEM_HINT_COLOR = '#AAE';
+const TAB_BACK_COLOR = '#F6F6F6';
+const TAB_HOVER_BACK_COLOR = '#FFF';
+const DIFF_ADD_BACK_COLOR = '#AFA';
+const DIFF_UPDATE_BACK_COLOR = '#FFA';
+const DIFF_REMOVE_BACK_COLOR = '#FAA';
+const DIFF_ADD_COLOR = '#393';
+const DIFF_REMOVE_COLOR = '#933';
+const DIFF_ARROW_COLOR = '#999';
+const LINK_COLOR = '#0a6ebd';
 
-const sheet = jss.createStyleSheet({
-  diffMonitor: {
+const colors = {
+  inspectorColor: {
     'background-color': BACKGROUND_COLOR,
-    'font-family': 'monaco, Consolas, "Lucida Console", monospace'
+    color: TEXT_COLOR
   },
 
-  actionList: {
-    'background-color': BACKGROUND_COLOR
+  actionListColor: {
+    'background-color': BACKGROUND_COLOR,
+    'border-color': BORDER_COLOR
   },
 
-  actionListItem: {
-    'border-bottom': '1px solid #DDD',
-    display: 'flex',
-    'align-items': 'flex-start',
-    'justify-content': 'space-between',
-    padding: '1rem',
-    cursor: 'pointer'
+  actionListItemColor: {
+    'border-bottom-color': BORDER_COLOR
   },
 
-  actionListItemSelected: {
+  actionListItemSelectedColor: {
     'background-color': SELECTED_BACKGROUND_COLOR
   },
 
+  actionListItemTimeColor: {
+    'background-color': ACTION_TIME_BACK_COLOR,
+    color: ACTION_TIME_COLOR
+  },
+
+  actionPreviewColor: {
+    'background-color': BACKGROUND_COLOR,
+  },
+
+  stateDiffEmptyColor: {
+    color: '#AAA'
+  },
+
+  inspectedPathColor: {
+    'background-color': HEADER_BACKGROUND_COLOR,
+    'border-color': BORDER_COLOR
+  },
+
+  treeItemPinColor: {
+    color: PIN_COLOR
+  },
+
+  previewHeaderColor: {
+    'background-color': HEADER_BACKGROUND_COLOR,
+    'border-bottom': BORDER_COLOR
+  },
+
+  treeItemHintColor: {
+    color: ITEM_HINT_COLOR
+  },
+
+  tabSelectorButtonColor: {
+    'border-color': BORDER_COLOR,
+    'background-color': TAB_BACK_COLOR,
+    '&:hover': {
+      'background-color': TAB_HOVER_BACK_COLOR
+    }
+  },
+
+  tabSelectorButtonSelectedColor: {
+    'background-color': TAB_HOVER_BACK_COLOR
+  },
+
+  diffColor: {
+    color: TEXT_COLOR
+  },
+
+  diffAddColor: {
+    'background-color': DIFF_ADD_BACK_COLOR
+  },
+
+  diffRemoveColor: {
+    'background-color': DIFF_REMOVE_BACK_COLOR
+  },
+
+  diffUpdateFromColor: {
+    color: DIFF_REMOVE_COLOR,
+    'text-decoration': 'line-through',
+    'background-color': DIFF_UPDATE_BACK_COLOR
+  },
+
+  diffUpdateToColor: {
+    color: DIFF_ADD_COLOR,
+    'background-color': DIFF_UPDATE_BACK_COLOR
+  },
+
+  diffUpdateArrowColor: {
+    color: DIFF_ARROW_COLOR
+  },
+
+  inspectedPathKeyLinkColor: {
+    color: LINK_COLOR
+  },
+
+  actionListSearchColor: {
+    'border-color': BORDER_COLOR
+  }
+};
+
+const styles = {
+  inspector: {
+    display: 'flex',
+    'flex-direction': 'column',
+    width: '100%',
+    height: '100%',
+    'font-family': 'monaco, Consolas, "Lucida Console", monospace',
+    'font-size': '12px',
+    'font-smoothing': 'antialiased',
+    'line-height': '1.5em',
+  },
+
+  actionListItem: {
+    'border-bottom-width': '1px',
+    'border-bottom-style': 'solid',
+    display: 'flex',
+    'align-items': 'flex-start',
+    'justify-content': 'space-between',
+    padding: '0.5rem 1rem',
+    cursor: 'pointer',
+
+    '&:last-child': {
+      'border-bottom-width': 0
+    }
+  },
+
   actionListItemTime: {
-    'background-color': '#EEE',
-    padding: '0.2rem 0.5rem',
+    padding: '0.4rem 0.6rem',
     'border-radius': '3px',
-    color: '#777',
-    'font-size': '0.7em',
+    'font-size': '0.8em',
     'line-height': '1em'
   },
 
   actionPreview: {
-    'background-color': BACKGROUND_COLOR,
-
     '& pre': {
       border: 'inherit',
       'border-radius': '3px',
@@ -52,100 +164,126 @@ const sheet = jss.createStyleSheet({
     }
   },
 
-  diffMonitorLayout: {
-    display: 'flex',
-    'flex-direction': 'column',
-    width: '100%',
-    height: '100%'
-  },
-
-  actionListLayout: {
+  actionList: {
     'flex-basis': '40%',
+    'flex-shrink': 0,
     'overflow-y': 'auto',
-    'border-bottom': '3px double #DDD'
+    'border-bottom-width': '3px',
+    'border-bottom-style': 'double'
   },
 
-  actionPreviewLayout: {
+  actionPreview: {
     'flex-grow': 1,
     'overflow-y': 'auto'
   },
 
-  diffMonitorWideLayout: {
+  inspectorWide: {
     'flex-direction': 'row'
   },
 
-  actionListWideLayout: {
+  actionListWide: {
     'flex-basis': '40%',
     'border-bottom': 'none',
-    'border-right': '3px double #DDD'
+    'border-right-width': '3px',
+    'border-right-style': 'double'
   },
 
   stateDiff: {
-
-  },
-
-  stateDiffLayout: {
     padding: '0.5rem 0'
   },
 
-  inspectedPath: {
-    'background-color': HEADER_BACKGROUND_COLOR,
-    'border-bottom': '1px solid #DDD'
-  },
-
-  inspectedPathLayout: {
+  stateDiffEmpty: {
     padding: '0.5rem 1rem'
   },
 
-  inspectedPathKey: {
-
+  inspectedPath: {
+    padding: '0.5rem 1rem',
+    'border-bottom-width': '1px',
+    'border-bottom-style': 'solid'
   },
 
-  inspectedPathKeyLayout: {
-    '& > a': {
-      cursor: 'pointer'
-    },
-
+  inspectedPathKey: {
     '&:not(:last-child):after': {
       content: '" > "'
     }
   },
 
+  inspectedPathKeyLink: {
+    cursor: 'pointer',
+    '&:hover': {
+      'text-decoration': 'underline'
+    }
+  },
+
   treeItemPin: {
-    color: '#AAA',
     'font-size': '0.7em',
     'padding-left': '0.5rem',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    '&:hover': {
+      'text-decoration': 'underline'
+    }
   },
 
   treeItemKey: {
     cursor: 'pointer'
   },
 
-  diffHeader: {
-    'background-color': HEADER_BACKGROUND_COLOR,
-    'border-top': '1px solid #DDD',
-    'border-bottom': '1px solid #DDD'
-  },
-
-  diffHeaderLayout: {
-    padding: '0.5rem 1rem'
+  previewHeader: {
+    padding: '0.5rem 1rem',
+    display: 'flex',
+    'justify-content': 'space-between',
+    'align-items': 'center',
+    'border-bottom-width': '1px',
+    'border-bottom-style': 'solid'
   },
 
   actionListSearch: {
     outline: 'none',
-    border: 'none',
-    'border-bottom': '1px solid #DDD'
-  },
-
-  actionListSearchLayout: {
+    'border-top': 'none',
+    'border-left': 'none',
+    'border-right': 'none',
+    'border-bottom-width': '1px',
+    'border-bottom-style': 'solid',
     width: '100%',
     padding: '0.5rem 1rem'
   },
 
-  treeItemHint: {
-    color: '#AAE'
-  }
+  tabSelector: {
+    display: 'flex'
+  },
+
+  tabSelectorButton: {
+    cursor: 'pointer',
+    padding: '0.5rem 1rem',
+    'border-style': 'solid',
+    'border-width': '1px',
+    'border-left-width': 0,
+
+    '&:first-child': {
+      'border-left-width': '1px',
+      'border-top-left-radius': '3px',
+      'border-bottom-left-radius': '3px'
+    },
+
+    '&:last-child': {
+      'border-top-right-radius': '3px',
+      'border-bottom-right-radius': '3px'
+    }
+  },
+
+  diff: {
+    padding: '0.2rem 0.3rem',
+    'border-radius': '3px'
+  },
+
+  diffUpdateFrom: {
+    'text-decoration': 'line-through'
+  },
+};
+
+const sheet = jss.createStyleSheet({
+  ...colors,
+  ...styles
 }).attach();
 
 export default sheet.classes;

@@ -2,6 +2,7 @@ const truthy = x => x;
 
 export default theme => (...names) => {
   const styles = names
+    .reduce((arr, name) => [...arr, name, name + 'Color'], [])
     .map(name => theme[name])
     .filter(truthy);
 

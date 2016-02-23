@@ -3,14 +3,14 @@
   "version": "0.1.2",
   "description": "Redux DevTools Diff Monitor",
   "scripts": {
-    "build-lib": "babel src --out-dir lib",
-    "build-demo": "NODE_ENV=production webpack -p",
+    "build:lib": "NODE_ENV=production babel src --out-dir lib",
+    "build:demo": "NODE_ENV=production webpack -p",
     "stats": "webpack --profile --json > stats.json",
     "start": "webpack-dev-server",
     "lint": "eslint src",
-    "version": "npm run build-demo && git add -A .",
+    "version": "npm run build:demo && git add -A .",
     "postversion": "git push",
-    "prepublish": "npm run build-lib"
+    "prepublish": "npm run build:lib"
   },
   "main": "lib/index.js",
   "repository": {},

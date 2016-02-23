@@ -9,6 +9,9 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import DockMonitor from 'redux-devtools-dock-monitor';
 import createLogger from 'redux-logger';
 
+const useDevtoolsExtension =
+  !!window.devToolsExtension && window.location.search.indexOf('ext') !== -1;
+
 const DevTools = createDevTools(
   <DockMonitor defaultIsVisible
                toggleVisibilityKey='ctrl-h'
@@ -20,7 +23,7 @@ const DevTools = createDevTools(
 
 const enhancer = compose(
   applyMiddleware(createLogger()),
-  window.devToolsExtension ? window.devToolsExtension() : DevTools.instrument()
+  useDevtoolsExtension ? window.devToolsExtension() : DevTools.instrument()
 );
 
 const store = createStore(reducers, {}, enhancer);
@@ -29,7 +32,7 @@ render(
   <Provider store={store}>
     <div>
       <DemoApp />
-      {!window.devToolsExtension && <DevTools />}
+      {!useDevtoolsExtension && <DevTools />}
     </div>
   </Provider>,
   document.getElementById('root')

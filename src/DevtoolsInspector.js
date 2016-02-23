@@ -11,7 +11,8 @@ export default class DevtoolsInspector extends Component {
     this.state = {
       isWideLayout: false,
       selectedActionId: null,
-      inspectedPath: []
+      inspectedPath: [],
+      tab: 'Diff'
     };
   }
 
@@ -52,38 +53,35 @@ export default class DevtoolsInspector extends Component {
 
   updateSizeMode() {
     this.setState({
-      isWideLayout: this.refs.diffMonitor.offsetWidth > 500
+      isWideLayout: this.refs.inspector.offsetWidth > 500
     });
   }
 
   render() {
     const { theme, stagedActionIds: actionIds, actionsById: actions, computedStates } = this.props;
-    const { isWideLayout, selectedActionId, inspectedPath, searchValue } = this.state;
+    const { isWideLayout, selectedActionId, inspectedPath, searchValue, tab } = this.state;
     const createTheme = themeable({ ...theme, ...defaultTheme });
     const lastActionId = actionIds[actionIds.length - 1];
     const currentActionId = selectedActionId === null ? lastActionId : selectedActionId;
 
     return (
-      <div key='diffMonitor'
-           {...createTheme(
-              'diffMonitor',
-              'diffMonitorLayout',
-              isWideLayout && 'diffMonitorWideLayout'
-            )}
-           ref='diffMonitor'>
+      <div key='inspector'
+           {...createTheme('inspector', isWideLayout && 'inspectorWide')}
+           ref='inspector'>
         <ActionList {...{ theme, defaultTheme, actions, actionIds, isWideLayout, searchValue }}
                     selectedActionId={selectedActionId}
                     onSearch={val => this.setState({ searchValue: val })}
                     onSelect={actionId => this.setState({
                       selectedActionId: actionId === selectedActionId ? null : actionId
                     })} />
-        <ActionPreview {...{ theme, defaultTheme }}
+        <ActionPreview {...{ theme, defaultTheme, tab }}
                        fromState={currentActionId > 0 ?
                          computedStates[currentActionId - 1] : null
                        }
-                       toState={currentActionId ? computedStates[currentActionId] : null}
+                       toState={computedStates[currentActionId]}
                        onInspectPath={(path) => this.setState({ inspectedPath: path })}
-                       inspectedPath={inspectedPath} />
+                       inspectedPath={inspectedPath}
+                       onSelectTab={tab => this.setState({ tab })} />
       </div>
     );
   }

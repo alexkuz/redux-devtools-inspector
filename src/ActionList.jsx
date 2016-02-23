@@ -22,8 +22,8 @@ const ActionList = ({
 
   return (
     <div key='actionList'
-         {...createTheme('actionList', 'actionListLayout', isWideLayout && 'actionListWideLayout')}>
-      <input {...createTheme('actionListSearch', 'actionListSearchLayout')}
+         {...createTheme('actionList', isWideLayout && 'actionListWide')}>
+      <input {...createTheme('actionListSearch')}
              onChange={e => onSearch(e.target.value)}
              value={searchValue}
              placeholder='filter...' />
@@ -31,12 +31,11 @@ const ActionList = ({
         <div key={actionId}
              {...createTheme(
                 'actionListItem',
-                actionId === selectedActionId && 'actionListItemSelected',
-                'actionListItemLayout'
+                actionId === selectedActionId && 'actionListItemSelected'
              )}
              onClick={() => onSelect(actionId)}>
           {actions[actionId].action.type}
-          <div {...createTheme('actionListItemTime', 'actionListItemTimeLayout')}>
+          <div {...createTheme('actionListItemTime')}>
             {getTime(actions, actionIds, actionId)}
           </div>
         </div>

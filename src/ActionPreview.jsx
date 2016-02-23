@@ -1,21 +1,27 @@
 import React from 'react';
 import themeable from './themeable';
 import { create as createJSONDiff } from 'jsondiffpatch';
-import formatters from 'jsondiffpatch/src/main-formatters';
 import JSONTree from '@alexkuz/react-json-tree';
+import ActionPreviewHeader from './ActionPreviewHeader';
+import JSONDiff from './JSONDiff';
+import deepMap from './deepMap';
 
 import 'jsondiffpatch/public/formatters-styles/html.css';
 
 const jsonDiff = createJSONDiff({});
 
-function getInspectedState(state, path) {
-  return path.length ?
+function getInspectedState(state, path, purgeFunctions) {
+  state = path.length ?
     {
       [path[path.length - 1]]: path.reduce(
         (s, key) => s && s[key],
         state
       )
-    } : state
+    } : state;
+
+  return purgeFunctions ?
+    deepMap(state, val => typeof val === 'function' ? 'fn()' : val) :
+    state;
 }
 
 function getItemString(createTheme, type, data) {
@@ -63,62 +69,49 @@ function getItemString(createTheme, type, data) {
 }
 
 const ActionPreview = ({
-  theme, defaultTheme, fromState, toState, onInspectPath, inspectedPath
+  theme, defaultTheme, fromState, toState, onInspectPath, inspectedPath, tab, onSelectTab
 }) => {
   const createTheme = themeable({ ...theme, ...defaultTheme });
   const delta = fromState && toState && jsonDiff.diff(
-    getInspectedState(fromState.state, inspectedPath),
-    getInspectedState(toState.state, inspectedPath)
+    getInspectedState(fromState.state, inspectedPath, true),
+    getInspectedState(toState.state, inspectedPath, true)
   );
 
+  const labelRenderer = (key, ...rest) =>
+    <span>
+      <span {...createTheme('treeItemKey')}>
+        {key}
+      </span>
+      <span {...createTheme('treeItemPin')}
+            onClick={() => onInspectPath([
+              ...inspectedPath.slice(0, inspectedPath.length - 1),
+              ...[key, ...rest].reverse()
+            ])}>
+        {'(pin)'}
+      </span>
+    </span>;
+
   return (
-    <div key='actionPreview' {...createTheme('actionPreview', 'actionPreviewLayout')}>
-      <div key='inspectedPath' {...createTheme('inspectedPath', 'inspectedPathLayout')}>
-        {inspectedPath.length ?
-          <span {...createTheme('inspectedPathKey', 'inspectedPathKeyLayout')}>
-            <a onClick={() => onInspectPath([])}>
-              State
-            </a>
-          </span> : 'State'
-        }
-        {inspectedPath.map((key, idx) =>
-          idx === inspectedPath.length - 1 ? key :
-          <span key={key}
-             {...createTheme('inspectedPathKey', 'inspectedPathKeyLayout')}>
-            <a onClick={() => onInspectPath(inspectedPath.slice(0, idx + 1))}>
-              {key}
-            </a>
-          </span>
-        )}
-      </div>
-      {toState &&
-        <JSONTree labelRenderer={(key, ...rest) =>
-                                  <span>
-                                    <span {...createTheme('treeItemKey')}>
-                                      {key}
-                                    </span>
-                                    <span {...createTheme('treeItemPin')}
-                                          onClick={() => onInspectPath([
-                                            ...inspectedPath.slice(0, inspectedPath.length - 1),
-                                            ...[key, ...rest].reverse()
-                                          ])}>
-                                      {'(pin)'}
-                                    </span>
-                                  </span>
-                                }
+    <div key='actionPreview' {...createTheme('actionPreview')}>
+      <ActionPreviewHeader {...{
+        theme, defaultTheme, inspectedPath, onInspectPath, tab, onSelectTab
+      }} />
+      {tab === 'Diff' && delta &&
+        <JSONDiff {...{ delta, labelRenderer, theme, defaultTheme }} />
+      }
+      {tab === 'Diff' && !delta &&
+        <div {...createTheme('stateDiffEmpty')}>
+          (states are equal)
+        </div>
+      }
+      {tab === 'State' && toState &&
+        <JSONTree labelRenderer={labelRenderer}
                   data={getInspectedState(toState.state, inspectedPath)}
                   getItemString={(type, data) => getItemString(createTheme, type, data)}
                   getItemStringStyle={
                     (type, expanded) => ({ display: expanded ? 'none' : 'inline' })
                   }
                   hideRoot />
-      }
-      <div key='diffHeader' {...createTheme('diffHeader', 'diffHeaderLayout')}>
-        Diff
-      </div>
-      {delta &&
-        <div {...createTheme('stateDiff', 'stateDiffLayout')}
-             dangerouslySetInnerHTML={{ __html: formatters.html.format(delta) }} />
       }
     </div>
   );

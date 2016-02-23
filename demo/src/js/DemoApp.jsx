@@ -35,9 +35,11 @@ class DemoApp extends React.Component {
         </PageHeader>
         <h5>{pkg.description || <span style={styles.muted}>Package Description</span>}</h5>
         <div style={styles.content}>
-          <Button onClick={this.props.increment1}>Increment 1</Button>
-          <Button onClick={this.props.increment2}>Increment 2</Button>
-          <Button onClick={this.props.increment3}>Change Nested</Button>
+          <Button onClick={this.props.increment}>Increment</Button>
+          <Button onClick={this.props.push}>Push</Button>
+          <Button onClick={this.props.pop}>Pop</Button>
+          <Button onClick={this.props.replace}>Replace</Button>
+          <Button onClick={this.props.nested}>Change Nested</Button>
         </div>
       </div>
     );
@@ -47,8 +49,10 @@ class DemoApp extends React.Component {
 export default connect(
   state => state,
   {
-    increment1: () => ({ type: 'INCREMENT_STATE1' }),
-    increment2: () => ({ type: 'INCREMENT_STATE2' }),
-    increment3: () => ({ type: 'CHANGE_NESTED' })
+    increment: () => ({ type: 'INCREMENT' }),
+    push: () => ({ type: 'PUSH' }),
+    pop: () => ({ type: 'POP' }),
+    replace: () => ({ type: 'REPLACE' }),
+    nested: () => ({ type: 'CHANGE_NESTED' })
   }
 )(DemoApp);

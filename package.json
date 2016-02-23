@@ -13,7 +13,9 @@
     "prepublish": "npm run build:lib"
   },
   "main": "lib/index.js",
-  "repository": {},
+  "repository": {
+    "url": "https://github.com/alexkuz/redux-devtools-inspector"
+  },
   "keywords": [
     "react",
     "reactjs"
@@ -53,13 +55,13 @@
     "webpack-dev-server": "^1.14.1"
   },
   "peerDependencies": {
-    "react": ">=0.13.0",
-    "babel-runtime": "^6.3.19"
+    "react": ">=0.13.0"
   },
   "author": "Alexander <alexkuz@gmail.com> (http://kuzya.org/)",
   "license": "MIT",
   "dependencies": {
     "@alexkuz/react-json-tree": "^0.5.3",
+    "babel-runtime": "^6.3.19",
     "css-loader": "^0.23.1",
     "dateformat": "^1.0.12",
     "jsondiffpatch": "^0.1.41",

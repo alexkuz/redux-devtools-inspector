@@ -17,12 +17,15 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'column',
-    paddingTop: '100px',
-    height: '50%'
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingTop: '100px'
   },
   muted: {
     color: '#CCCCCC'
+  },
+  button: {
+    marginRight: '1rem'
   }
 };
 
@@ -35,11 +38,11 @@ class DemoApp extends React.Component {
         </PageHeader>
         <h5>{pkg.description || <span style={styles.muted}>Package Description</span>}</h5>
         <div style={styles.content}>
-          <Button onClick={this.props.increment}>Increment</Button>
-          <Button onClick={this.props.push}>Push</Button>
-          <Button onClick={this.props.pop}>Pop</Button>
-          <Button onClick={this.props.replace}>Replace</Button>
-          <Button onClick={this.props.nested}>Change Nested</Button>
+          <Button onClick={this.props.increment} style={styles.button}>Increment</Button>
+          <Button onClick={this.props.push} style={styles.button}>Push</Button>
+          <Button onClick={this.props.pop} style={styles.button}>Pop</Button>
+          <Button onClick={this.props.replace} style={styles.button}>Replace</Button>
+          <Button onClick={this.props.nested} style={styles.button}>Change Nested</Button>
         </div>
       </div>
     );

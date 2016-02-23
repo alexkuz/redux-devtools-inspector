@@ -2,13 +2,13 @@ import { combineReducers } from 'redux';
 
 const DEFAULT_NESTED_STATE = {
   long: {
-    nested: {
+    nested: [{
       path: {
         to: {
           a: 'key'
         }
       }
-    }
+    }]
   }
 };
 
@@ -19,7 +19,7 @@ export default combineReducers({
   func: (state=() => {}) => state,
   array: (state=[], action) => action.type === 'PUSH' ?
     [...state, Math.random()] : (
-      action.type === 'POP' ? state.slice(1) : (
+      action.type === 'POP' ? state.slice(0, state.length - 1) : (
         action.type === 'REPLACE' ? [Math.random(), ...state.slice(1)] : state
       )
     ),
@@ -28,13 +28,13 @@ export default combineReducers({
       {
         ...state,
         long: {
-          nested: {
+          nested: [{
             path: {
               to: {
-                a: state.long.nested.path.to.a + '!'
+                a: state.long.nested[0].path.to.a + '!'
               }
             }
-          }
+          }]
         }
       } : state
 });

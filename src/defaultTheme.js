@@ -276,6 +276,10 @@ const styles = {
     'border-radius': '3px'
   },
 
+  diffRemove: {
+    'text-decoration': 'line-through'
+  },
+
   diffUpdateFrom: {
     'text-decoration': 'line-through'
   },

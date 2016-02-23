@@ -1,24 +1,5 @@
-# react-component-boilerplate
+# redux-devtools-inspector
 
-React component boilerplate
+Another Redux state monitor for [Redux DevTools](https://github.com/gaearon/redux-devtools)
 
-### How to use it
-
-Don't use it.
-
-Seriously, just write your own boilerplate, it's not that hard.
-I'm sure this one is already outdated anyway. Like any boilerplate.
-
-### Don't tell me what to do. How to install it?
-
-Ugh. Fine.
-
-```
-$ npm init
-
-$ npm install
-
-$ npm start
-
-$ open http://localhost:3000
-```
+![](2016-02-23.at.16.16.png)

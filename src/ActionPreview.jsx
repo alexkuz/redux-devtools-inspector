@@ -5,6 +5,7 @@ import JSONTree from '@alexkuz/react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
 import deepMap from './deepMap';
+import objType from './obj-type';
 
 const jsonDiff = new DiffPatcher({});
 
@@ -69,6 +70,10 @@ function getItemString(createTheme, type, data) {
 const ActionPreview = ({
   theme, defaultTheme, fromState, toState, onInspectPath, inspectedPath, tab, onSelectTab
 }) => {
+  [ fromState, toState ] = [ fromState, toState ].map(o => {
+    o = Object.assign({}, o);
+    if (objType(o.state) === 'Iterable') o.state = o.state.toJS(); return o;
+  });
   const createTheme = themeable({ ...theme, ...defaultTheme });
   const delta = fromState && toState && jsonDiff.diff(
     getInspectedState(fromState.state, inspectedPath, true),

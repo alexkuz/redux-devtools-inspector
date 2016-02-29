@@ -14,7 +14,7 @@
   },
   "main": "lib/index.js",
   "repository": {
-    "url": "https://github.com/alexkuz/redux-devtools-inspector"
+    "url": "https://github.com/leonaves/redux-devtools-inspector"
   },
   "keywords": [
     "react",
@@ -64,10 +64,12 @@
     "@alexkuz/react-json-tree": "^0.5.3",
     "babel-runtime": "^6.3.19",
     "dateformat": "^1.0.12",
+    "immutable": "^3.7.6",
     "jsondiffpatch": "^0.1.41",
     "jss": "^3.3.0",
     "jss-nested": "^1.0.2",
     "jss-vendor-prefixer": "^1.0.1",
+    "leonaves-react-json-tree": "^0.5.6",
     "lodash.debounce": "^4.0.3",
     "react-pure-render": "^1.0.2",
     "react-themeable": "^1.0.1"

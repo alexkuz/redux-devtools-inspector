@@ -1,5 +1,5 @@
 import React from 'react';
-import JSONTree from '@alexkuz/react-json-tree';
+import JSONTree from 'leonaves-react-json-tree';
 import deepMap from './deepMap';
 import themeable from './themeable';
 

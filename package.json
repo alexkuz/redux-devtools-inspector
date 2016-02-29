@@ -1,5 +1,5 @@
 {
-  "name": "leonaves-redux-devtools-inspector",
+  "name": "redux-devtools-inspector",
   "version": "0.1.7",
   "description": "Redux DevTools Diff Monitor",
   "scripts": {
@@ -14,7 +14,7 @@
   },
   "main": "lib/index.js",
   "repository": {
-    "url": "https://github.com/alexkuz/redux-devtools-inspector"
+    "url": "https://github.com/leonaves/redux-devtools-inspector"
   },
   "keywords": [
     "react",

@@ -1,5 +1,5 @@
 {
-  "name": "redux-devtools-inspector",
+  "name": "leonaves-redux-devtools-inspector",
   "version": "0.1.7",
   "description": "Redux DevTools Diff Monitor",
   "scripts": {

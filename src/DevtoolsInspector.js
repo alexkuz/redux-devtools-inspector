@@ -12,7 +12,7 @@ export default class DevtoolsInspector extends Component {
       isWideLayout: false,
       selectedActionId: null,
       inspectedPath: [],
-      tab: 'Diff'
+      tab: 'State'
     };
   }
 

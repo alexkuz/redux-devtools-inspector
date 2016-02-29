@@ -1,7 +1,7 @@
 import React from 'react';
 import themeable from './themeable';
 import { DiffPatcher } from 'jsondiffpatch/src/diffpatcher';
-import JSONTree from '@alexkuz/react-json-tree';
+import JSONTree from 'leonaves-react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
 import deepMap from './deepMap';
@@ -10,17 +10,29 @@ import objType from './obj-type';
 const jsonDiff = new DiffPatcher({});
 
 function getInspectedState(state, path, purgeFunctions) {
-  state = path.length ?
+    state = path.length ?
     {
-      [path[path.length - 1]]: path.reduce(
-        (s, key) => s && s[key],
-        state
-      )
+        [path[path.length - 1]]: path.reduce(
+            (s, key) => {
+                if (objType(s) === 'Iterable') {
+                    let i = 0; for (const entry of s) {
+                        if (Array.isArray(entry)) {
+                            if (entry[0] === key) return entry[1];
+                        } else {
+                            if (i > key) return; if (i === key) return entry;
+                        } i++;
+                    }
+                } else if (objType(s) === 'Immutable_Iterable') {
+                    return s && s.get(key);
+                } else {
+                    return s && s[key];
+                }
+            }, state)
     } : state;
 
-  return purgeFunctions ?
-    deepMap(state, val => typeof val === 'function' ? 'fn()' : val) :
-    state;
+    return purgeFunctions ?
+        deepMap(state, val => typeof val === 'function' ? 'fn()' : val) :
+        state;
 }
 
 function getItemString(createTheme, type, data) {
@@ -70,10 +82,7 @@ function getItemString(createTheme, type, data) {
 const ActionPreview = ({
   theme, defaultTheme, fromState, toState, onInspectPath, inspectedPath, tab, onSelectTab
 }) => {
-  [ fromState, toState ] = [ fromState, toState ].map(o => {
-    o = Object.assign({}, o);
-    if (objType(o.state) === 'Iterable') o.state = o.state.toJS(); return o;
-  });
+
   const createTheme = themeable({ ...theme, ...defaultTheme });
   const delta = fromState && toState && jsonDiff.diff(
     getInspectedState(fromState.state, inspectedPath, true),

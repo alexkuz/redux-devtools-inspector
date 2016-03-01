@@ -4,6 +4,13 @@ import defaultTheme from './defaultTheme';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import ActionList from './ActionList';
 import ActionPreview from './ActionPreview';
+import getInspectedState from './getInspectedState';
+import DiffPatcher from './DiffPatcher';
+
+function getCurrentActionId(props, state) {
+  const lastActionId = props.stagedActionIds[props.stagedActionIds.length - 1];
+  return state.selectedActionId === null ? lastActionId : state.selectedActionId;
+}
 
 export default class DevtoolsInspector extends Component {
   constructor(props) {
@@ -57,12 +64,35 @@ export default class DevtoolsInspector extends Component {
     });
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    const currentActionId = getCurrentActionId(nextProps, nextState);
+    if (this.props.computedStates !== nextProps.computedStates ||
+      getCurrentActionId(this.props, this.state) !== currentActionId ||
+      this.state.inspectedPath !== nextState.inspectedPath) {
+      const fromState = currentActionId > 0 ? nextProps.computedStates[currentActionId - 1] : null;
+      const toState = nextProps.computedStates[currentActionId];
+
+      const fromInspectedState = fromState &&
+        getInspectedState(fromState.state, nextState.inspectedPath);
+      const toInspectedState = getInspectedState(toState.state, nextState.inspectedPath);
+      const delta = fromState && toState && DiffPatcher.diff(
+        fromInspectedState,
+        toInspectedState
+      );
+
+      this.setState({
+        delta,
+        currentActionId,
+        nextState: toInspectedState
+      })
+    }
+  }
+
   render() {
-    const { theme, stagedActionIds: actionIds, actionsById: actions, computedStates } = this.props;
-    const { isWideLayout, selectedActionId, inspectedPath, searchValue, tab } = this.state;
+    const { theme, stagedActionIds: actionIds, actionsById: actions } = this.props;
+    const { isWideLayout, selectedActionId, inspectedPath, nextState,
+            searchValue, tab, delta } = this.state;
     const createTheme = themeable({ ...theme, ...defaultTheme });
-    const lastActionId = actionIds[actionIds.length - 1];
-    const currentActionId = selectedActionId === null ? lastActionId : selectedActionId;
 
     return (
       <div key='inspector'
@@ -75,10 +105,8 @@ export default class DevtoolsInspector extends Component {
                       selectedActionId: actionId === selectedActionId ? null : actionId
                     })} />
         <ActionPreview {...{ theme, defaultTheme, tab }}
-                       fromState={currentActionId > 0 ?
-                         computedStates[currentActionId - 1] : null
-                       }
-                       toState={computedStates[currentActionId]}
+                       delta={delta}
+                       nextState={nextState}
                        onInspectPath={(path) => this.setState({ inspectedPath: path })}
                        inspectedPath={inspectedPath}
                        onSelectTab={tab => this.setState({ tab })} />

@@ -1,71 +1,57 @@
 import React from 'react';
 import JSONTree from '@alexkuz/react-json-tree';
-import deepMap from './deepMap';
 import themeable from './themeable';
+import { stringify } from 'jsan';
 
-function stringify(val) {
-  const str = JSON.stringify(val);
+function stringifyAndShrink(val) {
+  const str = stringify(val);
+  if (val === null) { return 'null'; }
+  else if (typeof val === 'undefined') { return 'undefined'; }
 
   return str.length > 22 ? `${str.substr(0, 15)}…${str.substr(-5)}` : str;
 }
 
-function prepareDelta(delta) {
-  const diffs = [];
-  let diffId = -1;
-  const data = deepMap(delta, (val) => {
-    if (Array.isArray(val)) {
-      diffs.push(val);
-      diffId++;
-      return '<JSON_DIFF_ID>' + diffId;
-    }
-
-    if (val && val._t === 'a') {
-      return Object.keys(val).reduce((obj, key) => {
-        if (key === '_t') {
-          return obj;
-        } if (key[0] === '_' && !val[key.substr(1)]) {
-          return { ...obj, [key.substr(1)]: val[key] };
-        } else if (val['_' + key]) {
-          return { ...obj, [key]: [val['_' + key][0], val[key][0]] };
-        } else if (!val['_' + key] && key[0] !== '_') {
-          return { ...obj, [key]: val[key] };
+function prepareDelta(value) {
+  if (value && value._t === 'a') {
+    const res = {};
+    for (let key in value) {
+      if (key !== '_t') {
+        if (key[0] === '_' && !value[key.substr(1)]) {
+          res[key.substr(1)] = value[key];
+        } else if (value['_' + key]) {
+          res[key] = [value['_' + key][0], value[key][0]];
+        } else if (!value['_' + key] && key[0] !== '_') {
+          res[key] = value[key];
         }
-
-        return obj;
-      }, {});
+      }
     }
+    return res;
+  }
 
-    return val;
-  });
-
-  return { diffs, data };
+  return value;
 }
 
-function valueRenderer(raw, diffs, createTheme) {
+function valueRenderer(raw, value, createTheme) {
   function renderSpan(name, body) {
     return (
       <span key={name} {...createTheme('diff', name)}>{body}</span>
     );
   }
 
-  if (raw.indexOf('"<JSON_DIFF_ID>') === 0) {
-    const diff = diffs[parseInt(raw.replace(/[^\d]/g, ''), 10)];
-
-    if (Array.isArray(diff)) {
-      switch(diff.length) {
-      case 1:
-        return renderSpan('diffAdd', stringify(diff[0]));
-      case 2:
-        return (
-          <span>
-            {renderSpan('diffUpdateFrom', stringify(diff[0]))}
-            {renderSpan('diffUpdateArrow', ' => ')}
-            {renderSpan('diffUpdateTo', stringify(diff[1]))}
-          </span>
-        );
-      case 3:
-        return renderSpan('diffRemove', stringify(diff[0]));
-      }
+  if (Array.isArray(value)) {
+    switch(value.length) {
+    case 1:
+      return renderSpan('diffAdd', stringifyAndShrink(value[0]));
+    case 2:
+      return (
+        <span>
+          {renderSpan('diffUpdateFrom', stringifyAndShrink(value[0]))}
+          {renderSpan('diffUpdateArrow', ' => ')}
+          {renderSpan('diffUpdateTo', stringifyAndShrink(value[1]))}
+        </span>
+      );
+    case 3:
+      return renderSpan('diffRemove', stringifyAndShrink(value[0]));
     }
   }
 
@@ -73,14 +59,15 @@ function valueRenderer(raw, diffs, createTheme) {
 }
 
 const JSONDiff = ({ delta, theme, defaultTheme, ...props }) => {
-  const { data, diffs } = prepareDelta(delta);
   const createTheme = themeable({ ...theme, ...defaultTheme });
 
   return (
     <JSONTree {...props}
-              data={data}
+              data={delta}
               getItemString={() => ''}
-              valueRenderer={raw => valueRenderer(raw, diffs, createTheme)}
+              valueRenderer={(raw, value) => valueRenderer(raw, value, createTheme)}
+              postprocessValue={prepareDelta}
+              isCustomNode={value => Array.isArray(value)}
               expandAll
               hideRoot />
   );

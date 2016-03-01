@@ -1,26 +1,8 @@
 import React from 'react';
 import themeable from './themeable';
-import { DiffPatcher } from 'jsondiffpatch/src/diffpatcher';
 import JSONTree from '@alexkuz/react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
-import deepMap from './deepMap';
-
-const jsonDiff = new DiffPatcher({});
-
-function getInspectedState(state, path, purgeFunctions) {
-  state = path.length ?
-    {
-      [path[path.length - 1]]: path.reduce(
-        (s, key) => s && s[key],
-        state
-      )
-    } : state;
-
-  return purgeFunctions ?
-    deepMap(state, val => typeof val === 'function' ? 'fn()' : val) :
-    state;
-}
 
 function getItemString(createTheme, type, data) {
   let text;
@@ -67,13 +49,9 @@ function getItemString(createTheme, type, data) {
 }
 
 const ActionPreview = ({
-  theme, defaultTheme, fromState, toState, onInspectPath, inspectedPath, tab, onSelectTab
+  theme, defaultTheme, delta, nextState, onInspectPath, inspectedPath, tab, onSelectTab
 }) => {
   const createTheme = themeable({ ...theme, ...defaultTheme });
-  const delta = fromState && toState && jsonDiff.diff(
-    getInspectedState(fromState.state, inspectedPath, true),
-    getInspectedState(toState.state, inspectedPath, true)
-  );
 
   const labelRenderer = (key, ...rest) =>
     <span>
@@ -102,9 +80,9 @@ const ActionPreview = ({
           (states are equal)
         </div>
       }
-      {tab === 'State' && toState &&
+      {tab === 'State' && nextState &&
         <JSONTree labelRenderer={labelRenderer}
-                  data={getInspectedState(toState.state, inspectedPath)}
+                  data={nextState}
                   getItemString={(type, data) => getItemString(createTheme, type, data)}
                   getItemStringStyle={
                     (type, expanded) => ({ display: expanded ? 'none' : 'inline' })

@@ -27,8 +27,8 @@ const ActionList = ({
       <input {...createTheme('actionListSearch')}
              onChange={e => onSearch(e.target.value)}
              placeholder='filter...' />
-      {filteredActionIds.map(actionId =>
-        <div key={actionId}
+      {filteredActionIds.map((actionId, idx) =>
+        <div key={idx}
              {...createTheme(
                 'actionListItem',
                 actionId === selectedActionId && 'actionListItemSelected'

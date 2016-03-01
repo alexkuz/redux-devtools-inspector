@@ -81,7 +81,8 @@ export default class DevtoolsInspector extends Component {
                        toState={computedStates[currentActionId]}
                        onInspectPath={(path) => this.setState({ inspectedPath: path })}
                        inspectedPath={inspectedPath}
-                       onSelectTab={tab => this.setState({ tab })} />
+                       onSelectTab={tab => this.setState({ tab })}
+                       action={actions[currentActionId].action} />
       </div>
     );
   }

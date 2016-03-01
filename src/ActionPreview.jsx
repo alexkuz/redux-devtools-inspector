@@ -67,7 +67,7 @@ function getItemString(createTheme, type, data) {
 }
 
 const ActionPreview = ({
-  theme, defaultTheme, fromState, toState, onInspectPath, inspectedPath, tab, onSelectTab
+  theme, defaultTheme, fromState, toState, onInspectPath, inspectedPath, tab, onSelectTab, action
 }) => {
   const createTheme = themeable({ ...theme, ...defaultTheme });
   const delta = fromState && toState && jsonDiff.diff(
@@ -105,6 +105,15 @@ const ActionPreview = ({
       {tab === 'State' && toState &&
         <JSONTree labelRenderer={labelRenderer}
                   data={getInspectedState(toState.state, inspectedPath)}
+                  getItemString={(type, data) => getItemString(createTheme, type, data)}
+                  getItemStringStyle={
+                    (type, expanded) => ({ display: expanded ? 'none' : 'inline' })
+                  }
+                  hideRoot />
+      }
+      {tab === 'Action' &&
+        <JSONTree labelRenderer={labelRenderer}
+                  data={getInspectedState(action, inspectedPath)}
                   getItemString={(type, data) => getItemString(createTheme, type, data)}
                   getItemStringStyle={
                     (type, expanded) => ({ display: expanded ? 'none' : 'inline' })

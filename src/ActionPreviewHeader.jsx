@@ -29,7 +29,7 @@ const ActionPreviewHeader = ({
         )}
       </div>
       <div {...createTheme('tabSelector')}>
-        {['Diff', 'State'].map(t =>
+        {['Action', 'Diff', 'State'].map(t =>
           <div onClick={() => onSelectTab(t)}
                key={t}
                {...createTheme(

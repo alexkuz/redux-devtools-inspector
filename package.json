@@ -62,7 +62,7 @@
   "author": "Alexander <alexkuz@gmail.com> (http://kuzya.org/)",
   "license": "MIT",
   "dependencies": {
-    "@alexkuz/react-json-tree": "^0.5.3",
+    "@alexkuz/react-json-tree": "^0.6.0-alpha1",
     "babel-runtime": "^6.3.19",
     "dateformat": "^1.0.12",
     "jsondiffpatch": "^0.1.41",

@@ -45,7 +45,8 @@ export default class DevtoolsInspector extends Component {
 
   static defaultProps = {
     theme: {},
-    select: (state) => state
+    select: (state) => state,
+    supportImmutable: false
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
@@ -65,16 +66,19 @@ export default class DevtoolsInspector extends Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
+    const { supportImmutable, computedStates } = nextProps;
     const currentActionId = getCurrentActionId(nextProps, nextState);
-    if (this.props.computedStates !== nextProps.computedStates ||
+
+    if (this.props.computedStates !== computedStates ||
       getCurrentActionId(this.props, this.state) !== currentActionId ||
       this.state.inspectedPath !== nextState.inspectedPath) {
-      const fromState = currentActionId > 0 ? nextProps.computedStates[currentActionId - 1] : null;
-      const toState = nextProps.computedStates[currentActionId];
+      const fromState = currentActionId > 0 ? computedStates[currentActionId - 1] : null;
+      const toState = computedStates[currentActionId];
 
       const fromInspectedState = fromState &&
-        getInspectedState(fromState.state, nextState.inspectedPath);
-      const toInspectedState = getInspectedState(toState.state, nextState.inspectedPath);
+        getInspectedState(fromState.state, nextState.inspectedPath, supportImmutable);
+      const toInspectedState =
+        getInspectedState(toState.state, nextState.inspectedPath, supportImmutable);
       const delta = fromState && toState && DiffPatcher.diff(
         fromInspectedState,
         toInspectedState
@@ -83,7 +87,7 @@ export default class DevtoolsInspector extends Component {
       this.setState({
         delta,
         currentActionId,
-        nextState: toInspectedState
+        nextState: getInspectedState(toState.state, nextState.inspectedPath, false)
       })
     }
   }

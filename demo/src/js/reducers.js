@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
+import Immutable from 'immutable';
 
-const DEFAULT_NESTED_STATE = {
+const NESTED = {
   long: {
     nested: [{
       path: {
@@ -11,6 +12,16 @@ const DEFAULT_NESTED_STATE = {
     }]
   }
 };
+
+const IMMUTABLE_NESTED = Immutable.fromJS(NESTED);
+
+const IMMUTABLE_MAP = Immutable.Map({
+  map: Immutable.Map({ a:1, b: 2, c: 3 }),
+  list: Immutable.List(['a', 'b', 'c']),
+  set: Immutable.Set(['a', 'b', 'c']),
+  stack: Immutable.Stack(['a', 'b', 'c']),
+  seq: Immutable.Seq.of(1, 2, 3, 4, 5, 6, 7, 8)
+});
 
 const HUGE_ARRAY = Array.from({ length: 5000 })
   .map((_, key) => ({ str: 'key ' + key }));
@@ -50,7 +61,7 @@ export default combineReducers({
     [ ...state, HUGE_OBJECT ] : state,
   iterators: (state=[], action) => action.type === 'ADD_ITERATOR' ?
     [...state, createIterator()] : state,
-  nestedState: (state=DEFAULT_NESTED_STATE, action) =>
+  nested: (state=NESTED, action) =>
     action.type === 'CHANGE_NESTED' ?
       {
         ...state,
@@ -65,5 +76,12 @@ export default combineReducers({
         }
       } : state,
   recursive: (state=[], action) => action.type === 'ADD_RECURSIVE' ?
-    [...state, { ...RECURSIVE }] : state
+    [...state, { ...RECURSIVE }] : state,
+  immutables: (state=[], action) => action.type === 'ADD_IMMUTABLE_MAP' ?
+    [...state, IMMUTABLE_MAP] : state,
+  immutableNested: (state=IMMUTABLE_NESTED, action) => action.type === 'CHANGE_IMMUTABLE_NESTED' ?
+    state.updateIn(
+      ['long', 'nested', 0, 'path', 'to', 'a'],
+      str => str + '!'
+    ) : state
 });

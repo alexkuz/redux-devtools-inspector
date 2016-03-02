@@ -55,7 +55,7 @@ class DemoApp extends React.Component {
             <Button onClick={this.props.replace} style={styles.button}>
               Replace
             </Button>
-            <Button onClick={this.props.nested} style={styles.button}>
+            <Button onClick={this.props.changeNested} style={styles.button}>
               Change Nested
             </Button>
             <Button onClick={this.props.pushHugeArray} style={styles.button}>
@@ -69,6 +69,12 @@ class DemoApp extends React.Component {
             </Button>
             <Button onClick={this.props.addRecursive} style={styles.button}>
               Add Recursive
+            </Button>
+            <Button onClick={this.props.addImmutableMap} style={styles.button}>
+              Add Immutable Map
+            </Button>
+            <Button onClick={this.props.changeImmutableNested} style={styles.button}>
+              Change Immutable Nested
             </Button>
           </div>
         </div>
@@ -84,10 +90,12 @@ export default connect(
     push: () => ({ type: 'PUSH' }),
     pop: () => ({ type: 'POP' }),
     replace: () => ({ type: 'REPLACE' }),
-    nested: () => ({ type: 'CHANGE_NESTED' }),
+    changeNested: () => ({ type: 'CHANGE_NESTED' }),
     pushHugeArray: () => ({ type: 'PUSH_HUGE_ARRAY' }),
     addIterator: () => ({ type: 'ADD_ITERATOR' }),
     addHugeObect: () => ({ type: 'ADD_HUGE_OBJECT' }),
-    addRecursive: () => ({ type: 'ADD_RECURSIVE' })
+    addRecursive: () => ({ type: 'ADD_RECURSIVE' }),
+    addImmutableMap: () => ({ type: 'ADD_IMMUTABLE_MAP' }),
+    changeImmutableNested: () => ({ type: 'CHANGE_IMMUTABLE_NESTED' })
   }
 )(DemoApp);

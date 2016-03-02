@@ -17,7 +17,8 @@ const DevTools = createDevTools(
   <DockMonitor defaultIsVisible
                toggleVisibilityKey='ctrl-h'
                changePositionKey='ctrl-q'
-               changeMonitorKey='ctrl-m'>
+               changeMonitorKey='ctrl-m'
+               supportImmutable={window.location.search.indexOf('immutable') !== -1}>
     <DevtoolsInspector />
   </DockMonitor>
 );

@@ -3,6 +3,13 @@ import themeable from './themeable';
 import JSONTree from '@alexkuz/react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
+import { Iterable } from 'immutable';
+
+const IS_IMMUTABLE_KEY = '@@__IS_IMMUTABLE__@@';
+
+function isImmutable(value) {
+  return Iterable.isKeyed(value) || Iterable.isIndexed(value) || Iterable.isIterable(value);
+}
 
 function getItemString(createTheme, type, data) {
   let text;
@@ -45,7 +52,23 @@ function getItemString(createTheme, type, data) {
     text = type;
   }
 
-  return <span {...createTheme('treeItemHint')}> {text}</span>;
+  const immutableStr = data[IS_IMMUTABLE_KEY] ? 'Immutable' : '';
+
+  return <span {...createTheme('treeItemHint')}> {immutableStr} {text}</span>;
+}
+
+function convertImmutable(value) {
+  if (isImmutable(value)) {
+    value = value.toSeq().__toJS();
+    Object.defineProperty(value, IS_IMMUTABLE_KEY, {
+      enumerable: false,
+      configurable: false,
+      writable: false,
+      value: true
+    });
+  }
+
+  return value;
 }
 
 const ActionPreview = ({
@@ -84,6 +107,7 @@ const ActionPreview = ({
         <JSONTree labelRenderer={labelRenderer}
                   data={nextState}
                   getItemString={(type, data) => getItemString(createTheme, type, data)}
+                  postprocessValue={convertImmutable}
                   getItemStringStyle={
                     (type, expanded) => ({ display: expanded ? 'none' : 'inline' })
                   }

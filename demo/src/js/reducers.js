@@ -15,6 +15,8 @@ const NESTED = {
 
 const IMMUTABLE_NESTED = Immutable.fromJS(NESTED);
 
+/* eslint-disable babel/new-cap */
+
 const IMMUTABLE_MAP = Immutable.Map({
   map: Immutable.Map({ a:1, b: 2, c: 3 }),
   list: Immutable.List(['a', 'b', 'c']),
@@ -22,6 +24,8 @@ const IMMUTABLE_MAP = Immutable.Map({
   stack: Immutable.Stack(['a', 'b', 'c']),
   seq: Immutable.Seq.of(1, 2, 3, 4, 5, 6, 7, 8)
 });
+
+/* eslint-enable babel/new-cap */
 
 const HUGE_ARRAY = Array.from({ length: 5000 })
   .map((_, key) => ({ str: 'key ' + key }));

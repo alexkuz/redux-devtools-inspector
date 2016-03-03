@@ -76,6 +76,9 @@ class DemoApp extends React.Component {
             <Button onClick={this.props.changeImmutableNested} style={styles.button}>
               Change Immutable Nested
             </Button>
+            <Button onClick={this.props.hugePayload} style={styles.button}>
+              Huge Payload
+            </Button>
           </div>
         </div>
       </div>
@@ -96,6 +99,10 @@ export default connect(
     addHugeObect: () => ({ type: 'ADD_HUGE_OBJECT' }),
     addRecursive: () => ({ type: 'ADD_RECURSIVE' }),
     addImmutableMap: () => ({ type: 'ADD_IMMUTABLE_MAP' }),
-    changeImmutableNested: () => ({ type: 'CHANGE_IMMUTABLE_NESTED' })
+    changeImmutableNested: () => ({ type: 'CHANGE_IMMUTABLE_NESTED' }),
+    hugePayload: () => ({
+      type: 'HUGE_PAYLOAD',
+      payload: Array.from({ length: 10000 }).map((_, i) => i)
+    })
   }
 )(DemoApp);

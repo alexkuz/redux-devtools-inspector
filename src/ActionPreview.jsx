@@ -72,7 +72,7 @@ function convertImmutable(value) {
 }
 
 const ActionPreview = ({
-  theme, defaultTheme, delta, nextState, onInspectPath, inspectedPath, tab, onSelectTab
+  theme, defaultTheme, delta, nextState, onInspectPath, inspectedPath, tab, onSelectTab, action
 }) => {
   const createTheme = themeable({ ...theme, ...defaultTheme });
 
@@ -103,9 +103,9 @@ const ActionPreview = ({
           (states are equal)
         </div>
       }
-      {tab === 'State' && nextState &&
+      {(tab === 'State' && nextState || tab === 'Action') &&
         <JSONTree labelRenderer={labelRenderer}
-                  data={nextState}
+                  data={tab === 'Action' ? action : nextState}
                   getItemString={(type, data) => getItemString(createTheme, type, data)}
                   postprocessValue={convertImmutable}
                   getItemStringStyle={

@@ -12,13 +12,39 @@ function getCurrentActionId(props, state) {
   return state.selectedActionId === null ? lastActionId : state.selectedActionId;
 }
 
+function createState(props, state) {
+  const { supportImmutable, computedStates, actionsById: actions } = props;
+  const currentActionId = getCurrentActionId(props, state);
+  const currentAction = actions[currentActionId].action;
+
+  const fromState = currentActionId > 0 ? computedStates[currentActionId - 1] : null;
+  const toState = computedStates[currentActionId];
+
+  const fromInspectedState = fromState &&
+    getInspectedState(fromState.state, state.inspectedStatePath, supportImmutable);
+  const toInspectedState =
+    getInspectedState(toState.state, state.inspectedStatePath, supportImmutable);
+  const delta = fromState && toState && DiffPatcher.diff(
+    fromInspectedState,
+    toInspectedState
+  );
+
+  return {
+    delta,
+    currentActionId,
+    nextState: getInspectedState(toState.state, state.inspectedStatePath, false),
+    action: getInspectedState(currentAction, state.inspectedActionPath, false)
+  };
+}
+
 export default class DevtoolsInspector extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isWideLayout: false,
       selectedActionId: null,
-      inspectedPath: [],
+      inspectedActionPath: [],
+      inspectedStatePath: [],
       tab: 'Diff'
     };
   }
@@ -38,7 +64,8 @@ export default class DevtoolsInspector extends Component {
     theme: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.string
-    ])
+    ]),
+    supportImmutable: PropTypes.bool
   };
 
   static update = (s => s);
@@ -50,6 +77,10 @@ export default class DevtoolsInspector extends Component {
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
+
+  componentWillMount() {
+    this.setState(createState(this.props, this.state));
+  }
 
   componentDidMount() {
     this.updateSizeTimeout = window.setInterval(() => this.updateSizeMode(), 150);
@@ -66,37 +97,20 @@ export default class DevtoolsInspector extends Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    const { supportImmutable, computedStates } = nextProps;
-    const currentActionId = getCurrentActionId(nextProps, nextState);
+    if (this.props.computedStates !== nextProps.computedStates ||
+      getCurrentActionId(this.props, this.state) !== getCurrentActionId(nextProps, nextState) ||
+      this.state.inspectedStatePath !== nextState.inspectedStatePath) {
 
-    if (this.props.computedStates !== computedStates ||
-      getCurrentActionId(this.props, this.state) !== currentActionId ||
-      this.state.inspectedPath !== nextState.inspectedPath) {
-      const fromState = currentActionId > 0 ? computedStates[currentActionId - 1] : null;
-      const toState = computedStates[currentActionId];
-
-      const fromInspectedState = fromState &&
-        getInspectedState(fromState.state, nextState.inspectedPath, supportImmutable);
-      const toInspectedState =
-        getInspectedState(toState.state, nextState.inspectedPath, supportImmutable);
-      const delta = fromState && toState && DiffPatcher.diff(
-        fromInspectedState,
-        toInspectedState
-      );
-
-      this.setState({
-        delta,
-        currentActionId,
-        nextState: getInspectedState(toState.state, nextState.inspectedPath, false)
-      })
+      this.setState(createState(nextProps, nextState));
     }
   }
 
   render() {
     const { theme, stagedActionIds: actionIds, actionsById: actions } = this.props;
-    const { isWideLayout, selectedActionId, inspectedPath, nextState,
+    const { isWideLayout, selectedActionId, nextState, action,
             searchValue, tab, delta } = this.state;
     const createTheme = themeable({ ...theme, ...defaultTheme });
+    const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
 
     return (
       <div key='inspector'
@@ -111,8 +125,9 @@ export default class DevtoolsInspector extends Component {
         <ActionPreview {...{ theme, defaultTheme, tab }}
                        delta={delta}
                        nextState={nextState}
-                       onInspectPath={(path) => this.setState({ inspectedPath: path })}
-                       inspectedPath={inspectedPath}
+                       action={action}
+                       onInspectPath={(path) => this.setState({ [inspectedPathType]: path })}
+                       inspectedPath={this.state[inspectedPathType]}
                        onSelectTab={tab => this.setState({ tab })} />
       </div>
     );

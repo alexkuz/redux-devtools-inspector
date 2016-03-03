@@ -11,7 +11,8 @@ export default class DevtoolsInspector extends Component {
     this.state = {
       isWideLayout: false,
       selectedActionId: null,
-      inspectedPath: [],
+      inspectedActionPath: [],
+      inspectedStatePath: [],
       tab: 'Diff'
     };
   }
@@ -59,10 +60,11 @@ export default class DevtoolsInspector extends Component {
 
   render() {
     const { theme, stagedActionIds: actionIds, actionsById: actions, computedStates } = this.props;
-    const { isWideLayout, selectedActionId, inspectedPath, searchValue, tab } = this.state;
+    const { isWideLayout, selectedActionId, searchValue, tab } = this.state;
     const createTheme = themeable({ ...theme, ...defaultTheme });
     const lastActionId = actionIds[actionIds.length - 1];
     const currentActionId = selectedActionId === null ? lastActionId : selectedActionId;
+    const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath'
 
     return (
       <div key='inspector'
@@ -79,9 +81,10 @@ export default class DevtoolsInspector extends Component {
                          computedStates[currentActionId - 1] : null
                        }
                        toState={computedStates[currentActionId]}
-                       onInspectPath={(path) => this.setState({ inspectedPath: path })}
-                       inspectedPath={inspectedPath}
-                       onSelectTab={tab => this.setState({ tab })} />
+                       onInspectPath={(path) => this.setState({ [inspectedPathType]: path })}
+                       inspectedPath={this.state[inspectedPathType]}
+                       onSelectTab={tab => this.setState({ tab })}
+                       action={actions[currentActionId].action} />
       </div>
     );
   }

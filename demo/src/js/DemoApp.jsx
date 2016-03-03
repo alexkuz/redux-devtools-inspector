@@ -43,6 +43,7 @@ class DemoApp extends React.Component {
           <Button onClick={this.props.pop} style={styles.button}>Pop</Button>
           <Button onClick={this.props.replace} style={styles.button}>Replace</Button>
           <Button onClick={this.props.nested} style={styles.button}>Change Nested</Button>
+          <Button onClick={this.props.random} style={styles.button}>Random Payload</Button>
         </div>
       </div>
     );
@@ -56,6 +57,7 @@ export default connect(
     push: () => ({ type: 'PUSH' }),
     pop: () => ({ type: 'POP' }),
     replace: () => ({ type: 'REPLACE' }),
-    nested: () => ({ type: 'CHANGE_NESTED' })
+    nested: () => ({ type: 'CHANGE_NESTED' }),
+    random: () => ({ type: 'RANDOM_PAYLOAD', payload: Math.random() })
   }
 )(DemoApp);

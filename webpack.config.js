@@ -24,7 +24,7 @@ module.exports = {
     hash: true
   },
   plugins: [
-    new CleanWebpackPlugin(['index.html', 'demo/dist', 'lib']),
+    new CleanWebpackPlugin(isProduction ? ['index.html', 'demo/dist', 'lib'] : []),
     new HtmlWebpackPlugin({
       inject: true,
       template: 'demo/src/index.html',

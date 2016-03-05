@@ -114,7 +114,7 @@ class DemoApp extends React.Component {
                    type='text'
                    ref='theme'
                    addonAfter={
-                    <a onClick={() => setTheme(options, this.refs.theme.value)}
+                    <a onClick={() => setTheme(options, this.refs.theme.getValue())}
                        style={styles.link}>
                       Set Theme
                     </a>

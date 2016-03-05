@@ -1,9 +1,5 @@
 import { Iterable, fromJS } from 'immutable';
-
-function isIterable(obj) {
-  return obj !== null && typeof obj === 'object' && !Array.isArray(obj) &&
-    typeof obj[Symbol.iterator] === 'function';
-}
+import isIterable from './isIterable';
 
 function iterateToKey(obj, key) { // maybe there's a better way, dunno
   let idx = 0;

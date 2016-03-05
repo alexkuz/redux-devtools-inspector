@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import themeable from './themeable';
-import defaultTheme from './defaultTheme';
+import createDefaultTheme from './createDefaultTheme';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import ActionList from './ActionList';
 import ActionPreview from './ActionPreview';
 import getInspectedState from './getInspectedState';
 import DiffPatcher from './DiffPatcher';
+import getBase16Theme from './getBase16Theme';
 
 function getCurrentActionId(props, state) {
   const lastActionId = props.stagedActionIds[props.stagedActionIds.length - 1];
@@ -99,7 +100,8 @@ export default class DevtoolsInspector extends Component {
   componentWillUpdate(nextProps, nextState) {
     if (this.props.computedStates !== nextProps.computedStates ||
       getCurrentActionId(this.props, this.state) !== getCurrentActionId(nextProps, nextState) ||
-      this.state.inspectedStatePath !== nextState.inspectedStatePath) {
+      this.state.inspectedStatePath !== nextState.inspectedStatePath ||
+      this.state.inspectedActionPath !== nextState.inspectedActionPath) {
 
       this.setState(createState(nextProps, nextState));
     }
@@ -109,23 +111,23 @@ export default class DevtoolsInspector extends Component {
     const { theme, stagedActionIds: actionIds, actionsById: actions } = this.props;
     const { isWideLayout, selectedActionId, nextState, action,
             searchValue, tab, delta } = this.state;
-    const createTheme = themeable({ ...theme, ...defaultTheme });
+    const base16Theme = getBase16Theme(theme);
+    const inspectorTheme = { ...createDefaultTheme(base16Theme), ...(base16Theme ? {} : theme) };
+    const createTheme = themeable(inspectorTheme);
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
 
     return (
       <div key='inspector'
            {...createTheme('inspector', isWideLayout && 'inspectorWide')}
            ref='inspector'>
-        <ActionList {...{ theme, defaultTheme, actions, actionIds, isWideLayout, searchValue }}
-                    selectedActionId={selectedActionId}
+        <ActionList {...{ actions, actionIds, isWideLayout, searchValue, selectedActionId }}
+                    theme={inspectorTheme}
                     onSearch={val => this.setState({ searchValue: val })}
                     onSelect={actionId => this.setState({
                       selectedActionId: actionId === selectedActionId ? null : actionId
                     })} />
-        <ActionPreview {...{ theme, defaultTheme, tab }}
-                       delta={delta}
-                       nextState={nextState}
-                       action={action}
+        <ActionPreview {...{ base16Theme, tab, delta, nextState, action }}
+                       theme={inspectorTheme}
                        onInspectPath={(path) => this.setState({ [inspectedPathType]: path })}
                        inspectedPath={this.state[inspectedPathType]}
                        onSelectTab={tab => this.setState({ tab })} />

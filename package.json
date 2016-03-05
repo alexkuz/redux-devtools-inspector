@@ -72,6 +72,7 @@
     "jss-vendor-prefixer": "^1.0.1",
     "lodash.debounce": "^4.0.3",
     "react-pure-render": "^1.0.2",
-    "react-themeable": "^1.0.1"
+    "react-themeable": "^1.0.1",
+    "redux-devtools-themes": "^1.0.0"
   }
 }

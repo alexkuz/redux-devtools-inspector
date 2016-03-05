@@ -41,28 +41,37 @@ function valueRenderer(raw, value, createTheme) {
   if (Array.isArray(value)) {
     switch(value.length) {
     case 1:
-      return renderSpan('diffAdd', stringifyAndShrink(value[0]));
+      return (
+        <span {...createTheme('diffWrap')}>
+          {renderSpan('diffAdd', stringifyAndShrink(value[0]))}
+        </span>
+      );
     case 2:
       return (
-        <span>
+        <span {...createTheme('diffWrap')}>
           {renderSpan('diffUpdateFrom', stringifyAndShrink(value[0]))}
           {renderSpan('diffUpdateArrow', ' => ')}
           {renderSpan('diffUpdateTo', stringifyAndShrink(value[1]))}
         </span>
       );
     case 3:
-      return renderSpan('diffRemove', stringifyAndShrink(value[0]));
+      return (
+        <span {...createTheme('diffWrap')}>
+          {renderSpan('diffRemove', stringifyAndShrink(value[0]))}
+        </span>
+      );
     }
   }
 
   return raw;
 }
 
-const JSONDiff = ({ delta, theme, defaultTheme, ...props }) => {
-  const createTheme = themeable({ ...theme, ...defaultTheme });
+const JSONDiff = ({ delta, theme, base16Theme, ...props }) => {
+  const createTheme = themeable(theme);
 
   return (
     <JSONTree {...props}
+              theme={base16Theme}
               data={delta}
               getItemString={() => ''}
               valueRenderer={(raw, value) => valueRenderer(raw, value, createTheme)}

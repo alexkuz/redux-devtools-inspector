@@ -4,6 +4,7 @@ import JSONTree from '@alexkuz/react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
 import { Iterable } from 'immutable';
+import isIterable from './isIterable';
 
 const IS_IMMUTABLE_KEY = '@@__IS_IMMUTABLE__@@';
 
@@ -15,7 +16,9 @@ function getItemString(createTheme, type, data) {
   let text;
 
   function getShortTypeString(val) {
-    if (Array.isArray(val)) {
+    if (isIterable(val) && !isImmutable(val)) {
+      return '(…)';
+    } else if (Array.isArray(val)) {
       return val.length > 0 ? '[…]' : '[]';
     } else if (val === null) {
       return 'null';
@@ -72,9 +75,9 @@ function convertImmutable(value) {
 }
 
 const ActionPreview = ({
-  theme, defaultTheme, delta, nextState, onInspectPath, inspectedPath, tab, onSelectTab, action
+  theme, delta, nextState, onInspectPath, inspectedPath, tab, onSelectTab, action, base16Theme
 }) => {
-  const createTheme = themeable({ ...theme, ...defaultTheme });
+  const createTheme = themeable(theme);
 
   const labelRenderer = (key, ...rest) =>
     <span>
@@ -93,10 +96,10 @@ const ActionPreview = ({
   return (
     <div key='actionPreview' {...createTheme('actionPreview')}>
       <ActionPreviewHeader {...{
-        theme, defaultTheme, inspectedPath, onInspectPath, tab, onSelectTab
+        theme, inspectedPath, onInspectPath, tab, onSelectTab
       }} />
       {tab === 'Diff' && delta &&
-        <JSONDiff {...{ delta, labelRenderer, theme, defaultTheme }} />
+        <JSONDiff {...{ delta, labelRenderer, theme, base16Theme }} />
       }
       {tab === 'Diff' && !delta &&
         <div {...createTheme('stateDiffEmpty')}>
@@ -105,6 +108,7 @@ const ActionPreview = ({
       }
       {(tab === 'State' && nextState || tab === 'Action') &&
         <JSONTree labelRenderer={labelRenderer}
+                  theme={base16Theme}
                   data={tab === 'Action' ? action : nextState}
                   getItemString={(type, data) => getItemString(createTheme, type, data)}
                   postprocessValue={convertImmutable}

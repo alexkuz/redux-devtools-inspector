@@ -12,10 +12,10 @@ function getTime(actions, actionIds, actionId) {
 }
 
 const ActionList = ({
-  theme, defaultTheme, actions, actionIds, isWideLayout,
+  theme, actions, actionIds, isWideLayout,
   selectedActionId, onSelect, onSearch, searchValue
 }) => {
-  const createTheme = themeable({ ...theme, ...defaultTheme });
+  const createTheme = themeable(theme);
   const lowerSearchValue = searchValue && searchValue.toLowerCase();
   const filteredActionIds = searchValue ? actionIds.filter(
     id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1
@@ -34,7 +34,9 @@ const ActionList = ({
                 actionId === selectedActionId && 'actionListItemSelected'
              )}
              onClick={() => onSelect(actionId)}>
-          {actions[actionId].action.type}
+          <div {...createTheme('actionListItemName')}>
+            {actions[actionId].action.type}
+          </div>
           <div {...createTheme('actionListItemTime')}>
             {getTime(actions, actionIds, actionId)}
           </div>

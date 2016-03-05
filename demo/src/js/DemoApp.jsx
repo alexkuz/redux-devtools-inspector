@@ -3,6 +3,7 @@ import PageHeader from 'react-bootstrap/lib/PageHeader';
 import { connect } from 'react-redux';
 import pkg from '../../../package.json';
 import Button from 'react-bootstrap/lib/Button';
+import Input from 'react-bootstrap/lib/Input';
 
 const styles = {
   wrapper: {
@@ -30,11 +31,37 @@ const styles = {
   },
   button: {
     margin: '0.5rem'
+  },
+  links: {
+    textAlign: 'center'
+  },
+  link: {
+    margin: '0 0.5rem',
+    cursor: 'pointer',
+    display: 'block'
+  },
+  input: {
+    display: 'inline-block',
+    width: '30rem'
   }
 };
 
+function buildUrl(options) {
+  return '?' + [
+    options.useExtension ? 'ext' : '',
+    options.supportImmutable ? 'imutable' : '',
+    options.theme ? 'theme=' + options.theme : ''
+  ].filter(s => s).join('&');
+}
+
+function setTheme(options, theme) {
+  window.location = buildUrl({ ...options, theme });
+}
+
 class DemoApp extends React.Component {
   render() {
+    const { options } = this.props;
+
     return (
       <div style={styles.wrapper}>
         <PageHeader style={styles.header}>
@@ -80,6 +107,27 @@ class DemoApp extends React.Component {
               Huge Payload
             </Button>
           </div>
+        </div>
+        <div style={styles.links}>
+          <div style={styles.input}>
+            <Input defaultValue={options.theme}
+                   type='text'
+                   ref='theme'
+                   addonAfter={
+                    <a onClick={() => setTheme(options, this.refs.theme.value)}
+                       style={styles.link}>
+                      Set Theme
+                    </a>
+                   } />
+          </div>
+          <a href={buildUrl({ ...options, useExtension: !options.useExtension })}
+             style={styles.link}>
+            {(options.useExtension ? 'Disable' : 'Enable') + ' Chrome Extension'}
+          </a>
+          <a href={buildUrl({ ...options, supportImmutable: !options.supportImmutable })}
+             style={styles.link}>
+            {(options.supportImmutable ? 'Disable' : 'Enable') + ' Full Immutable Support'}
+          </a>
         </div>
       </div>
     );

@@ -5,51 +5,71 @@ import jssNested from 'jss-nested';
 jss.use(jssVendorPrefixer());
 jss.use(jssNested());
 
-const TEXT_COLOR = '#666';
-const BACKGROUND_COLOR = '#FFF';
-const SELECTED_BACKGROUND_COLOR = '#F0F0F0';
-const HEADER_BACKGROUND_COLOR = '#FAFAFA';
-const BORDER_COLOR = '#DDD';
-const ACTION_TIME_BACK_COLOR = '#EEE';
-const ACTION_TIME_COLOR = '#777';
-const PIN_COLOR = '#AAA';
-const ITEM_HINT_COLOR = '#AAE';
-const TAB_BACK_COLOR = '#F6F6F6';
-const TAB_HOVER_BACK_COLOR = '#FFF';
-const DIFF_ADD_BACK_COLOR = '#AFA';
-const DIFF_UPDATE_BACK_COLOR = '#FFA';
-const DIFF_REMOVE_BACK_COLOR = '#FAA';
-const DIFF_ADD_COLOR = '#393';
-const DIFF_REMOVE_COLOR = '#933';
-const DIFF_ARROW_COLOR = '#999';
-const LINK_COLOR = '#0a6ebd';
+const defaultBase16Theme = {
+  base00: '#FFF',
+  base01: '#FAFAFA',
+  base02: '#DDD',
+  base03: '#777',
+  base04: '#999',
+  base05: '#EEE',
+  base06: '#666',
+  base07: '#AAE',
+  base08: '#F99',
+  base09: '#933',
+  base0A: '#FFA',
+  base0B: '#9F9',
+  base0C: '#0a6ebd',
+  base0D: '#933',
+  base0E: '#939',
+  base0F: '#993'
+};
 
-const colors = {
+const colorMap = theme => ({
+  TEXT_COLOR: theme.base06,
+  BACKGROUND_COLOR: theme.base00,
+  SELECTED_BACKGROUND_COLOR: theme.base01,
+  HEADER_BACKGROUND_COLOR: theme.base01,
+  HEADER_BORDER_COLOR: theme.base02,
+  BORDER_COLOR: theme.base02,
+  LIST_BORDER_COLOR: theme.base02,
+  ACTION_TIME_BACK_COLOR: theme.base02,
+  ACTION_TIME_COLOR: theme.base03,
+  PIN_COLOR: theme.base04,
+  ITEM_HINT_COLOR: theme.base0F,
+  TAB_BACK_COLOR: theme.base02,
+  TAB_BORDER_COLOR: theme.base02,
+  DIFF_ADD_COLOR: theme.base0B,
+  DIFF_REMOVE_COLOR: theme.base08,
+  DIFF_ARROW_COLOR: theme.base0E,
+  LINK_COLOR: theme.base0C
+});
+
+const colors = map => ({
   inspectorColor: {
-    'background-color': BACKGROUND_COLOR,
-    color: TEXT_COLOR
+    'background-color': map.BACKGROUND_COLOR,
+    color: map.TEXT_COLOR
   },
 
   actionListColor: {
-    'background-color': BACKGROUND_COLOR,
-    'border-color': BORDER_COLOR
+    'background-color': map.BACKGROUND_COLOR,
+    'border-color': map.LIST_BORDER_COLOR
   },
 
   actionListItemColor: {
-    'border-bottom-color': BORDER_COLOR
+    'border-bottom-color': map.BORDER_COLOR
   },
 
   actionListItemSelectedColor: {
-    'background-color': SELECTED_BACKGROUND_COLOR
+    'background-color': map.SELECTED_BACKGROUND_COLOR
   },
 
   actionListItemTimeColor: {
-    'background-color': ACTION_TIME_BACK_COLOR,
-    color: ACTION_TIME_COLOR
+    'background-color': map.ACTION_TIME_BACK_COLOR,
+    color: map.ACTION_TIME_COLOR
   },
 
   actionPreviewColor: {
-    'background-color': BACKGROUND_COLOR,
+    'background-color': map.BACKGROUND_COLOR,
   },
 
   stateDiffEmptyColor: {
@@ -57,70 +77,87 @@ const colors = {
   },
 
   inspectedPathColor: {
-    'background-color': HEADER_BACKGROUND_COLOR,
-    'border-color': BORDER_COLOR
+    'background-color': map.HEADER_BACKGROUND_COLOR,
+    'border-color': map.BORDER_COLOR
   },
 
   treeItemPinColor: {
-    color: PIN_COLOR
+    color: map.PIN_COLOR
   },
 
   previewHeaderColor: {
-    'background-color': HEADER_BACKGROUND_COLOR,
-    'border-bottom': BORDER_COLOR
+    'background-color': map.HEADER_BACKGROUND_COLOR,
+    'border-bottom': map.HEADER_BORDER_COLOR
   },
 
   treeItemHintColor: {
-    color: ITEM_HINT_COLOR
+    color: map.ITEM_HINT_COLOR
   },
 
   tabSelectorButtonColor: {
-    'border-color': BORDER_COLOR,
-    'background-color': TAB_BACK_COLOR,
-    '&:hover': {
-      'background-color': TAB_HOVER_BACK_COLOR
+    'border-color': map.TAB_BORDER_COLOR,
+    '&:before': {
+      opacity: 0.5,
+      'background-color': map.TAB_BACK_COLOR
+    },
+    '&:hover:before': {
+      opacity: 0
     }
   },
 
   tabSelectorButtonSelectedColor: {
-    'background-color': TAB_HOVER_BACK_COLOR
+    '&:before': {
+      opacity: 0
+    }
   },
 
   diffColor: {
-    color: TEXT_COLOR
+    color: map.TEXT_COLOR
   },
 
   diffAddColor: {
-    'background-color': DIFF_ADD_BACK_COLOR
+    '&:before': {
+      'background-color': map.DIFF_ADD_COLOR
+    }
   },
 
   diffRemoveColor: {
-    'background-color': DIFF_REMOVE_BACK_COLOR
+    '&:before': {
+      'background-color': map.DIFF_REMOVE_COLOR
+    }
   },
 
   diffUpdateFromColor: {
-    color: DIFF_REMOVE_COLOR,
-    'text-decoration': 'line-through',
-    'background-color': DIFF_UPDATE_BACK_COLOR
+    '&:before': {
+      'background-color': map.DIFF_REMOVE_COLOR
+    }
   },
 
   diffUpdateToColor: {
-    color: DIFF_ADD_COLOR,
-    'background-color': DIFF_UPDATE_BACK_COLOR
+    '&:before': {
+      'background-color': map.DIFF_ADD_COLOR
+    }
   },
 
   diffUpdateArrowColor: {
-    color: DIFF_ARROW_COLOR
+    color: map.DIFF_ARROW_COLOR
   },
 
   inspectedPathKeyLinkColor: {
-    color: LINK_COLOR
+    color: map.LINK_COLOR,
+    opacity: 0.8,
+    '&:hover': {
+      color: map.LINK_COLOR,
+      opacity: 1
+    }
   },
 
   actionListSearchColor: {
-    'border-color': BORDER_COLOR
+    'border-color': map.BORDER_COLOR,
+    'background-color': map.BACKGROUND_COLOR,
+    color: map.TEXT_COLOR
   }
-};
+});
 
 const styles = {
   inspector: {
@@ -152,7 +189,13 @@ const styles = {
     padding: '0.4rem 0.6rem',
     'border-radius': '3px',
     'font-size': '0.8em',
-    'line-height': '1em'
+    'line-height': '1em',
+    'flex-shrink': 0
+  },
+
+  actionListItemName: {
+    overflow: 'auto',
+    'text-overflow': 'ellipsis'
   },
 
   actionPreview: {
@@ -197,9 +240,7 @@ const styles = {
   },
 
   inspectedPath: {
-    padding: '0.5rem 1rem',
-    'border-bottom-width': '1px',
-    'border-bottom-style': 'solid'
+    padding: '0.6rem 0rem'
   },
 
   inspectedPathKey: {
@@ -228,10 +269,12 @@ const styles = {
     cursor: 'pointer'
   },
 
+  treeItemHint: {
+    opacity: 0.9
+  },
+
   previewHeader: {
     padding: '0.5rem 1rem',
-    display: 'flex',
-    'justify-content': 'space-between',
     'align-items': 'center',
     'border-bottom-width': '1px',
     'border-bottom-style': 'solid'
@@ -249,11 +292,16 @@ const styles = {
   },
 
   tabSelector: {
-    display: 'flex'
+    position: 'relative',
+    'z-index': 1,
+    display: 'inline-flex',
+    float: 'right',
+    'margin-bottom': '0.5rem'
   },
 
   tabSelectorButton: {
     cursor: 'pointer',
+    position: 'relative',
     padding: '0.5rem 1rem',
     'border-style': 'solid',
     'border-width': '1px',
@@ -268,12 +316,38 @@ const styles = {
     '&:last-child': {
       'border-top-right-radius': '3px',
       'border-bottom-right-radius': '3px'
+    },
+
+    '&:before': {
+      content: '""',
+      position: 'absolute',
+      'z-index': -1,
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%'
     }
+  },
+
+  diffWrap: {
+    position: 'relative',
+    'z-index': 1
   },
 
   diff: {
     padding: '0.2rem 0.3rem',
-    'border-radius': '3px'
+    'border-radius': '3px',
+    position: 'relative',
+    '&:before': {
+      'border-radius': '3px',
+      content: '""',
+      position: 'absolute',
+      'z-index': -1,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      opacity: 0.5
+    }
   },
 
   diffRemove: {
@@ -285,9 +359,11 @@ const styles = {
   },
 };
 
-const sheet = jss.createStyleSheet({
-  ...colors,
-  ...styles
-}).attach();
+export default function createDefaultTheme(base16Theme) {
+  const sheet = jss.createStyleSheet({
+    ...colors(colorMap(base16Theme || defaultBase16Theme)),
+    ...styles
+  }).attach();
 
-export default sheet.classes;
+  return sheet.classes;
+}

@@ -49,7 +49,7 @@ const styles = {
 function buildUrl(options) {
   return '?' + [
     options.useExtension ? 'ext' : '',
-    options.supportImmutable ? 'imutable' : '',
+    options.supportImmutable ? 'immutable' : '',
     options.theme ? 'theme=' + options.theme : ''
   ].filter(s => s).join('&');
 }

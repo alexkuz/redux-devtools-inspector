@@ -33,6 +33,7 @@ const HUGE_ARRAY = Array.from({ length: 5000 })
 const HUGE_OBJECT = Array.from({ length: 5000 })
   .reduce((o, _, key) => (o['key ' + key] = 'item ' + key, o), {});
 
+const FUNC = function (a, b, c) { return a + b + c; };
 
 const RECURSIVE = {};
 RECURSIVE.obj = RECURSIVE;
@@ -87,5 +88,7 @@ export default combineReducers({
     state.updateIn(
       ['long', 'nested', 0, 'path', 'to', 'a'],
       str => str + '!'
-    ) : state
+    ) : state,
+  addFunction: (state=null, action) => action.type === 'ADD_FUNCTION' ?
+    { f: FUNC } : state
 });

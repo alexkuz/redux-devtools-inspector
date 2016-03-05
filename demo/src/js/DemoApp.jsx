@@ -106,6 +106,9 @@ class DemoApp extends React.Component {
             <Button onClick={this.props.hugePayload} style={styles.button}>
               Huge Payload
             </Button>
+            <Button onClick={this.props.addFunction} style={styles.button}>
+              Add Function
+            </Button>
           </div>
         </div>
         <div style={styles.links}>
@@ -151,6 +154,7 @@ export default connect(
     hugePayload: () => ({
       type: 'HUGE_PAYLOAD',
       payload: Array.from({ length: 10000 }).map((_, i) => i)
-    })
+    }),
+    addFunction: () => ({ type: 'ADD_FUNCTION' })
   }
 )(DemoApp);

@@ -41,10 +41,10 @@ You may pin a certain part of the state to only track its changes.
 
 ### Props
 
-Name               | Type        | Description
------------------- | ----------- | -------------
-`theme`            | Object      | Contains classnames or style objects that are used to style `Inspector` (similar to [react-themeable](https://github.com/markdalgleish/react-themeable)).
-`supportImmutable` | Boolean     | Better `Immutable` rendering in `Diff` (can affect performance if state has huge objects/arrays). `false` by default.
+Name               | Type             | Description
+------------------ | ---------------- | -------------
+`theme`            | Object or string | Contains either [base16](https://github.com/chriskempson/base16) theme name or object, that can be `base16` colors map or object containing classnames or styles.
+`supportImmutable` | Boolean          | Better `Immutable` rendering in `Diff` (can affect performance if state has huge objects/arrays). `false` by default.
 
 ### License
 

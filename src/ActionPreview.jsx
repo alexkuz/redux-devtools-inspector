@@ -30,6 +30,8 @@ function getItemString(createTheme, type, data) {
       return 'fn';
     } else if (typeof val === 'string') {
       return `"${val.substr(0, 10) + (val.length > 10 ? '…' : '')}"`
+    } else if (typeof val === 'symbol') {
+      return 'symbol'
     } else {
       return val;
     }

@@ -65,7 +65,7 @@
     "babel-runtime": "^6.3.19",
     "dateformat": "^1.0.12",
     "immutable": "^3.7.6",
-    "javascript-stringify": "^1.0.2",
+    "javascript-stringify": "^1.1.0",
     "jsondiffpatch": "^0.1.41",
     "jss": "^3.3.0",
     "jss-nested": "^1.0.2",

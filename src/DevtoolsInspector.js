@@ -16,7 +16,7 @@ function getCurrentActionId(props, state) {
 function createState(props, state) {
   const { supportImmutable, computedStates, actionsById: actions } = props;
   const currentActionId = getCurrentActionId(props, state);
-  const currentAction = actions[currentActionId].action;
+  const currentAction = actions[currentActionId] && actions[currentActionId].action;
 
   const fromState = currentActionId > 0 ? computedStates[currentActionId - 1] : null;
   const toState = computedStates[currentActionId];
@@ -24,7 +24,7 @@ function createState(props, state) {
   const fromInspectedState = fromState &&
     getInspectedState(fromState.state, state.inspectedStatePath, supportImmutable);
   const toInspectedState =
-    getInspectedState(toState.state, state.inspectedStatePath, supportImmutable);
+    toState && getInspectedState(toState.state, state.inspectedStatePath, supportImmutable);
   const delta = fromState && toState && DiffPatcher.diff(
     fromInspectedState,
     toInspectedState
@@ -33,7 +33,7 @@ function createState(props, state) {
   return {
     delta,
     currentActionId,
-    nextState: getInspectedState(toState.state, state.inspectedStatePath, false),
+    nextState: toState && getInspectedState(toState.state, state.inspectedStatePath, false),
     action: getInspectedState(currentAction, state.inspectedActionPath, false)
   };
 }

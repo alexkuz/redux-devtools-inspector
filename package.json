@@ -61,7 +61,6 @@
   "author": "Alexander <alexkuz@gmail.com> (http://kuzya.org/)",
   "license": "MIT",
   "dependencies": {
-    "@alexkuz/react-json-tree": "^0.6.0-alpha1",
     "babel-runtime": "^6.3.19",
     "dateformat": "^1.0.12",
     "immutable": "^3.7.6",
@@ -71,6 +70,7 @@
     "jss-nested": "^1.0.2",
     "jss-vendor-prefixer": "^1.0.1",
     "lodash.debounce": "^4.0.3",
+    "react-json-tree": "^0.6.2",
     "react-pure-render": "^1.0.2",
     "react-themeable": "^1.0.1",
     "redux-devtools-themes": "^1.0.0"

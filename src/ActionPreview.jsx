@@ -1,6 +1,6 @@
 import React from 'react';
 import themeable from './themeable';
-import JSONTree from '@alexkuz/react-json-tree';
+import JSONTree from 'react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
 import { Iterable } from 'immutable';

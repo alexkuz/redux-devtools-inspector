@@ -90,5 +90,7 @@ export default combineReducers({
       str => str + '!'
     ) : state,
   addFunction: (state=null, action) => action.type === 'ADD_FUNCTION' ?
-    { f: FUNC } : state
+    { f: FUNC } : state,
+  addSymbol: (state=null, action) => action.type === 'ADD_SYMBOL' ?
+    { s: Symbol('symbol') } : state
 });

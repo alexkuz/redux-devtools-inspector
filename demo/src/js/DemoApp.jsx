@@ -109,6 +109,9 @@ class DemoApp extends React.Component {
             <Button onClick={this.props.addFunction} style={styles.button}>
               Add Function
             </Button>
+            <Button onClick={this.props.addSymbol} style={styles.button}>
+              Add Symbol
+            </Button>
           </div>
         </div>
         <div style={styles.links}>
@@ -155,6 +158,7 @@ export default connect(
       type: 'HUGE_PAYLOAD',
       payload: Array.from({ length: 10000 }).map((_, i) => i)
     }),
-    addFunction: () => ({ type: 'ADD_FUNCTION' })
+    addFunction: () => ({ type: 'ADD_FUNCTION' }),
+    addSymbol: () => ({ type: 'ADD_SYMBOL' })
   }
 )(DemoApp);

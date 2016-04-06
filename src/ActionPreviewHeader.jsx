@@ -1,30 +1,27 @@
 import React from 'react';
-import themeable from './themeable';
 
 const ActionPreviewHeader = ({
-  theme, inspectedPath, onInspectPath, tab, onSelectTab
+  styling, inspectedPath, onInspectPath, tab, onSelectTab
 }) => {
-  const createTheme = themeable(theme);
-
   return (
-    <div key='previewHeader' {...createTheme('previewHeader')}>
-      <div {...createTheme('tabSelector')}>
+    <div key='previewHeader' {...styling('previewHeader')}>
+      <div {...styling('tabSelector')}>
         {['Action', 'Diff', 'State'].map(t =>
           <div onClick={() => onSelectTab(t)}
                key={t}
-               {...createTheme(
+               {...styling([
                  'tabSelectorButton',
                  t === tab && 'tabSelectorButtonSelected'
-               )}>
+               ], t === tab)}>
             {t}
           </div>
         )}
       </div>
-      <div {...createTheme('inspectedPath')}>
+      <div {...styling('inspectedPath')}>
         {inspectedPath.length ?
-          <span {...createTheme('inspectedPathKey')}>
+          <span {...styling('inspectedPathKey')}>
             <a onClick={() => onInspectPath([])}
-               {...createTheme('inspectedPathKeyLink')}>
+               {...styling('inspectedPathKeyLink')}>
               {tab}
             </a>
           </span> : tab
@@ -32,9 +29,9 @@ const ActionPreviewHeader = ({
         {inspectedPath.map((key, idx) =>
           idx === inspectedPath.length - 1 ? key :
           <span key={key}
-             {...createTheme('inspectedPathKey')}>
+             {...styling('inspectedPathKey')}>
             <a onClick={() => onInspectPath(inspectedPath.slice(0, idx + 1))}
-               {...createTheme('inspectedPathKeyLink')}>
+               {...styling('inspectedPathKeyLink')}>
               {key}
             </a>
           </span>

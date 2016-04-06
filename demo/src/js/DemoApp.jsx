@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import pkg from '../../../package.json';
 import Button from 'react-bootstrap/lib/Button';
 import Input from 'react-bootstrap/lib/Input';
+import Combobox from 'react-input-enhancements/lib/Combobox';
+import * as base16 from 'base16';
 
 const styles = {
   wrapper: {
@@ -42,15 +44,21 @@ const styles = {
   },
   input: {
     display: 'inline-block',
+    textAlign: 'left',
     width: '30rem'
   }
 };
+
+const themeOptions = Object.keys(base16)
+  .map(value => ({ value, label: base16[value].scheme }))
+  .filter(opt => opt.label);
 
 function buildUrl(options) {
   return '?' + [
     options.useExtension ? 'ext' : '',
     options.supportImmutable ? 'immutable' : '',
-    options.theme ? 'theme=' + options.theme : ''
+    options.theme ? 'theme=' + options.theme : '',
+    options.dark ? 'dark' : ''
   ].filter(s => s).join('&');
 }
 
@@ -68,6 +76,25 @@ class DemoApp extends React.Component {
           {pkg.name || <span style={styles.muted}>Package Name</span>}
         </PageHeader>
         <h5>{pkg.description || <span style={styles.muted}>Package Description</span>}</h5>
+        <div style={styles.links}>
+          <div style={styles.input}>
+            <Input ref='theme'
+                   label='Theme:'
+                   addonAfter={
+                    <a href={buildUrl({ ...options, dark: !options.dark })}
+                       style={styles.link}>
+                      {options.dark ? 'Light theme' : 'Dark theme'}
+                    </a>
+                   }>
+              <Combobox options={themeOptions}
+                        defaultValue={options.theme}
+                        onValueChange={value => setTheme(options, value)}
+                        optionFilters={[]}>
+                {props => <input {...props} type='text' className='form-control' />}
+              </Combobox>
+            </Input>
+          </div>
+        </div>
         <div style={styles.content}>
           <div style={styles.buttons}>
             <Button onClick={this.props.increment} style={styles.button}>
@@ -115,17 +142,6 @@ class DemoApp extends React.Component {
           </div>
         </div>
         <div style={styles.links}>
-          <div style={styles.input}>
-            <Input defaultValue={options.theme}
-                   type='text'
-                   ref='theme'
-                   addonAfter={
-                    <a onClick={() => setTheme(options, this.refs.theme.getValue())}
-                       style={styles.link}>
-                      Set Theme
-                    </a>
-                   } />
-          </div>
           <a href={buildUrl({ ...options, useExtension: !options.useExtension })}
              style={styles.link}>
             {(options.useExtension ? 'Disable' : 'Enable') + ' Chrome Extension'}

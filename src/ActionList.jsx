@@ -1,6 +1,5 @@
 import React from 'react';
 import dateformat from 'dateformat';
-import themeable from './themeable';
 
 function getTime(actions, actionIds, actionId) {
   const idx = actionIds.indexOf(actionId);
@@ -12,10 +11,9 @@ function getTime(actions, actionIds, actionId) {
 }
 
 const ActionList = ({
-  theme, actions, actionIds, isWideLayout,
+  styling, actions, actionIds, isWideLayout,
   selectedActionId, onSelect, onSearch, searchValue
 }) => {
-  const createTheme = themeable(theme);
   const lowerSearchValue = searchValue && searchValue.toLowerCase();
   const filteredActionIds = searchValue ? actionIds.filter(
     id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1
@@ -23,21 +21,21 @@ const ActionList = ({
 
   return (
     <div key='actionList'
-         {...createTheme('actionList', isWideLayout && 'actionListWide')}>
-      <input {...createTheme('actionListSearch')}
+         {...styling(['actionList', isWideLayout && 'actionListWide'], isWideLayout)}>
+      <input {...styling('actionListSearch')}
              onChange={e => onSearch(e.target.value)}
              placeholder='filter...' />
       {filteredActionIds.map((actionId, idx) =>
         <div key={idx}
-             {...createTheme(
-                'actionListItem',
-                actionId === selectedActionId && 'actionListItemSelected'
-             )}
+             {...styling([
+               'actionListItem',
+               actionId === selectedActionId && 'actionListItemSelected'
+             ], actionId === selectedActionId)}
              onClick={() => onSelect(actionId)}>
-          <div {...createTheme('actionListItemName')}>
+          <div {...styling('actionListItemName')}>
             {actions[actionId].action.type}
           </div>
-          <div {...createTheme('actionListItemTime')}>
+          <div {...styling('actionListItemTime')}>
             {getTime(actions, actionIds, actionId)}
           </div>
         </div>

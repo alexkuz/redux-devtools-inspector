@@ -16,7 +16,8 @@ const options = {
   theme: do {
     const match = window.location.search.match(/theme=([^&]+)/);
     match ? match[1] : undefined
-  }
+  },
+  dark: window.location.search.indexOf('dark') !== -1
 };
 
 const useDevtoolsExtension =
@@ -28,7 +29,7 @@ const DevTools = createDevTools(
                changePositionKey='ctrl-q'
                changeMonitorKey='ctrl-m'
                supportImmutable={options.supportImmutable}>
-    <DevtoolsInspector theme={options.theme} />
+    <DevtoolsInspector theme={options.theme} isLightTheme={!options.dark} />
   </DockMonitor>
 );
 

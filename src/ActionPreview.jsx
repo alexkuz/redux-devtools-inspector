@@ -1,5 +1,4 @@
 import React from 'react';
-import themeable from './themeable';
 import JSONTree from 'react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
@@ -77,16 +76,14 @@ function convertImmutable(value) {
 }
 
 const ActionPreview = ({
-  theme, delta, nextState, onInspectPath, inspectedPath, tab, onSelectTab, action, base16Theme
+  styling, delta, nextState, onInspectPath, inspectedPath, tab, onSelectTab, action, base16Theme
 }) => {
-  const createTheme = themeable(theme);
-
   const labelRenderer = (key, ...rest) =>
     <span>
-      <span {...createTheme('treeItemKey')}>
+      <span {...styling('treeItemKey')}>
         {key}
       </span>
-      <span {...createTheme('treeItemPin')}
+      <span {...styling('treeItemPin')}
             onClick={() => onInspectPath([
               ...inspectedPath.slice(0, inspectedPath.length - 1),
               ...[key, ...rest].reverse()
@@ -96,15 +93,15 @@ const ActionPreview = ({
     </span>;
 
   return (
-    <div key='actionPreview' {...createTheme('actionPreview')}>
+    <div key='actionPreview' {...styling('actionPreview')}>
       <ActionPreviewHeader {...{
-        theme, inspectedPath, onInspectPath, tab, onSelectTab
+        styling, inspectedPath, onInspectPath, tab, onSelectTab
       }} />
       {tab === 'Diff' && delta &&
-        <JSONDiff {...{ delta, labelRenderer, theme, base16Theme }} />
+        <JSONDiff {...{ delta, labelRenderer, styling, base16Theme }} />
       }
       {tab === 'Diff' && !delta &&
-        <div {...createTheme('stateDiffEmpty')}>
+        <div {...styling('stateDiffEmpty')}>
           (states are equal)
         </div>
       }
@@ -112,7 +109,7 @@ const ActionPreview = ({
         <JSONTree labelRenderer={labelRenderer}
                   theme={base16Theme}
                   data={tab === 'Action' ? action : nextState}
-                  getItemString={(type, data) => getItemString(createTheme, type, data)}
+                  getItemString={(type, data) => getItemString(styling, type, data)}
                   postprocessValue={convertImmutable}
                   getItemStringStyle={
                     (type, expanded) => ({ display: expanded ? 'none' : 'inline' })

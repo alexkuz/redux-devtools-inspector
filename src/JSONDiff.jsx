@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { Component } from 'react';
 import JSONTree from 'react-json-tree';
-import themeable from './themeable';
 import stringify from 'javascript-stringify';
 
 function stringifyAndShrink(val) {
@@ -31,55 +30,55 @@ function prepareDelta(value) {
   return value;
 }
 
-function valueRenderer(raw, value, createTheme) {
-  function renderSpan(name, body) {
+export default class JSONDiff extends Component {
+  render() {
+    const { delta, styling, base16Theme, ...props } = this.props;
+
     return (
-      <span key={name} {...createTheme('diff', name)}>{body}</span>
+      <JSONTree {...props}
+                theme={base16Theme}
+                data={delta}
+                getItemString={() => ''}
+                valueRenderer={(raw, value) => this.valueRenderer(raw, value, styling)}
+                postprocessValue={prepareDelta}
+                isCustomNode={value => Array.isArray(value)}
+                expandAll
+                hideRoot />
     );
   }
 
-  if (Array.isArray(value)) {
-    switch(value.length) {
-    case 1:
+  valueRenderer(raw, value, styling) {
+    function renderSpan(name, body) {
       return (
-        <span {...createTheme('diffWrap')}>
-          {renderSpan('diffAdd', stringifyAndShrink(value[0]))}
-        </span>
-      );
-    case 2:
-      return (
-        <span {...createTheme('diffWrap')}>
-          {renderSpan('diffUpdateFrom', stringifyAndShrink(value[0]))}
-          {renderSpan('diffUpdateArrow', ' => ')}
-          {renderSpan('diffUpdateTo', stringifyAndShrink(value[1]))}
-        </span>
-      );
-    case 3:
-      return (
-        <span {...createTheme('diffWrap')}>
-          {renderSpan('diffRemove', stringifyAndShrink(value[0]))}
-        </span>
+        <span key={name} {...styling(['diff', name])}>{body}</span>
       );
     }
+
+    if (Array.isArray(value)) {
+      switch(value.length) {
+      case 1:
+        return (
+          <span {...styling('diffWrap')}>
+            {renderSpan('diffAdd', stringifyAndShrink(value[0]))}
+          </span>
+        );
+      case 2:
+        return (
+          <span {...styling('diffWrap')}>
+            {renderSpan('diffUpdateFrom', stringifyAndShrink(value[0]))}
+            {renderSpan('diffUpdateArrow', ' => ')}
+            {renderSpan('diffUpdateTo', stringifyAndShrink(value[1]))}
+          </span>
+        );
+      case 3:
+        return (
+          <span {...styling('diffWrap')}>
+            {renderSpan('diffRemove', stringifyAndShrink(value[0]))}
+          </span>
+        );
+      }
+    }
+
+    return raw;
   }
-
-  return raw;
 }
-
-const JSONDiff = ({ delta, theme, base16Theme, ...props }) => {
-  const createTheme = themeable(theme);
-
-  return (
-    <JSONTree {...props}
-              theme={base16Theme}
-              data={delta}
-              getItemString={() => ''}
-              valueRenderer={(raw, value) => valueRenderer(raw, value, createTheme)}
-              postprocessValue={prepareDelta}
-              isCustomNode={value => Array.isArray(value)}
-              expandAll
-              hideRoot />
-  );
-}
-
-export default JSONDiff;

@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react';
-import themeable from './themeable';
-import createDefaultTheme from './createDefaultTheme';
+import { createStylingFromTheme } from './createStylingFromTheme';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import ActionList from './ActionList';
 import ActionPreview from './ActionPreview';
 import getInspectedState from './getInspectedState';
 import DiffPatcher from './DiffPatcher';
-import getBase16Theme from './getBase16Theme';
+import { getBase16Theme } from 'react-base16-styling';
+import * as base16Themes from 'redux-devtools-themes';
 
 function getCurrentActionId(props, state) {
   const lastActionId = props.stagedActionIds[props.stagedActionIds.length - 1];
@@ -39,16 +39,14 @@ function createState(props, state) {
 }
 
 export default class DevtoolsInspector extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isWideLayout: false,
-      selectedActionId: null,
-      inspectedActionPath: [],
-      inspectedStatePath: [],
-      tab: 'Diff'
-    };
-  }
+  state = {
+    isWideLayout: false,
+    selectedActionId: null,
+    inspectedActionPath: [],
+    inspectedStatePath: [],
+    tab: 'Diff',
+    isLightTheme: true
+  };
 
   static propTypes = {
     dispatch: PropTypes.func,
@@ -72,7 +70,6 @@ export default class DevtoolsInspector extends Component {
   static update = (s => s);
 
   static defaultProps = {
-    theme: {},
     select: (state) => state,
     supportImmutable: false
   };
@@ -84,7 +81,7 @@ export default class DevtoolsInspector extends Component {
   }
 
   componentDidMount() {
-    this.updateSizeTimeout = window.setInterval(() => this.updateSizeMode(), 150);
+    this.updateSizeTimeout = window.setInterval(this.updateSizeMode.bind(this), 150);
   }
 
   componentWillUnmount() {
@@ -108,26 +105,25 @@ export default class DevtoolsInspector extends Component {
   }
 
   render() {
-    const { theme, stagedActionIds: actionIds, actionsById: actions } = this.props;
+    const { theme, stagedActionIds: actionIds, actionsById: actions, isLightTheme } = this.props;
     const { isWideLayout, selectedActionId, nextState, action,
             searchValue, tab, delta } = this.state;
-    const base16Theme = getBase16Theme(theme);
-    const inspectorTheme = { ...createDefaultTheme(base16Theme), ...(base16Theme ? {} : theme) };
-    const createTheme = themeable(inspectorTheme);
+    const base16Theme = getBase16Theme(theme, base16Themes);
+    const styling = createStylingFromTheme(base16Theme || theme, isLightTheme);
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
 
     return (
       <div key='inspector'
-           {...createTheme('inspector', isWideLayout && 'inspectorWide')}
-           ref='inspector'>
+           ref='inspector'
+           {...styling(['inspector', isWideLayout && 'inspectorWide'], isWideLayout)}>
         <ActionList {...{ actions, actionIds, isWideLayout, searchValue, selectedActionId }}
-                    theme={inspectorTheme}
+                    styling={styling}
                     onSearch={val => this.setState({ searchValue: val })}
                     onSelect={actionId => this.setState({
                       selectedActionId: actionId === selectedActionId ? null : actionId
                     })} />
         <ActionPreview {...{ base16Theme, tab, delta, nextState, action }}
-                       theme={inspectorTheme}
+                       styling={styling}
                        onInspectPath={(path) => this.setState({ [inspectedPathType]: path })}
                        inspectedPath={this.state[inspectedPathType]}
                        onSelectTab={tab => this.setState({ tab })} />

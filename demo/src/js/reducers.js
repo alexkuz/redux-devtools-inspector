@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import Immutable from 'immutable';
 
 const NESTED = {
@@ -49,7 +48,7 @@ function createIterator() {
   return iterable;
 }
 
-export default combineReducers({
+export default {
   store: (state=0, action) => action.type === 'INCREMENT' ? state + 1 : state,
   undefined: (state={ val: undefined }) => state,
   null: (state=null) => state,
@@ -93,4 +92,4 @@ export default combineReducers({
     { f: FUNC } : state,
   addSymbol: (state=null, action) => action.type === 'ADD_SYMBOL' ?
     { s: Symbol('symbol') } : state
-});
+};

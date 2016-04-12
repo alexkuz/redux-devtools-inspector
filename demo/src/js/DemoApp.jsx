@@ -6,6 +6,9 @@ import Button from 'react-bootstrap/lib/Button';
 import Input from 'react-bootstrap/lib/Input';
 import Combobox from 'react-input-enhancements/lib/Combobox';
 import * as base16 from 'base16';
+import * as inspectorThemes from '../../../src/themes';
+import getOptions from './getOptions';
+import { push as pushRoute } from 'react-router-redux';
 
 const styles = {
   wrapper: {
@@ -49,9 +52,14 @@ const styles = {
   }
 };
 
-const themeOptions = Object.keys(base16)
-  .map(value => ({ value, label: base16[value].scheme }))
-  .filter(opt => opt.label);
+const themeOptions = [
+  ...Object.keys(inspectorThemes)
+    .map(value => ({ value, label: inspectorThemes[value].scheme })),
+  null,
+  ...Object.keys(base16)
+    .map(value => ({ value, label: base16[value].scheme }))
+    .filter(opt => opt.label)
+];
 
 function buildUrl(options) {
   return '?' + [
@@ -62,13 +70,9 @@ function buildUrl(options) {
   ].filter(s => s).join('&');
 }
 
-function setTheme(options, theme) {
-  window.location = buildUrl({ ...options, theme });
-}
-
 class DemoApp extends React.Component {
   render() {
-    const { options } = this.props;
+    const options = getOptions();
 
     return (
       <div style={styles.wrapper}>
@@ -81,14 +85,14 @@ class DemoApp extends React.Component {
             <Input ref='theme'
                    label='Theme:'
                    addonAfter={
-                    <a href={buildUrl({ ...options, dark: !options.dark })}
+                    <a onClick={this.toggleTheme}
                        style={styles.link}>
                       {options.dark ? 'Light theme' : 'Dark theme'}
                     </a>
                    }>
               <Combobox options={themeOptions}
                         defaultValue={options.theme}
-                        onValueChange={value => setTheme(options, value)}
+                        onValueChange={value => this.setTheme(options, value)}
                         optionFilters={[]}>
                 {props => <input {...props} type='text' className='form-control' />}
               </Combobox>
@@ -142,11 +146,11 @@ class DemoApp extends React.Component {
           </div>
         </div>
         <div style={styles.links}>
-          <a href={buildUrl({ ...options, useExtension: !options.useExtension })}
+          <a onClick={this.toggleExtension}
              style={styles.link}>
             {(options.useExtension ? 'Disable' : 'Enable') + ' Chrome Extension'}
           </a>
-          <a href={buildUrl({ ...options, supportImmutable: !options.supportImmutable })}
+          <a onClick={this.toggleImmutableSupport}
              style={styles.link}>
             {(options.supportImmutable ? 'Disable' : 'Enable') + ' Full Immutable Support'}
           </a>
@@ -154,6 +158,28 @@ class DemoApp extends React.Component {
       </div>
     );
   }
+
+  toggleExtension = () => {
+    const options = getOptions();
+
+    this.props.pushRoute(buildUrl({ ...options, useExtension: !options.useExtension }));
+  };
+
+  toggleImmutableSupport = () => {
+    const options = getOptions();
+
+    this.props.pushRoute(buildUrl({ ...options, supportImmutable: !options.supportImmutable }));
+  };
+
+  toggleTheme = () => {
+    const options = getOptions();
+
+    this.props.pushRoute(buildUrl({ ...options, dark: !options.dark }));
+  };
+
+  setTheme = (options, theme) => {
+    this.props.pushRoute(buildUrl({ ...options, theme }));
+  };
 }
 
 export default connect(
@@ -175,6 +201,7 @@ export default connect(
       payload: Array.from({ length: 10000 }).map((_, i) => i)
     }),
     addFunction: () => ({ type: 'ADD_FUNCTION' }),
-    addSymbol: () => ({ type: 'ADD_SYMBOL' })
+    addSymbol: () => ({ type: 'ADD_SYMBOL' }),
+    pushRoute
   }
 )(DemoApp);

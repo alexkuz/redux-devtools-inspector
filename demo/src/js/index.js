@@ -3,49 +3,72 @@ import React from 'react';
 import { render } from 'react-dom';
 import DemoApp from './DemoApp';
 import { Provider } from 'react-redux';
+import reducers from './reducers';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import createLogger from 'redux-logger';
+import { Router, Route, browserHistory } from 'react-router';
+import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
 import { createDevTools } from 'redux-devtools';
 import DevtoolsInspector from '../../../src/DevtoolsInspector';
-import reducers from './reducers';
-import { createStore, applyMiddleware, compose } from 'redux';
 import DockMonitor from 'redux-devtools-dock-monitor';
-import createLogger from 'redux-logger';
+import getOptions from './getOptions';
 
-const options = {
-  useExtension: window.location.search.indexOf('ext') !== -1,
-  supportImmutable: window.location.search.indexOf('immutable') !== -1,
-  theme: do {
-    const match = window.location.search.match(/theme=([^&]+)/);
-    match ? match[1] : undefined
-  },
-  dark: window.location.search.indexOf('dark') !== -1
-};
+const getDevTools = options =>
+  createDevTools(
+    <DockMonitor defaultIsVisible
+                 toggleVisibilityKey='ctrl-h'
+                 changePositionKey='ctrl-q'
+                 changeMonitorKey='ctrl-m'>
+      <DevtoolsInspector theme={options.theme}
+                         isLightTheme={!options.dark}
+                         supportImmutable={options.supportImmutable} />
+    </DockMonitor>
+  );
 
-const useDevtoolsExtension =
-  !!window.devToolsExtension && options.useExtension;
+let DevTools = getDevTools(getOptions());
 
-const DevTools = createDevTools(
-  <DockMonitor defaultIsVisible
-               toggleVisibilityKey='ctrl-h'
-               changePositionKey='ctrl-q'
-               changeMonitorKey='ctrl-m'
-               supportImmutable={options.supportImmutable}>
-    <DevtoolsInspector theme={options.theme} isLightTheme={!options.dark} />
-  </DockMonitor>
-);
+const reduxRouterMiddleware = routerMiddleware(browserHistory);
 
 const enhancer = compose(
-  applyMiddleware(createLogger()),
-  useDevtoolsExtension ? window.devToolsExtension() : DevTools.instrument()
+  applyMiddleware(createLogger(), reduxRouterMiddleware),
+  (...args) => {
+    const useDevtoolsExtension = !!window.devToolsExtension && getOptions().useExtension;
+    const instrument = useDevtoolsExtension ?
+      window.devToolsExtension() : DevTools.instrument();
+    return instrument(...args);
+  }
 );
 
-const store = createStore(reducers, {}, enhancer);
+const store = createStore(combineReducers({
+  ...reducers,
+  routing: routerReducer
+}), {}, enhancer);
 
-render(
-  <Provider store={store}>
-    <div>
-      <DemoApp options={options} />
-      {!useDevtoolsExtension && <DevTools />}
-    </div>
-  </Provider>,
-  document.getElementById('root')
+const history = syncHistoryWithStore(browserHistory, store);
+
+const handleRouterUpdate = () => {
+  renderApp(getOptions());
+};
+
+const router = (
+  <Router history={history} onUpdate={handleRouterUpdate}>
+    <Route path='/' component={DemoApp} />
+  </Router>
 );
+
+const renderApp = options => {
+  DevTools = getDevTools(options);
+  const useDevtoolsExtension = !!window.devToolsExtension && options.useExtension;
+
+  return render(
+    <Provider store={store}>
+      <div>
+        {router}
+        {!useDevtoolsExtension && <DevTools />}
+      </div>
+    </Provider>,
+    document.getElementById('root')
+  );
+}
+
+renderApp(getOptions());

@@ -49,6 +49,8 @@
     "react-input-enhancements": "^0.4.8",
     "react-pure-render": "^1.0.2",
     "react-redux": "^4.4.0",
+    "react-router": "^2.0.1",
+    "react-router-redux": "^4.0.2",
     "react-transform-hmr": "^1.0.2",
     "redux": "^3.3.1",
     "redux-devtools": "^3.1.0",

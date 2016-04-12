@@ -3,6 +3,7 @@ import jssVendorPrefixer from 'jss-vendor-prefixer';
 import jssNested from 'jss-nested';
 import { createStyling } from 'react-base16-styling';
 import rgba from 'hex-rgba';
+import inspector from './themes/inspector';
 
 jss.use(jssVendorPrefixer());
 jss.use(jssNested());
@@ -10,7 +11,7 @@ jss.use(jssNested());
 
 const colorMap = theme => ({
   TEXT_COLOR: theme.base06,
-  TEXT_PLACEHOLDER_COLOR: rgba(theme.base06, 80),
+  TEXT_PLACEHOLDER_COLOR: rgba(theme.base06, 60),
   BACKGROUND_COLOR: theme.base00,
   SELECTED_BACKGROUND_COLOR: rgba(theme.base03, 20),
   HEADER_BACKGROUND_COLOR: rgba(theme.base03, 30),
@@ -75,7 +76,7 @@ const getSheetFromColorMap = map => ({
     display: 'flex',
     'align-items': 'flex-start',
     'justify-content': 'space-between',
-    padding: '0.5rem 1rem',
+    padding: '5px 10px',
     cursor: 'pointer',
 
     '&:last-child': {
@@ -90,7 +91,7 @@ const getSheetFromColorMap = map => ({
   },
 
   actionListItemTime: {
-    padding: '0.4rem 0.6rem',
+    padding: '4px 6px',
     'border-radius': '3px',
     'font-size': '0.8em',
     'line-height': '1em',
@@ -113,7 +114,9 @@ const getSheetFromColorMap = map => ({
     'border-bottom-width': '1px',
     'border-bottom-style': 'solid',
     width: '100%',
-    padding: '0.5rem 1rem',
+    padding: '5px 10px',
+    'font-size': '1em',
+    'font-family': 'monaco, Consolas, "Lucida Console", monospace',
 
     'border-color': map.BORDER_COLOR,
     'background-color': map.BACKGROUND_COLOR,
@@ -143,17 +146,17 @@ const getSheetFromColorMap = map => ({
   },
 
   stateDiff: {
-    padding: '0.5rem 0'
+    padding: '5px 0'
   },
 
   stateDiffEmpty: {
-    padding: '1rem',
+    padding: '10px',
 
     color: map.TEXT_PLACEHOLDER_COLOR
   },
 
   inspectedPath: {
-    padding: '0.6rem 0rem'
+    padding: '6px 0'
   },
 
   inspectedPathKey: {
@@ -176,7 +179,7 @@ const getSheetFromColorMap = map => ({
 
   treeItemPin: {
     'font-size': '0.7em',
-    'padding-left': '0.5rem',
+    'padding-left': '5px',
     cursor: 'pointer',
     '&:hover': {
       'text-decoration': 'underline'
@@ -190,7 +193,7 @@ const getSheetFromColorMap = map => ({
   },
 
   previewHeader: {
-    padding: '0.5rem 1rem',
+    padding: '5px 10px',
     'align-items': 'center',
     'border-bottom-width': '1px',
     'border-bottom-style': 'solid',
@@ -204,13 +207,13 @@ const getSheetFromColorMap = map => ({
     'z-index': 1,
     display: 'inline-flex',
     float: 'right',
-    'margin-bottom': '0.5rem'
+    'margin-bottom': '5px'
   },
 
   tabSelectorButton: {
     cursor: 'pointer',
     position: 'relative',
-    padding: '0.5rem 1rem',
+    padding: '5px 10px',
     'border-style': 'solid',
     'border-width': '1px',
     'border-left-width': 0,
@@ -252,7 +255,7 @@ const getSheetFromColorMap = map => ({
   },
 
   diff: {
-    padding: '0.2rem 0.3rem',
+    padding: '2px 3px',
     'border-radius': '3px',
     position: 'relative',
 
@@ -310,15 +313,18 @@ const getSheetFromColorMap = map => ({
 let themeSheet;
 
 const getDefaultThemeStyling = theme => {
-  if (!themeSheet) {
-    themeSheet = jss.createStyleSheet(
-      getSheetFromColorMap(colorMap(theme))
-    ).attach();
+  if (themeSheet) {
+    themeSheet.detach();
   }
+
+  themeSheet = jss.createStyleSheet(
+    getSheetFromColorMap(colorMap(theme))
+  ).attach();
 
   return themeSheet.classes;
 };
 
 export const createStylingFromTheme = createStyling({
-  getStylingFromBase16: getDefaultThemeStyling
+  getStylingFromBase16: getDefaultThemeStyling,
+  defaultBase16: inspector
 });

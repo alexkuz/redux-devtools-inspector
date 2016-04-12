@@ -1,5 +1,7 @@
 # redux-devtools-inspector
 
+[![npm version](https://badge.fury.io/js/redux-devtools-inspector.svg)](https://badge.fury.io/js/redux-devtools-inspector)
+
 A state monitor for [Redux DevTools](https://github.com/gaearon/redux-devtools) that provides a convenient way to inspect "real world" app states that could be complicated and deeply nested.
 
 ![](demo.gif)

@@ -21,8 +21,9 @@ function createState(props) {
   const currentActionId = getCurrentActionId(props, state);
   const currentAction = actions[currentActionId] && actions[currentActionId].action;
 
-  const fromState = currentActionId > 0 ? computedStates[currentActionId - 1] : null;
-  const toState = computedStates[currentActionId];
+  const actionIndex = Object.keys(actions).indexOf(currentActionId && currentActionId.toString());
+  const fromState = actionIndex > 0 ? computedStates[actionIndex - 1] : null;
+  const toState = computedStates[actionIndex];
 
   const fromInspectedState = fromState &&
     getInspectedState(fromState.state, state.inspectedStatePath, supportImmutable);

@@ -43,8 +43,9 @@ function createState(props) {
 }
 
 function createThemeState(props) {
-  const base16Theme = getBase16Theme(props.theme, { ...base16Themes, ...inspectorThemes });
-  const styling = createStylingFromTheme(base16Theme || props.theme, props.isLightTheme);
+  const themes = { ...base16Themes, ...inspectorThemes };
+  const base16Theme = getBase16Theme(props.theme, themes);
+  const styling = createStylingFromTheme(props.theme, themes, props.isLightTheme);
 
   return { base16Theme, styling };
 }
@@ -133,7 +134,8 @@ export default class DevtoolsInspector extends Component {
   }
 
   render() {
-    const { stagedActionIds: actionIds, actionsById: actions, monitorState } = this.props;
+    const { stagedActionIds: actionIds, actionsById: actions,
+            monitorState, isLightTheme } = this.props;
     const { isWideLayout, selectedActionId, nextState, action,
             searchValue, tab, delta, base16Theme, styling } = monitorState;
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
@@ -146,7 +148,7 @@ export default class DevtoolsInspector extends Component {
                     styling={styling}
                     onSearch={this.handleSearch}
                     onSelect={this.handleSelectAction} />
-        <ActionPreview {...{ base16Theme, tab, delta, nextState, action }}
+        <ActionPreview {...{ base16Theme, tab, delta, nextState, action, isLightTheme }}
                        styling={styling}
                        onInspectPath={this.handleInspectPath.bind(this, inspectedPathType)}
                        inspectedPath={monitorState[inspectedPathType]}

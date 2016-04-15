@@ -76,7 +76,8 @@ function convertImmutable(value) {
 }
 
 const ActionPreview = ({
-  styling, delta, nextState, onInspectPath, inspectedPath, tab, onSelectTab, action, base16Theme
+  styling, delta, nextState, onInspectPath, inspectedPath, tab,
+  onSelectTab, action, base16Theme, isLightTheme
 }) => {
   const labelRenderer = (key, ...rest) =>
     <span>
@@ -98,7 +99,7 @@ const ActionPreview = ({
         styling, inspectedPath, onInspectPath, tab, onSelectTab
       }} />
       {tab === 'Diff' && delta &&
-        <JSONDiff {...{ delta, labelRenderer, styling, base16Theme }} />
+        <JSONDiff {...{ delta, labelRenderer, styling, base16Theme, isLightTheme }} />
       }
       {tab === 'Diff' && !delta &&
         <div {...styling('stateDiffEmpty')}>
@@ -107,13 +108,19 @@ const ActionPreview = ({
       }
       {(tab === 'State' && nextState || tab === 'Action') &&
         <JSONTree labelRenderer={labelRenderer}
-                  theme={base16Theme}
+                  theme={{
+                    extend: base16Theme,
+                    nestedNodeItemString: ({ style }, expanded) => ({
+                      style: {
+                        ...style,
+                        display: expanded ? 'none' : 'inline'
+                      }
+                    })
+                  }}
                   data={tab === 'Action' ? action : nextState}
                   getItemString={(type, data) => getItemString(styling, type, data)}
                   postprocessValue={convertImmutable}
-                  getItemStringStyle={
-                    (type, expanded) => ({ display: expanded ? 'none' : 'inline' })
-                  }
+                  isLightTheme={isLightTheme}
                   hideRoot />
       }
     </div>

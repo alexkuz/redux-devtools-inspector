@@ -42,7 +42,7 @@ export default class JSONDiff extends Component {
                 valueRenderer={(raw, value) => this.valueRenderer(raw, value, styling)}
                 postprocessValue={prepareDelta}
                 isCustomNode={value => Array.isArray(value)}
-                expandAll
+                shouldExpandNode={(keyName, data, level) => level <= 1}
                 hideRoot />
     );
   }

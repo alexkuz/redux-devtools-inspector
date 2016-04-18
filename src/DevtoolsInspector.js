@@ -14,11 +14,11 @@ function getCurrentActionId(props, state) {
 }
 
 function createState(props, state) {
-  const { supportImmutable, computedStates, actionsById: actions } = props;
+  const { supportImmutable, computedStates, stagedActionIds, actionsById: actions } = props;
   const currentActionId = getCurrentActionId(props, state);
   const currentAction = actions[currentActionId] && actions[currentActionId].action;
 
-  const actionIndex = Object.keys(actions).indexOf(currentActionId && currentActionId.toString());
+  const actionIndex = stagedActionIds.indexOf(currentActionId);
   const fromState = actionIndex > 0 ? computedStates[actionIndex - 1] : null;
   const toState = computedStates[actionIndex];
 

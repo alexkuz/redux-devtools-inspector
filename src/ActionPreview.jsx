@@ -61,20 +61,6 @@ function getItemString(createTheme, type, data) {
   return <span {...createTheme('treeItemHint')}> {immutableStr} {text}</span>;
 }
 
-function convertImmutable(value) {
-  if (isImmutable(value)) {
-    value = value.toSeq().__toJS();
-    Object.defineProperty(value, IS_IMMUTABLE_KEY, {
-      enumerable: false,
-      configurable: false,
-      writable: false,
-      value: true
-    });
-  }
-
-  return value;
-}
-
 const ActionPreview = ({
   styling, delta, nextState, onInspectPath, inspectedPath, tab,
   onSelectTab, action, base16Theme, isLightTheme
@@ -119,7 +105,6 @@ const ActionPreview = ({
                   }}
                   data={tab === 'Action' ? action : nextState}
                   getItemString={(type, data) => getItemString(styling, type, data)}
-                  postprocessValue={convertImmutable}
                   isLightTheme={isLightTheme}
                   hideRoot />
       }

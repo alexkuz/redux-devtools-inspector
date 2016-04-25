@@ -25,6 +25,8 @@ const getDevTools = options =>
     </DockMonitor>
   );
 
+const ROOT = process.env.NODE_ENV === 'production' ? '/redux-devtools-inspector/' : '/';
+
 let DevTools = getDevTools(getOptions());
 
 const reduxRouterMiddleware = routerMiddleware(browserHistory);
@@ -52,7 +54,8 @@ const handleRouterUpdate = () => {
 
 const router = (
   <Router history={history} onUpdate={handleRouterUpdate}>
-    <Route path='/' component={DemoApp} />
+    <Route path={ROOT}
+           component={DemoApp} />
   </Router>
 );
 

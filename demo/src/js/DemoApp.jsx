@@ -61,8 +61,10 @@ const themeOptions = [
     .filter(opt => opt.label)
 ];
 
+const ROOT = process.env.NODE_ENV === 'production' ? '/redux-devtools-inspector/' : '/';
+
 function buildUrl(options) {
-  return '?' + [
+  return `${ROOT}?` + [
     options.useExtension ? 'ext' : '',
     options.supportImmutable ? 'immutable' : '',
     options.theme ? 'theme=' + options.theme : '',

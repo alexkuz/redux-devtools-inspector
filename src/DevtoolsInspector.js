@@ -17,11 +17,12 @@ function getCurrentActionId(props) {
 }
 
 function createState(props) {
-  const { supportImmutable, computedStates, actionsById: actions, monitorState: state } = props;
+  const { supportImmutable, computedStates, stagedActionIds,
+          actionsById: actions, monitorState: state } = props;
   const currentActionId = getCurrentActionId(props, state);
   const currentAction = actions[currentActionId] && actions[currentActionId].action;
 
-  const actionIndex = Object.keys(actions).indexOf(currentActionId && currentActionId.toString());
+  const actionIndex = stagedActionIds.indexOf(currentActionId);
   const fromState = actionIndex > 0 ? computedStates[actionIndex - 1] : null;
   const toState = computedStates[actionIndex];
 
@@ -83,7 +84,8 @@ export default class DevtoolsInspector extends Component {
 
   static defaultProps = {
     select: (state) => state,
-    supportImmutable: false
+    supportImmutable: false,
+    theme: 'inspector'
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;

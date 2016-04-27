@@ -47,6 +47,10 @@ export default class JSONDiff extends Component {
   }
 
   updateData() {
+    // this magically fixes weird React error, where it can't find a node in tree
+    // if we set `delta` as JSONTree data right away
+    // https://github.com/alexkuz/redux-devtools-inspector/issues/17
+
     this.setState({ data: this.props.delta });
   }
 

@@ -10,6 +10,9 @@ function stringifyAndShrink(val) {
   return str.length > 22 ? `${str.substr(0, 15)}…${str.substr(-5)}` : str;
 }
 
+const returnEmptyString = () => '';
+const expandFirstLevel = (keyName, data, level) => level <= 1;
+
 function prepareDelta(value) {
   if (value && value._t === 'a') {
     const res = {};
@@ -31,23 +34,49 @@ function prepareDelta(value) {
 }
 
 export default class JSONDiff extends Component {
+  state = { data: {} }
+
+  componentDidMount() {
+    this.updateData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.delta !== this.props.delta) {
+      this.updateData();
+    }
+  }
+
+  updateData() {
+    this.setState({ data: this.props.delta });
+  }
+
   render() {
-    const { delta, styling, base16Theme, ...props } = this.props;
+    const { styling, base16Theme, ...props } = this.props;
+
+    if (!this.state.data) {
+      return (
+        <div {...styling('stateDiffEmpty')}>
+          (states are equal)
+        </div>
+      );
+    }
 
     return (
       <JSONTree {...props}
                 theme={base16Theme}
-                data={delta}
-                getItemString={() => ''}
-                valueRenderer={(raw, value) => this.valueRenderer(raw, value, styling)}
+                data={this.state.data}
+                getItemString={returnEmptyString}
+                valueRenderer={this.valueRenderer}
                 postprocessValue={prepareDelta}
-                isCustomNode={value => Array.isArray(value)}
-                shouldExpandNode={(keyName, data, level) => level <= 1}
+                isCustomNode={Array.isArray}
+                shouldExpandNode={expandFirstLevel}
                 hideRoot />
     );
   }
 
-  valueRenderer(raw, value, styling) {
+  valueRenderer = (raw, value) => {
+    const { styling } = this.props;
+
     function renderSpan(name, body) {
       return (
         <span key={name} {...styling(['diff', name])}>{body}</span>

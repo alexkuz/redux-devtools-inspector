@@ -53,12 +53,7 @@ function createThemeState(props) {
 
 export default class DevtoolsInspector extends Component {
   state = {
-    isWideLayout: false,
-    selectedActionId: null,
-    inspectedActionPath: [],
-    inspectedStatePath: [],
-    tab: 'Diff',
-    isLightTheme: true
+    themeState: {}
   };
 
   static propTypes = {
@@ -85,16 +80,15 @@ export default class DevtoolsInspector extends Component {
   static defaultProps = {
     select: (state) => state,
     supportImmutable: false,
-    theme: 'inspector'
+    theme: 'inspector',
+    isLightTheme: true
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
 
   componentWillMount() {
-    this.props.dispatch(updateMonitorState({
-      ...createState(this.props),
-      ...createThemeState(this.props)
-    }));
+    this.props.dispatch(updateMonitorState(createState(this.props)));
+    this.setState({ themeState: createThemeState(this.props) });
   }
 
   componentDidMount() {
@@ -122,16 +116,13 @@ export default class DevtoolsInspector extends Component {
       this.props.monitorState.inspectedActionPath !== nextProps.monitorState.inspectedActionPath) {
 
       state = { ...state, ...createState(nextProps) };
+
+      nextProps.dispatch(updateMonitorState(state));
     }
 
     if (this.props.theme !== nextProps.theme ||
-      this.props.isLightTheme !== nextProps.isLightTheme) {
-
-      state = { ...state, ...createThemeState(nextProps) };
-    }
-
-    if (state !== nextProps.monitorState) {
-      nextProps.dispatch(updateMonitorState(state));
+        this.props.isLightTheme !== nextProps.isLightTheme) {
+      this.setState({ themeState: createThemeState(nextProps) });
     }
   }
 
@@ -139,8 +130,9 @@ export default class DevtoolsInspector extends Component {
     const { stagedActionIds: actionIds, actionsById: actions,
             monitorState, isLightTheme } = this.props;
     const { isWideLayout, selectedActionId, nextState, action,
-            searchValue, tab, delta, base16Theme, styling } = monitorState;
+            searchValue, tab, delta } = monitorState;
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
+    const { base16Theme, styling } = this.state.themeState;
 
     return (
       <div key='inspector'

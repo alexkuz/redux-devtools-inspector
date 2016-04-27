@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import JSONTree from 'react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
@@ -61,55 +61,60 @@ function getItemString(createTheme, type, data) {
   return <span {...createTheme('treeItemHint')}> {immutableStr} {text}</span>;
 }
 
-const ActionPreview = ({
-  styling, delta, nextState, onInspectPath, inspectedPath, tab,
-  onSelectTab, action, base16Theme, isLightTheme
-}) => {
-  const labelRenderer = (key, ...rest) =>
-    <span>
-      <span {...styling('treeItemKey')}>
-        {key}
-      </span>
-      <span {...styling('treeItemPin')}
-            onClick={() => onInspectPath([
-              ...inspectedPath.slice(0, inspectedPath.length - 1),
-              ...[key, ...rest].reverse()
-            ])}>
-        {'(pin)'}
-      </span>
-    </span>;
+class ActionPreview extends Component {
+  render() {
+    const {
+      styling, delta, nextState, onInspectPath, inspectedPath, tab,
+      onSelectTab, action, base16Theme, isLightTheme
+    } = this.props;
 
-  return (
-    <div key='actionPreview' {...styling('actionPreview')}>
-      <ActionPreviewHeader {...{
-        styling, inspectedPath, onInspectPath, tab, onSelectTab
-      }} />
-      {tab === 'Diff' && delta &&
-        <JSONDiff {...{ delta, labelRenderer, styling, base16Theme, isLightTheme }} />
-      }
-      {tab === 'Diff' && !delta &&
-        <div {...styling('stateDiffEmpty')}>
-          (states are equal)
-        </div>
-      }
-      {(tab === 'State' && nextState || tab === 'Action') &&
-        <JSONTree labelRenderer={labelRenderer}
-                  theme={{
-                    extend: base16Theme,
-                    nestedNodeItemString: ({ style }, expanded) => ({
-                      style: {
-                        ...style,
-                        display: expanded ? 'none' : 'inline'
-                      }
-                    })
-                  }}
-                  data={tab === 'Action' ? action : nextState}
-                  getItemString={(type, data) => getItemString(styling, type, data)}
-                  isLightTheme={isLightTheme}
-                  hideRoot />
-      }
-    </div>
-  );
+    return (
+      <div key='actionPreview' {...styling('actionPreview')}>
+        <ActionPreviewHeader {...{
+          styling, inspectedPath, onInspectPath, tab, onSelectTab
+        }} />
+        {tab === 'Diff' &&
+          <JSONDiff labelRenderer={this.labelRenderer}
+                    {...{ delta, styling, base16Theme, isLightTheme }} />
+        }
+        {(tab === 'State' && nextState || tab === 'Action') &&
+          <JSONTree labelRenderer={this.labelRenderer}
+                    theme={{
+                      extend: base16Theme,
+                      nestedNodeItemString: ({ style }, expanded) => ({
+                        style: {
+                          ...style,
+                          display: expanded ? 'none' : 'inline'
+                        }
+                      })
+                    }}
+                    data={tab === 'Action' ? action : nextState}
+                    getItemString={(type, data) => getItemString(styling, type, data)}
+                    isLightTheme={isLightTheme}
+                    hideRoot />
+        }
+      </div>
+    );
+  }
+
+  labelRenderer = (key, ...rest) => {
+    const { styling, onInspectPath, inspectedPath } = this.props;
+
+    return (
+      <span>
+        <span {...styling('treeItemKey')}>
+          {key}
+        </span>
+        <span {...styling('treeItemPin')}
+              onClick={() => onInspectPath([
+                ...inspectedPath.slice(0, inspectedPath.length - 1),
+                ...[key, ...rest].reverse()
+              ])}>
+          {'(pin)'}
+        </span>
+      </span>
+    );
+  }
 }
 
 export default ActionPreview;

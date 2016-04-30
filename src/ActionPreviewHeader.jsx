@@ -10,8 +10,8 @@ const ActionPreviewHeader = ({
           <div onClick={() => onSelectTab(t)}
                key={t}
                {...styling([
-                 'tabSelectorButton',
-                 t === tab && 'tabSelectorButtonSelected'
+                 'selectorButton',
+                 t === tab && 'selectorButtonSelected'
                ], t === tab)}>
             {t}
           </div>

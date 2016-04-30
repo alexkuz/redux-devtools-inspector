@@ -1,47 +1,63 @@
-import React from 'react';
-import dateformat from 'dateformat';
+import React, { Component } from 'react';
+import ReactDOM from 'react/lib/ReactDOM';
+import ActionListRow from './ActionListRow';
+import ActionListHeader from './ActionListHeader';
 
-function getTime(actions, actionIds, actionId) {
+function getTimestamps(actions, actionIds, actionId) {
   const idx = actionIds.indexOf(actionId);
   const prevActionId = actionIds[idx - 1];
 
-  return idx ?
-    dateformat(actions[actionId].timestamp - actions[prevActionId].timestamp, '+MM:ss.L') :
-    dateformat(actions[actionId].timestamp, 'h:MM:ss.L');
+  return {
+    current: actions[actionId].timestamp,
+    previous: idx ? actions[prevActionId].timestamp : 0
+  };
 }
 
-const ActionList = ({
-  styling, actions, actionIds, isWideLayout,
-  selectedActionId, onSelect, onSearch, searchValue
-}) => {
-  const lowerSearchValue = searchValue && searchValue.toLowerCase();
-  const filteredActionIds = searchValue ? actionIds.filter(
-    id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1
-  ) : actionIds;
+export default class ActionList extends Component {
+  componentDidUpdate(prevProps) {
+    if (this.props.lastActionId !== prevProps.lastActionId) {
+      this.scrollToBottom();
+    }
+  }
 
-  return (
-    <div key='actionList'
-         {...styling(['actionList', isWideLayout && 'actionListWide'], isWideLayout)}>
-      <input {...styling('actionListSearch')}
-             onChange={e => onSearch(e.target.value)}
-             placeholder='filter...' />
-      {filteredActionIds.map((actionId, idx) =>
-        <div key={idx}
-             {...styling([
-               'actionListItem',
-               actionId === selectedActionId && 'actionListItemSelected'
-             ], actionId === selectedActionId)}
-             onClick={() => onSelect(actionId)}>
-          <div {...styling('actionListItemName')}>
-            {actions[actionId].action.type}
-          </div>
-          <div {...styling('actionListItemTime')}>
-            {getTime(actions, actionIds, actionId)}
-          </div>
+  scrollToBottom() {
+    const el = ReactDOM.findDOMNode(this.refs.rows);
+
+    el.scrollTop = el.scrollHeight;
+  }
+
+  render() {
+    const { styling, actions, actionIds, isWideLayout, onToggleAction, skippedActionIds,
+            selectedActionId, onSelect, onSearch, searchValue, onCommit, onSweep } = this.props;
+    const lowerSearchValue = searchValue && searchValue.toLowerCase();
+    const filteredActionIds = searchValue ? actionIds.filter(
+      id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1
+    ) : actionIds;
+
+    return (
+      <div key='actionList'
+           {...styling(['actionList', isWideLayout && 'actionListWide'], isWideLayout)}>
+        <ActionListHeader styling={styling}
+                          onSearch={onSearch}
+                          onCommit={onCommit}
+                          onSweep={onSweep}
+                          hasSkippedActions={skippedActionIds.length > 0}
+                          hasStagedActions={actionIds.length > 1} />
+        <div {...styling('actionListRows')} ref='rows'>
+          {filteredActionIds.map(actionId =>
+            <ActionListRow key={actionId}
+                           styling={styling}
+                           isInitAction={!actionId}
+                           isSelected={actionId === selectedActionId}
+                           onSelect={() => onSelect(actionId)}
+                           timestamps={getTimestamps(actions, actionIds, actionId)}
+                           action={actions[actionId].action}
+                           onViewClick={() => onToggleAction(actionId)}
+                           onCommitClick={() => onCommit(actionId)}
+                           isSkipped={skippedActionIds.indexOf(actionId) !== -1} />
+          )}
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
 }
-
-export default ActionList;

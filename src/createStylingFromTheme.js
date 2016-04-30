@@ -14,6 +14,7 @@ const colorMap = theme => ({
   TEXT_PLACEHOLDER_COLOR: rgba(theme.base06, 60),
   BACKGROUND_COLOR: theme.base00,
   SELECTED_BACKGROUND_COLOR: rgba(theme.base03, 20),
+  SKIPPED_BACKGROUND_COLOR: rgba(theme.base03, 10),
   HEADER_BACKGROUND_COLOR: rgba(theme.base03, 30),
   HEADER_BORDER_COLOR: rgba(theme.base03, 20),
   BORDER_COLOR: rgba(theme.base03, 50),
@@ -58,9 +59,30 @@ const getSheetFromColorMap = map => ({
     'overflow-y': 'auto',
     'border-bottom-width': '3px',
     'border-bottom-style': 'double',
+    display: 'flex',
+    'flex-direction': 'column',
 
     'background-color': map.BACKGROUND_COLOR,
     'border-color': map.LIST_BORDER_COLOR
+  },
+
+  actionListHeader: {
+    display: 'flex',
+    flex: '0 0',
+    'align-items': 'center',
+    'border-bottom-width': '1px',
+    'border-bottom-style': 'solid',
+
+    'border-color': map.LIST_BORDER_COLOR
+  },
+
+  actionListRows: {
+    overflow: 'auto'
+  },
+
+  actionListHeaderSelector: {
+    display: 'inline-flex',
+    'margin-right': '10px'
   },
 
   actionListWide: {
@@ -74,7 +96,6 @@ const getSheetFromColorMap = map => ({
     'border-bottom-width': '1px',
     'border-bottom-style': 'solid',
     display: 'flex',
-    'align-items': 'flex-start',
     'justify-content': 'space-between',
     padding: '5px 10px',
     cursor: 'pointer',
@@ -90,7 +111,19 @@ const getSheetFromColorMap = map => ({
     'background-color': map.SELECTED_BACKGROUND_COLOR
   },
 
+  actionListItemSkipped: {
+    'background-color': map.SKIPPED_BACKGROUND_COLOR
+  },
+
+  actionListItemButtons: {
+    position: 'relative',
+    height: '20px',
+    'flex-basis': '25%',
+    display: 'flex'
+  },
+
   actionListItemTime: {
+    display: 'inline',
     padding: '4px 6px',
     'border-radius': '3px',
     'font-size': '0.8em',
@@ -101,24 +134,29 @@ const getSheetFromColorMap = map => ({
     color: map.ACTION_TIME_COLOR
   },
 
-  actionListItemName: {
-    overflow: 'auto',
-    'text-overflow': 'ellipsis'
+  actionListItemSelector: {
+    display: 'inline-flex'
   },
 
-  actionListSearch: {
+  actionListItemName: {
+    overflow: 'auto',
+    'text-overflow': 'ellipsis',
+    'line-height': '20px'
+  },
+
+  actionListItemNameSkipped: {
+    'text-decoration': 'line-through',
+    opacity: 0.3
+  },
+
+  actionListHeaderSearch: {
     outline: 'none',
-    'border-top': 'none',
-    'border-left': 'none',
-    'border-right': 'none',
-    'border-bottom-width': '1px',
-    'border-bottom-style': 'solid',
+    border: 'none',
     width: '100%',
     padding: '5px 10px',
     'font-size': '1em',
     'font-family': 'monaco, Consolas, "Lucida Console", monospace',
 
-    'border-color': map.BORDER_COLOR,
     'background-color': map.BACKGROUND_COLOR,
     color: map.TEXT_COLOR,
 
@@ -129,6 +167,11 @@ const getSheetFromColorMap = map => ({
     '&::-moz-placeholder': {
       color: map.TEXT_PLACEHOLDER_COLOR
     }
+  },
+
+  actionListHeaderWrapper: {
+    position: 'relative',
+    height: '20px'
   },
 
   actionPreview: {
@@ -210,7 +253,7 @@ const getSheetFromColorMap = map => ({
     'margin-bottom': '5px'
   },
 
-  tabSelectorButton: {
+  selectorButton: {
     cursor: 'pointer',
     position: 'relative',
     padding: '5px 10px',
@@ -229,45 +272,28 @@ const getSheetFromColorMap = map => ({
       'border-bottom-right-radius': '3px'
     },
 
-    '&:before': {
-      content: '""',
-      position: 'absolute',
-      'z-index': -1,
-      left: 0,
-      top: 0,
-      width: '100%',
-      height: '100%',
+    'background-color': map.TAB_BACK_COLOR,
 
-      'background-color': map.TAB_BACK_COLOR
-    },
-
-    '&:hover:before': {
+    '&:hover': {
       'background-color': map.TAB_BACK_HOVER_COLOR
     },
 
     'border-color': map.TAB_BORDER_COLOR
   },
 
-  tabSelectorButtonSelected: {
-    '&:before': {
-      'background-color': map.TAB_BACK_SELECTED_COLOR
-    }
+  selectorButtonSmall: {
+    padding: '0px 8px',
+    'font-size': '0.8em'
+  },
+
+  selectorButtonSelected: {
+    'background-color': map.TAB_BACK_SELECTED_COLOR
   },
 
   diff: {
     padding: '2px 3px',
     'border-radius': '3px',
     position: 'relative',
-
-    '&:before': {
-      'border-radius': '3px',
-      content: '""',
-      position: 'absolute',
-      'z-index': -1,
-      left: 0,
-      width: '100%',
-      height: '100%'
-    },
 
     color: map.TEXT_COLOR
   },
@@ -278,9 +304,7 @@ const getSheetFromColorMap = map => ({
   },
 
   diffAdd: {
-    '&:before': {
-      'background-color': map.DIFF_ADD_COLOR
-    }
+    'background-color': map.DIFF_ADD_COLOR
   },
 
   diffRemove: {
@@ -299,6 +323,27 @@ const getSheetFromColorMap = map => ({
 
   diffUpdateArrow: {
     color: map.DIFF_ARROW_COLOR
+  },
+
+  rightSlider: {
+    position: 'absolute',
+    right: 0,
+    transform: 'translateX(150%)',
+    transition: 'transform 0.2s ease-in-out'
+  },
+
+  rightSliderRotate: {
+    transform: 'rotateX(90deg)',
+    transition: 'transform 0.2s ease-in-out 0.08s'
+  },
+
+  rightSliderShown: {
+    transform: 'translateX(0)',
+  },
+
+  rightSliderRotateShown: {
+    transform: 'rotateX(0)',
+    transition: 'transform 0.2s ease-in-out 0.18s'
   }
 });
 

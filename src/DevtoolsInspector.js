@@ -9,10 +9,17 @@ import { getBase16Theme } from 'react-base16-styling';
 import * as base16Themes from 'redux-devtools-themes';
 import * as inspectorThemes from './themes';
 import { reducer, updateMonitorState } from './redux';
+import { ActionCreators } from 'redux-devtools';
+
+const { commit, sweep, toggleAction } = ActionCreators;
+
+function getLastActionId(props) {
+  return props.stagedActionIds[props.stagedActionIds.length - 1];
+}
 
 function getCurrentActionId(props) {
   const state = props.monitorState;
-  const lastActionId = props.stagedActionIds[props.stagedActionIds.length - 1];
+  const lastActionId = getLastActionId(props);
   return state.selectedActionId === null ? lastActionId : state.selectedActionId;
 }
 
@@ -128,7 +135,7 @@ export default class DevtoolsInspector extends Component {
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions,
-            monitorState, isLightTheme } = this.props;
+            monitorState, isLightTheme, skippedActionIds } = this.props;
     const { isWideLayout, selectedActionId, nextState, action,
             searchValue, tab, delta } = monitorState;
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
@@ -141,7 +148,12 @@ export default class DevtoolsInspector extends Component {
         <ActionList {...{ actions, actionIds, isWideLayout, searchValue, selectedActionId }}
                     styling={styling}
                     onSearch={this.handleSearch}
-                    onSelect={this.handleSelectAction} />
+                    onSelect={this.handleSelectAction}
+                    onToggleAction={this.handleToggleAction}
+                    onCommit={this.handleCommit}
+                    onSweep={this.handleSweep}
+                    skippedActionIds={skippedActionIds}
+                    lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{ base16Theme, tab, delta, nextState, action, isLightTheme }}
                        styling={styling}
                        onInspectPath={this.handleInspectPath.bind(this, inspectedPathType)}
@@ -150,6 +162,18 @@ export default class DevtoolsInspector extends Component {
       </div>
     );
   }
+
+  handleToggleAction = actionId => {
+    this.props.dispatch(toggleAction(actionId));
+  };
+
+  handleCommit = () => {
+    this.props.dispatch(commit());
+  };
+
+  handleSweep = () => {
+    this.props.dispatch(sweep());
+  };
 
   handleSearch = val => {
     this.props.dispatch(updateMonitorState({ searchValue: val }));

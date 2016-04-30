@@ -285,24 +285,16 @@ const getSheetFromColorMap = map => ({
 
   diffRemove: {
     'text-decoration': 'line-through',
-
-    '&:before': {
-      'background-color': map.DIFF_REMOVE_COLOR
-    }
+    'background-color': map.DIFF_REMOVE_COLOR
   },
 
   diffUpdateFrom: {
     'text-decoration': 'line-through',
-
-    '&:before': {
-      'background-color': map.DIFF_REMOVE_COLOR
-    }
+    'background-color': map.DIFF_REMOVE_COLOR
   },
 
   diffUpdateTo: {
-    '&:before': {
-      'background-color': map.DIFF_ADD_COLOR
-    }
+    'background-color': map.DIFF_ADD_COLOR
   },
 
   diffUpdateArrow: {

@@ -240,6 +240,7 @@ const getSheetFromColorMap = map => ({
     'align-items': 'center',
     'border-bottom-width': '1px',
     'border-bottom-style': 'solid',
+    'min-height': '30px',
 
     'background-color': map.HEADER_BACKGROUND_COLOR,
     'border-bottom-color': map.HEADER_BORDER_COLOR

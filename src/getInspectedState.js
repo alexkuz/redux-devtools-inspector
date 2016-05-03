@@ -15,7 +15,7 @@ function iterateToKey(obj, key) { // maybe there's a better way, dunno
 }
 
 export default function getInspectedState(state, path, convertImmutable) {
-  state = path.length ?
+  state = path && path.length ?
     {
       [path[path.length - 1]]: path.reduce(
         (s, key) => {

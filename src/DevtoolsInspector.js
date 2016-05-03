@@ -17,16 +17,16 @@ function getLastActionId(props) {
   return props.stagedActionIds[props.stagedActionIds.length - 1];
 }
 
-function getCurrentActionId(props) {
-  const state = props.monitorState;
+function getCurrentActionId(props, monitorState) {
   const lastActionId = getLastActionId(props);
-  return state.selectedActionId === null ? lastActionId : state.selectedActionId;
+  return monitorState.selectedActionId === null ? lastActionId : monitorState.selectedActionId;
 }
 
-function createState(props) {
+function createMonitorState(props, monitorState) {
   const { supportImmutable, computedStates, stagedActionIds,
-          actionsById: actions, monitorState: state } = props;
-  const currentActionId = getCurrentActionId(props, state);
+          actionsById: actions } = props;
+  const { inspectedStatePath, inspectedActionPath } = monitorState;
+  const currentActionId = getCurrentActionId(props, monitorState);
   const currentAction = actions[currentActionId] && actions[currentActionId].action;
 
   const actionIndex = stagedActionIds.indexOf(currentActionId);
@@ -34,19 +34,20 @@ function createState(props) {
   const toState = computedStates[actionIndex];
 
   const fromInspectedState = fromState &&
-    getInspectedState(fromState.state, state.inspectedStatePath, supportImmutable);
+    getInspectedState(fromState.state, inspectedStatePath, supportImmutable);
   const toInspectedState =
-    toState && getInspectedState(toState.state, state.inspectedStatePath, supportImmutable);
+    toState && getInspectedState(toState.state, inspectedStatePath, supportImmutable);
   const delta = fromState && toState && DiffPatcher.diff(
     fromInspectedState,
     toInspectedState
   );
 
   return {
+    ...monitorState,
     delta,
     currentActionId,
-    nextState: toState && getInspectedState(toState.state, state.inspectedStatePath, false),
-    action: getInspectedState(currentAction, state.inspectedActionPath, false)
+    nextState: toState && getInspectedState(toState.state, inspectedStatePath, false),
+    action: getInspectedState(currentAction, inspectedActionPath, false)
   };
 }
 
@@ -58,10 +59,22 @@ function createThemeState(props) {
   return { base16Theme, styling };
 }
 
+const DEFAULT_MONITOR_STATE = {
+  isWideLayout: false,
+  tab: 'Diff',
+  inspectedStatePath: [],
+  inspectedActionPath: [],
+  selectedActionId: null
+};
+
 export default class DevtoolsInspector extends Component {
-  state = {
-    themeState: {}
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      themeState: createThemeState(props),
+      monitorState: createMonitorState(props, DEFAULT_MONITOR_STATE)
+    };
+  }
 
   static propTypes = {
     dispatch: PropTypes.func,
@@ -88,15 +101,11 @@ export default class DevtoolsInspector extends Component {
     select: (state) => state,
     supportImmutable: false,
     theme: 'inspector',
-    isLightTheme: true
+    isLightTheme: true,
+    shouldPersistState: true
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
-
-  componentWillMount() {
-    this.props.dispatch(updateMonitorState(createState(this.props)));
-    this.setState({ themeState: createThemeState(this.props) });
-  }
 
   componentDidMount() {
     this.updateSizeMode();
@@ -107,24 +116,46 @@ export default class DevtoolsInspector extends Component {
     window.clearTimeout(this.updateSizeTimeout);
   }
 
+  updateMonitorState(monitorState) {
+    this.setState({ monitorState: { ...this.state.monitorState, ...monitorState } }, () => {
+      if (this.props.shouldPersistState) {
+        this.props.dispatch(updateMonitorState(monitorState));
+      }
+    });
+  }
+
   updateSizeMode() {
     const isWideLayout = this.refs.inspector.offsetWidth > 500;
-    if (isWideLayout !== this.props.monitorState.isWideLayout) {
-      this.props.dispatch(updateMonitorState({ isWideLayout }));
+    const { monitorState } = this.state;
+
+    if (isWideLayout !== monitorState.isWideLayout) {
+      this.updateMonitorState({ isWideLayout });
     }
   }
 
-  componentWillUpdate(nextProps) {
-    let state = nextProps.monitorState;
+  componentWillReceiveProps(nextProps) {
+    const nextMonitorState = nextProps.monitorState;
+    const monitorState = this.props.monitorState;
 
-    if (this.props.computedStates !== nextProps.computedStates ||
-      getCurrentActionId(this.props) !== getCurrentActionId(nextProps) ||
-      this.props.monitorState.inspectedStatePath !== nextProps.monitorState.inspectedStatePath ||
-      this.props.monitorState.inspectedActionPath !== nextProps.monitorState.inspectedActionPath) {
+    if (monitorState !== nextMonitorState) {
+      this.setState({ monitorState: { ...this.state.monitorState, ...nextMonitorState } });
+    }
+  }
 
-      state = { ...state, ...createState(nextProps) };
+  componentWillUpdate(nextProps, nextState) {
+    let nextMonitorState = nextState.monitorState;
+    const monitorState = this.state.monitorState;
 
-      nextProps.dispatch(updateMonitorState(state));
+    if (
+      getCurrentActionId(this.props, monitorState) !==
+      getCurrentActionId(nextProps, nextMonitorState) ||
+      monitorState.inspectedStatePath !== nextMonitorState.inspectedStatePath ||
+      monitorState.inspectedActionPath !== nextMonitorState.inspectedActionPath
+    ) {
+
+      nextMonitorState = createMonitorState(nextProps, nextMonitorState);
+
+      this.updateMonitorState(nextMonitorState);
     }
 
     if (this.props.theme !== nextProps.theme ||
@@ -135,7 +166,8 @@ export default class DevtoolsInspector extends Component {
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions,
-            monitorState, isLightTheme, skippedActionIds } = this.props;
+            isLightTheme, skippedActionIds } = this.props;
+    const { monitorState } = this.state;
     const { isWideLayout, selectedActionId, nextState, action,
             searchValue, tab, delta } = monitorState;
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
@@ -176,22 +208,22 @@ export default class DevtoolsInspector extends Component {
   };
 
   handleSearch = val => {
-    this.props.dispatch(updateMonitorState({ searchValue: val }));
+    this.updateMonitorState({ searchValue: val });
   };
 
   handleSelectAction = actionId => {
-    const { monitorState: { selectedActionId } } = this.props;
+    const { monitorState } = this.state;
 
-    this.props.dispatch(updateMonitorState({
-      selectedActionId: actionId === selectedActionId ? null : actionId
-    }));
+    this.updateMonitorState({
+      selectedActionId: actionId === monitorState.selectedActionId ? null : actionId
+    });
   };
 
   handleInspectPath = (pathType, path) => {
-    this.props.dispatch(updateMonitorState({ [pathType]: path }));
+    this.updateMonitorState({ [pathType]: path });
   };
 
   handleSelectTab = tab => {
-    this.props.dispatch(updateMonitorState({ tab }));
+    this.updateMonitorState({ tab });
   };
 }

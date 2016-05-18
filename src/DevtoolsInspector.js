@@ -1,13 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { createStylingFromTheme } from './createStylingFromTheme';
+import { createStylingFromTheme, base16Themes } from './createStylingFromTheme';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import ActionList from './ActionList';
 import ActionPreview from './ActionPreview';
 import getInspectedState from './getInspectedState';
 import DiffPatcher from './DiffPatcher';
 import { getBase16Theme } from 'react-base16-styling';
-import * as base16Themes from 'redux-devtools-themes';
-import * as inspectorThemes from './themes';
 import { reducer, updateMonitorState } from './redux';
 import { ActionCreators } from 'redux-devtools';
 
@@ -52,9 +50,8 @@ function createMonitorState(props, monitorState) {
 }
 
 function createThemeState(props) {
-  const themes = { ...base16Themes, ...inspectorThemes };
-  const base16Theme = getBase16Theme(props.theme, themes);
-  const styling = createStylingFromTheme(props.theme, themes, props.isLightTheme);
+  const base16Theme = getBase16Theme(props.theme, base16Themes);
+  const styling = createStylingFromTheme(props.theme, props.isLightTheme);
 
   return { base16Theme, styling };
 }

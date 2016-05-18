@@ -1,6 +1,6 @@
 {
   "name": "redux-devtools-inspector",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Redux DevTools Diff Monitor",
   "scripts": {
     "build:lib": "NODE_ENV=production babel src --out-dir lib",

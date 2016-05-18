@@ -32,7 +32,7 @@ function createMonitorState(props, monitorState) {
   const actionIndex = stagedActionIds.indexOf(currentActionId);
   const fromState = actionIndex > 0 ? computedStates[actionIndex - 1] : null;
   const toState = computedStates[actionIndex];
-  const { error } = toState;
+  const error = toState && toState.error;
 
   const fromInspectedState = !error && fromState &&
     getInspectedState(fromState.state, inspectedStatePath, supportImmutable);

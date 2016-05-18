@@ -32,12 +32,13 @@ function createMonitorState(props, monitorState) {
   const actionIndex = stagedActionIds.indexOf(currentActionId);
   const fromState = actionIndex > 0 ? computedStates[actionIndex - 1] : null;
   const toState = computedStates[actionIndex];
+  const { error } = toState;
 
-  const fromInspectedState = fromState &&
+  const fromInspectedState = !error && fromState &&
     getInspectedState(fromState.state, inspectedStatePath, supportImmutable);
   const toInspectedState =
-    toState && getInspectedState(toState.state, inspectedStatePath, supportImmutable);
-  const delta = fromState && toState && DiffPatcher.diff(
+    !error && toState && getInspectedState(toState.state, inspectedStatePath, supportImmutable);
+  const delta = !error && fromState && toState && DiffPatcher.diff(
     fromInspectedState,
     toInspectedState
   );
@@ -47,7 +48,8 @@ function createMonitorState(props, monitorState) {
     delta,
     currentActionId,
     nextState: toState && getInspectedState(toState.state, inspectedStatePath, false),
-    action: getInspectedState(currentAction, inspectedActionPath, false)
+    action: getInspectedState(currentAction, inspectedActionPath, false),
+    error
   };
 }
 
@@ -169,7 +171,7 @@ export default class DevtoolsInspector extends Component {
             isLightTheme, skippedActionIds } = this.props;
     const { monitorState } = this.state;
     const { isWideLayout, selectedActionId, nextState, action,
-            searchValue, tab, delta } = monitorState;
+            searchValue, tab, delta, error } = monitorState;
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
     const { base16Theme, styling } = this.state.themeState;
 
@@ -186,7 +188,7 @@ export default class DevtoolsInspector extends Component {
                     onSweep={this.handleSweep}
                     skippedActionIds={skippedActionIds}
                     lastActionId={getLastActionId(this.props)} />
-        <ActionPreview {...{ base16Theme, tab, delta, nextState, action, isLightTheme }}
+        <ActionPreview {...{ base16Theme, tab, delta, error, nextState, action, isLightTheme }}
                        styling={styling}
                        onInspectPath={this.handleInspectPath.bind(this, inspectedPathType)}
                        inspectedPath={monitorState[inspectedPathType]}

@@ -64,7 +64,7 @@ function getItemString(createTheme, type, data) {
 class ActionPreview extends Component {
   render() {
     const {
-      styling, delta, nextState, onInspectPath, inspectedPath, tab,
+      styling, delta, error, nextState, onInspectPath, inspectedPath, tab,
       onSelectTab, action, base16Theme, isLightTheme
     } = this.props;
 
@@ -73,11 +73,11 @@ class ActionPreview extends Component {
         <ActionPreviewHeader {...{
           styling, inspectedPath, onInspectPath, tab, onSelectTab
         }} />
-        {tab === 'Diff' &&
+        {tab === 'Diff' && !error &&
           <JSONDiff labelRenderer={this.labelRenderer}
                     {...{ delta, styling, base16Theme, isLightTheme }} />
         }
-        {(tab === 'State' && nextState || tab === 'Action') &&
+        {(tab === 'State' && nextState && !error || tab === 'Action') &&
           <JSONTree labelRenderer={this.labelRenderer}
                     theme={{
                       extend: base16Theme,
@@ -92,6 +92,9 @@ class ActionPreview extends Component {
                     getItemString={(type, data) => getItemString(styling, type, data)}
                     isLightTheme={isLightTheme}
                     hideRoot />
+        }
+        {error &&
+          <div {...styling('stateError')}>{error}</div>
         }
       </div>
     );

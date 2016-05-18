@@ -31,7 +31,8 @@ const colorMap = theme => ({
   DIFF_REMOVE_COLOR: rgba(theme.base08, 40),
   DIFF_ARROW_COLOR: theme.base0E,
   LINK_COLOR: rgba(theme.base0E, 90),
-  LINK_HOVER_COLOR: theme.base0E
+  LINK_HOVER_COLOR: theme.base0E,
+  ERROR_COLOR: theme.base08,
 });
 
 const getSheetFromColorMap = map => ({
@@ -196,6 +197,14 @@ const getSheetFromColorMap = map => ({
     padding: '10px',
 
     color: map.TEXT_PLACEHOLDER_COLOR
+  },
+
+  stateError: {
+    padding: '10px',
+    'margin-left': '14px',
+    'font-weight': 'bold',
+
+    color: map.ERROR_COLOR
   },
 
   inspectedPath: {

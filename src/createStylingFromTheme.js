@@ -69,7 +69,6 @@ const getSheetFromColorMap = map => ({
 
   actionListHeader: {
     display: 'flex',
-    flex: '0 0',
     'align-items': 'center',
     'border-bottom-width': '1px',
     'border-bottom-style': 'solid',

@@ -22,6 +22,16 @@ function getCurrentActionId(props, monitorState) {
   return monitorState.selectedActionId === null ? lastActionId : monitorState.selectedActionId;
 }
 
+function getFromState(actionIndex, stagedActionIds, computedStates, monitorState) {
+  const { startActionId } = monitorState;
+  if (startActionId === null) {
+    return actionIndex > 0 ? computedStates[actionIndex - 1] : null;
+  }
+  let fromStateIdx = stagedActionIds.indexOf(startActionId - 1);
+  if (fromStateIdx === -1) fromStateIdx = 0;
+  return computedStates[fromStateIdx];
+}
+
 function createMonitorState(props, monitorState) {
   const { supportImmutable, computedStates, stagedActionIds,
           actionsById: actions } = props;
@@ -30,7 +40,7 @@ function createMonitorState(props, monitorState) {
   const currentAction = actions[currentActionId] && actions[currentActionId].action;
 
   const actionIndex = stagedActionIds.indexOf(currentActionId);
-  const fromState = actionIndex > 0 ? computedStates[actionIndex - 1] : null;
+  const fromState = getFromState(actionIndex, stagedActionIds, computedStates, monitorState);
   const toState = computedStates[actionIndex];
   const error = toState && toState.error;
 
@@ -66,6 +76,7 @@ const DEFAULT_MONITOR_STATE = {
   tab: 'Diff',
   inspectedStatePath: [],
   inspectedActionPath: [],
+  startActionId: null,
   selectedActionId: null
 };
 
@@ -151,6 +162,7 @@ export default class DevtoolsInspector extends Component {
     if (
       getCurrentActionId(this.props, monitorState) !==
       getCurrentActionId(nextProps, nextMonitorState) ||
+      monitorState.startActionId !== nextMonitorState.startActionId ||
       monitorState.inspectedStatePath !== nextMonitorState.inspectedStatePath ||
       monitorState.inspectedActionPath !== nextMonitorState.inspectedActionPath
     ) {
@@ -170,7 +182,7 @@ export default class DevtoolsInspector extends Component {
     const { stagedActionIds: actionIds, actionsById: actions,
             isLightTheme, skippedActionIds } = this.props;
     const { monitorState } = this.state;
-    const { isWideLayout, selectedActionId, nextState, action,
+    const { isWideLayout, selectedActionId, startActionId, nextState, action,
             searchValue, tab, delta, error } = monitorState;
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
     const { base16Theme, styling } = this.state.themeState;
@@ -179,7 +191,9 @@ export default class DevtoolsInspector extends Component {
       <div key='inspector'
            ref='inspector'
            {...styling(['inspector', isWideLayout && 'inspectorWide'], isWideLayout)}>
-        <ActionList {...{ actions, actionIds, isWideLayout, searchValue, selectedActionId }}
+        <ActionList {...{
+          actions, actionIds, isWideLayout, searchValue, selectedActionId, startActionId
+        }}
                     styling={styling}
                     onSearch={this.handleSearch}
                     onSelect={this.handleSelectAction}
@@ -213,12 +227,34 @@ export default class DevtoolsInspector extends Component {
     this.updateMonitorState({ searchValue: val });
   };
 
-  handleSelectAction = actionId => {
+  handleSelectAction = (e, actionId) => {
     const { monitorState } = this.state;
+    let startActionId;
+    let selectedActionId;
 
-    this.updateMonitorState({
-      selectedActionId: actionId === monitorState.selectedActionId ? null : actionId
-    });
+    if (e.shiftKey && monitorState.selectedActionId !== null) {
+      if (monitorState.startActionId !== null) {
+        if (actionId >= monitorState.startActionId) {
+          startActionId = Math.min(monitorState.startActionId, monitorState.selectedActionId);
+          selectedActionId = actionId;
+        } else {
+          selectedActionId = Math.max(monitorState.startActionId, monitorState.selectedActionId);
+          startActionId = actionId;
+        }
+      } else {
+        startActionId = Math.min(actionId, monitorState.selectedActionId);
+        selectedActionId = Math.max(actionId, monitorState.selectedActionId);
+      }
+    } else {
+      startActionId = null;
+      if (actionId === monitorState.selectedActionId || monitorState.startActionId !== null) {
+        selectedActionId = null;
+      } else {
+        selectedActionId = actionId;
+      }
+    }
+
+    this.updateMonitorState({ startActionId, selectedActionId });
   };
 
   handleInspectPath = (pathType, path) => {

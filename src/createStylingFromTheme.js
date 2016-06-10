@@ -100,6 +100,7 @@ const getSheetFromColorMap = map => ({
     'justify-content': 'space-between',
     padding: '5px 10px',
     cursor: 'pointer',
+    'user-select': 'none',
 
     '&:last-child': {
       'border-bottom-width': 0

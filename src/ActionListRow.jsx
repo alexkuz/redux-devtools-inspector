@@ -49,7 +49,7 @@ export default class ActionListRow extends Component {
              'actionListItem',
              isSelected && 'actionListItemSelected',
              isSkipped && 'actionListItemSkipped'
-           ], isSelected)}>
+           ], isSelected, action)}>
         <div {...styling(['actionListItemName', isSkipped && 'actionListItemNameSkipped'])}>
           {action.type}
         </div>

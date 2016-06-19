@@ -57,6 +57,7 @@ const getSheetFromColorMap = map => ({
   actionList: {
     'flex-basis': '40%',
     'flex-shrink': 0,
+    'overflow-x': 'hidden',
     'overflow-y': 'auto',
     'border-bottom-width': '3px',
     'border-bottom-style': 'double',

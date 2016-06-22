@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, cloneElement } from 'react';
 import JSONTree from 'react-json-tree';
 import ActionPreviewHeader from './ActionPreviewHeader';
 import JSONDiff from './JSONDiff';
@@ -65,13 +65,14 @@ class ActionPreview extends Component {
   render() {
     const {
       styling, delta, error, nextState, onInspectPath, inspectedPath, tab,
-      onSelectTab, action, base16Theme, isLightTheme
+      onSelectTab, action, actions, selectedActionId, startActionId,
+      computedStates, base16Theme, isLightTheme, customTabs
     } = this.props;
 
     return (
       <div key='actionPreview' {...styling('actionPreview')}>
         <ActionPreviewHeader {...{
-          styling, inspectedPath, onInspectPath, tab, onSelectTab
+          styling, inspectedPath, onInspectPath, tab, onSelectTab, customTabs
         }} />
         {tab === 'Diff' && !error &&
           <JSONDiff labelRenderer={this.labelRenderer}
@@ -92,6 +93,11 @@ class ActionPreview extends Component {
                     getItemString={(type, data) => getItemString(styling, type, data)}
                     isLightTheme={isLightTheme}
                     hideRoot />
+        }
+        {customTabs && customTabs[tab] &&
+          cloneElement(customTabs[tab],
+            {...{styling, computedStates, actions, selectedActionId, startActionId}}
+          )
         }
         {error &&
           <div {...styling('stateError')}>{error}</div>

@@ -1,12 +1,14 @@
 import React from 'react';
 
 const ActionPreviewHeader = ({
-  styling, inspectedPath, onInspectPath, tab, onSelectTab
+  styling, inspectedPath, onInspectPath, tab, onSelectTab, customTabs
 }) => {
+  let tabs = ['Action', 'Diff', 'State'];
+  if (customTabs) tabs = tabs.concat(Object.keys(customTabs));
   return (
     <div key='previewHeader' {...styling('previewHeader')}>
       <div {...styling('tabSelector')}>
-        {['Action', 'Diff', 'State'].map(t =>
+        {tabs.map(t =>
           <div onClick={() => onSelectTab(t)}
                key={t}
                {...styling([

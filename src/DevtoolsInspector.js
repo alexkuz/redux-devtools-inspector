@@ -74,6 +74,7 @@ function createThemeState(props) {
 const DEFAULT_MONITOR_STATE = {
   isWideLayout: false,
   tab: 'Diff',
+  tabIdx: 1,
   inspectedStatePath: [],
   inspectedActionPath: [],
   startActionId: null,
@@ -183,7 +184,7 @@ export default class DevtoolsInspector extends Component {
       customTabs, isLightTheme, skippedActionIds } = this.props;
     const { monitorState } = this.state;
     const { isWideLayout, selectedActionId, startActionId, nextState, action,
-            searchValue, tab, delta, error } = monitorState;
+            searchValue, tab, tabIdx, delta, error } = monitorState;
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
     const { base16Theme, styling } = this.state.themeState;
 
@@ -203,7 +204,7 @@ export default class DevtoolsInspector extends Component {
                     skippedActionIds={skippedActionIds}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
-          base16Theme, isLightTheme, customTabs, tab, delta, error, nextState,
+          base16Theme, isLightTheme, customTabs, tab, tabIdx, delta, error, nextState,
           computedStates, action, actions, selectedActionId, startActionId
         }}
                        styling={styling}
@@ -264,7 +265,7 @@ export default class DevtoolsInspector extends Component {
     this.updateMonitorState({ [pathType]: path });
   };
 
-  handleSelectTab = tab => {
-    this.updateMonitorState({ tab });
+  handleSelectTab = (tab, tabIdx) => {
+    this.updateMonitorState({ tab, tabIdx });
   };
 }

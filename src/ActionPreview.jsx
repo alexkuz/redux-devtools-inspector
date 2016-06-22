@@ -64,7 +64,7 @@ function getItemString(createTheme, type, data) {
 class ActionPreview extends Component {
   render() {
     const {
-      styling, delta, error, nextState, onInspectPath, inspectedPath, tab,
+      styling, delta, error, nextState, onInspectPath, inspectedPath, tab, tabIdx,
       onSelectTab, action, actions, selectedActionId, startActionId,
       computedStates, base16Theme, isLightTheme, customTabs
     } = this.props;
@@ -72,7 +72,7 @@ class ActionPreview extends Component {
     return (
       <div key='actionPreview' {...styling('actionPreview')}>
         <ActionPreviewHeader {...{
-          styling, inspectedPath, onInspectPath, tab, onSelectTab, customTabs
+          styling, inspectedPath, onInspectPath, tab, tabIdx, onSelectTab, customTabs
         }} />
         {tab === 'Diff' && !error &&
           <JSONDiff labelRenderer={this.labelRenderer}
@@ -94,8 +94,8 @@ class ActionPreview extends Component {
                     isLightTheme={isLightTheme}
                     hideRoot />
         }
-        {customTabs && customTabs[tab] &&
-          cloneElement(customTabs[tab],
+        {customTabs && tabIdx > 2 &&
+          cloneElement(customTabs[tabIdx - 3].component,
             {...{styling, computedStates, actions, selectedActionId, startActionId}}
           )
         }

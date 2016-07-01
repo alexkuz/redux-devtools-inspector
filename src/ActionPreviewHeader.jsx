@@ -3,12 +3,23 @@ import React, { Component } from 'react';
 class ActionPreviewHeader extends Component {
   constructor(props) {
     super(props);
-    this.tabs = ['Action', 'Diff', 'State'];
-    if (props.customTabs) {
-      props.customTabs.forEach(tab => {
-        this.tabs.push(tab.name);
+    this.state = { tabs: this.getTabs(props.customTabs) };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.customTabs !== this.props.customTabs) {
+      this.setState({ tabs: this.getTabs(props.customTabs) });
+    }
+  }
+
+  getTabs(customTabs) {
+    const tabs = ['Action', 'Diff', 'State'];
+    if (customTabs) {
+      customTabs.forEach(tab => {
+        tabs.push(tab.name);
       });
     }
+    return tabs;
   }
 
   render() {
@@ -16,7 +27,7 @@ class ActionPreviewHeader extends Component {
     return (
       <div key='previewHeader' {...styling('previewHeader')}>
         <div {...styling('tabSelector')}>
-          {this.tabs.map((t, i) =>
+          {this.state.tabs.map((t, i) =>
             <div onClick={() => onSelectTab(t, i)}
                  key={i}
               {...styling([

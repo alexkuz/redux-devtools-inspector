@@ -13,6 +13,19 @@ import DevtoolsInspector from '../../../src/DevtoolsInspector';
 import DockMonitor from 'redux-devtools-dock-monitor';
 import getOptions from './getOptions';
 
+const CustomComponent = ({ someProp }) =>
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    minHeight: '20rem',
+    flexDirection: 'column'
+  }}>
+    <div>Custom Tab Content</div>
+    <div>someProp: {someProp}</div>
+  </div>;
+
 const getDevTools = options =>
   createDevTools(
     <DockMonitor defaultIsVisible
@@ -21,7 +34,11 @@ const getDevTools = options =>
                  changeMonitorKey='ctrl-m'>
       <DevtoolsInspector theme={options.theme}
                          isLightTheme={!options.dark}
-                         supportImmutable={options.supportImmutable} />
+                         supportImmutable={options.supportImmutable}
+                         customTabs={[{
+                           name: 'Custom Tab',
+                           component: <CustomComponent someProp='Some Prop Value' />
+                         }]} />
     </DockMonitor>
   );
 

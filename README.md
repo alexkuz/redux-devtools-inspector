@@ -47,6 +47,7 @@ Name               | Type             | Description
 ------------------ | ---------------- | -------------
 `theme`            | Object or string | Contains either [base16](https://github.com/chriskempson/base16) theme name or object, that can be `base16` colors map or object containing classnames or styles.
 `supportImmutable` | Boolean          | Better `Immutable` rendering in `Diff` (can affect performance if state has huge objects/arrays). `false` by default.
+`customTabs`       | Array            | Add custom tabs with specified React components to inspect selected actions, for example [`redux-devtools-test-generator`](https://github.com/zalmoxisus/redux-devtools-test-generator#containersdevtoolsjs).
 
 ### License
 

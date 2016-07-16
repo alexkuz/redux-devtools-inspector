@@ -74,6 +74,7 @@ function createThemeState(props) {
 const DEFAULT_MONITOR_STATE = {
   isWideLayout: false,
   tab: 'Diff',
+  tabIdx: 1,
   inspectedStatePath: [],
   inspectedActionPath: [],
   startActionId: null,
@@ -179,11 +180,11 @@ export default class DevtoolsInspector extends Component {
   }
 
   render() {
-    const { stagedActionIds: actionIds, actionsById: actions,
-            isLightTheme, skippedActionIds } = this.props;
+    const { stagedActionIds: actionIds, actionsById: actions, computedStates,
+      customTabs, isLightTheme, skippedActionIds } = this.props;
     const { monitorState } = this.state;
     const { isWideLayout, selectedActionId, startActionId, nextState, action,
-            searchValue, tab, delta, error } = monitorState;
+            searchValue, tab, tabIdx, delta, error } = monitorState;
     const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
     const { base16Theme, styling } = this.state.themeState;
 
@@ -202,7 +203,10 @@ export default class DevtoolsInspector extends Component {
                     onSweep={this.handleSweep}
                     skippedActionIds={skippedActionIds}
                     lastActionId={getLastActionId(this.props)} />
-        <ActionPreview {...{ base16Theme, tab, delta, error, nextState, action, isLightTheme }}
+        <ActionPreview {...{
+          base16Theme, isLightTheme, customTabs, tab, tabIdx, delta, error, nextState,
+          computedStates, action, actions, selectedActionId, startActionId
+        }}
                        styling={styling}
                        onInspectPath={this.handleInspectPath.bind(this, inspectedPathType)}
                        inspectedPath={monitorState[inspectedPathType]}
@@ -261,7 +265,7 @@ export default class DevtoolsInspector extends Component {
     this.updateMonitorState({ [pathType]: path });
   };
 
-  handleSelectTab = tab => {
-    this.updateMonitorState({ tab });
+  handleSelectTab = (tab, tabIdx) => {
+    this.updateMonitorState({ tab, tabIdx });
   };
 }

@@ -7,6 +7,7 @@ const DEFAULT_STATE = {
   inspectedActionPath: [],
   inspectedStatePath: [],
   tab: 'Diff',
+  tabIdx: 1,
   isLightTheme: true,
   styling: () => ({})
 };

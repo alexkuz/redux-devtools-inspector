@@ -47,7 +47,17 @@ Name               | Type             | Description
 ------------------ | ---------------- | -------------
 `theme`            | Object or string | Contains either [base16](https://github.com/chriskempson/base16) theme name or object, that can be `base16` colors map or object containing classnames or styles.
 `supportImmutable` | Boolean          | Better `Immutable` rendering in `Diff` (can affect performance if state has huge objects/arrays). `false` by default.
-`customTabs`       | Array            | Add custom tabs with specified React components to inspect selected actions, for example [`redux-devtools-test-generator`](https://github.com/zalmoxisus/redux-devtools-test-generator#containersdevtoolsjs).
+`tabs`             | Array or function | Overrides list of tabs (see below)
+
+If `tabs` is a function, it receives a list of default tabs and should return updated list, for example:
+```
+defaultTabs => [...defaultTabs, { name: 'My Tab', component: MyTab }]
+```
+If `tabs` is an array, only provided tabs are rendered.
+
+`component` is provided with `action` and other props, see [`ActionPreview.jsx`](src/ActionPreview.jsx#L42) for reference.
+
+Usage example: [`redux-devtools-test-generator`](https://github.com/zalmoxisus/redux-devtools-test-generator#containersdevtoolsjs).
 
 ### License
 

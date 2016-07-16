@@ -1,6 +1,6 @@
 {
   "name": "redux-devtools-inspector",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Redux DevTools Diff Monitor",
   "scripts": {
     "build:lib": "NODE_ENV=production babel src --out-dir lib",
@@ -82,5 +82,7 @@
     "react-pure-render": "^1.0.2",
     "redux-devtools-themes": "^1.0.0"
   },
-  "pre-commit": ["lint"]
+  "pre-commit": [
+    "lint"
+  ]
 }

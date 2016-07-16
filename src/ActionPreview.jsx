@@ -1,103 +1,56 @@
-import React, { Component, cloneElement } from 'react';
-import JSONTree from 'react-json-tree';
+import React, { Component } from 'react';
 import ActionPreviewHeader from './ActionPreviewHeader';
-import JSONDiff from './JSONDiff';
-import { Iterable } from 'immutable';
-import isIterable from './isIterable';
+import DiffTab from './tabs/DiffTab';
+import StateTab from './tabs/StateTab';
+import ActionTab from './tabs/ActionTab';
 
-const IS_IMMUTABLE_KEY = '@@__IS_IMMUTABLE__@@';
-
-function isImmutable(value) {
-  return Iterable.isKeyed(value) || Iterable.isIndexed(value) || Iterable.isIterable(value);
-}
-
-function getItemString(createTheme, type, data) {
-  let text;
-
-  function getShortTypeString(val) {
-    if (isIterable(val) && !isImmutable(val)) {
-      return '(…)';
-    } else if (Array.isArray(val)) {
-      return val.length > 0 ? '[…]' : '[]';
-    } else if (val === null) {
-      return 'null';
-    } else if (val === undefined) {
-      return 'undef';
-    } else if (typeof val === 'object') {
-      return Object.keys(val).length > 0 ? '{…}' : '{}';
-    } else if (typeof val === 'function') {
-      return 'fn';
-    } else if (typeof val === 'string') {
-      return `"${val.substr(0, 10) + (val.length > 10 ? '…' : '')}"`
-    } else if (typeof val === 'symbol') {
-      return 'symbol'
-    } else {
-      return val;
-    }
-  }
-
-  if (type === 'Object') {
-    const keys = Object.keys(data);
-    const str = keys
-      .slice(0, 2)
-      .map(key => `${key}: ${getShortTypeString(data[key])}`)
-      .concat(keys.length > 2 ? ['…'] : [])
-      .join(', ');
-
-    text = `{ ${str} }`;
-  } else if (type === 'Array') {
-    const str = data
-      .slice(0, 2)
-      .map(getShortTypeString)
-      .concat(data.length > 2 ? ['…'] : []).join(', ');
-
-    text = `[${str}]`;
-  } else {
-    text = type;
-  }
-
-  const immutableStr = data[IS_IMMUTABLE_KEY] ? 'Immutable' : '';
-
-  return <span {...createTheme('treeItemHint')}> {immutableStr} {text}</span>;
-}
+const DEFAULT_TABS = [{
+  name: 'Action',
+  component: ActionTab
+}, {
+  name: 'Diff',
+  component: DiffTab
+}, {
+  name: 'State',
+  component: StateTab
+}]
 
 class ActionPreview extends Component {
   render() {
     const {
-      styling, delta, error, nextState, onInspectPath, inspectedPath, tab, tabIdx,
+      styling, delta, error, nextState, onInspectPath, inspectedPath, tabName,
       onSelectTab, action, actions, selectedActionId, startActionId,
-      computedStates, base16Theme, isLightTheme, customTabs
+      computedStates, base16Theme, isLightTheme, tabs
     } = this.props;
+
+    const renderedTabs = (typeof tabs === 'function') ?
+      tabs(DEFAULT_TABS) :
+      (tabs ? tabs : DEFAULT_TABS);
+
+    const { component: TabComponent } = renderedTabs.find(tab => tab.name === tabName);
 
     return (
       <div key='actionPreview' {...styling('actionPreview')}>
-        <ActionPreviewHeader {...{
-          styling, inspectedPath, onInspectPath, tab, tabIdx, onSelectTab, customTabs
-        }} />
-        {tab === 'Diff' && !error &&
-          <JSONDiff labelRenderer={this.labelRenderer}
-                    {...{ delta, styling, base16Theme, isLightTheme }} />
-        }
-        {(tab === 'State' && nextState && !error || tab === 'Action') &&
-          <JSONTree labelRenderer={this.labelRenderer}
-                    theme={{
-                      extend: base16Theme,
-                      nestedNodeItemString: ({ style }, expanded) => ({
-                        style: {
-                          ...style,
-                          display: expanded ? 'none' : 'inline'
-                        }
-                      })
-                    }}
-                    data={tab === 'Action' ? action : nextState}
-                    getItemString={(type, data) => getItemString(styling, type, data)}
-                    isLightTheme={isLightTheme}
-                    hideRoot />
-        }
-        {customTabs && tabIdx > 2 &&
-          cloneElement(customTabs[tabIdx - 3].component,
-            {...{styling, computedStates, actions, selectedActionId, startActionId}}
-          )
+        <ActionPreviewHeader
+          tabs={renderedTabs}
+          {...{ styling, inspectedPath, onInspectPath, tabName, onSelectTab }}
+        />
+        {!error &&
+          <TabComponent
+            labelRenderer={this.labelRenderer}
+            {...{
+              styling,
+              computedStates,
+              actions,
+              selectedActionId,
+              startActionId,
+              base16Theme,
+              isLightTheme,
+              delta,
+              action,
+              nextState
+            }}
+          />
         }
         {error &&
           <div {...styling('stateError')}>{error}</div>

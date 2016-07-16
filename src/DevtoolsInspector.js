@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { createStylingFromTheme } from './createStylingFromTheme';
+import { createStylingFromTheme } from './utils/createStylingFromTheme';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import ActionList from './ActionList';
 import ActionPreview from './ActionPreview';
-import getInspectedState from './getInspectedState';
+import getInspectedState from './utils/getInspectedState';
 import DiffPatcher from './DiffPatcher';
 import { getBase16Theme } from 'react-base16-styling';
 import * as base16Themes from 'redux-devtools-themes';
@@ -73,8 +73,7 @@ function createThemeState(props) {
 
 const DEFAULT_MONITOR_STATE = {
   isWideLayout: false,
-  tab: 'Diff',
-  tabIdx: 1,
+  tabName: 'Diff',
   inspectedStatePath: [],
   inspectedActionPath: [],
   startActionId: null,
@@ -181,11 +180,11 @@ export default class DevtoolsInspector extends Component {
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
-      customTabs, isLightTheme, skippedActionIds } = this.props;
+      tabs, isLightTheme, skippedActionIds } = this.props;
     const { monitorState } = this.state;
     const { isWideLayout, selectedActionId, startActionId, nextState, action,
-            searchValue, tab, tabIdx, delta, error } = monitorState;
-    const inspectedPathType = tab === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
+            searchValue, tabName, delta, error } = monitorState;
+    const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
     const { base16Theme, styling } = this.state.themeState;
 
     return (
@@ -204,7 +203,7 @@ export default class DevtoolsInspector extends Component {
                     skippedActionIds={skippedActionIds}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
-          base16Theme, isLightTheme, customTabs, tab, tabIdx, delta, error, nextState,
+          base16Theme, isLightTheme, tabs, tabName, delta, error, nextState,
           computedStates, action, actions, selectedActionId, startActionId
         }}
                        styling={styling}
@@ -265,7 +264,7 @@ export default class DevtoolsInspector extends Component {
     this.updateMonitorState({ [pathType]: path });
   };
 
-  handleSelectTab = (tab, tabIdx) => {
-    this.updateMonitorState({ tab, tabIdx });
+  handleSelectTab = tabName => {
+    this.updateMonitorState({ tabName });
   };
 }

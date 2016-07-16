@@ -1,66 +1,40 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class ActionPreviewHeader extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { tabs: this.getTabs(props.customTabs) };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.customTabs !== this.props.customTabs) {
-      this.setState({ tabs: this.getTabs(props.customTabs) });
-    }
-  }
-
-  getTabs(customTabs) {
-    const tabs = ['Action', 'Diff', 'State'];
-    if (customTabs) {
-      customTabs.forEach(tab => {
-        tabs.push(tab.name);
-      });
-    }
-    return tabs;
-  }
-
-  render() {
-    const {styling, inspectedPath, onInspectPath, tab, tabIdx, onSelectTab} = this.props;
-    return (
-      <div key='previewHeader' {...styling('previewHeader')}>
-        <div {...styling('tabSelector')}>
-          {this.state.tabs.map((t, i) =>
-            <div onClick={() => onSelectTab(t, i)}
-                 key={i}
-              {...styling([
-                'selectorButton',
-                i === tabIdx && 'selectorButtonSelected'
-              ], i === tabIdx)}>
-              {t}
-            </div>
-          )}
+const ActionPreviewHeader =
+  ({ styling, inspectedPath, onInspectPath, tabName, onSelectTab, tabs }) =>
+  <div key='previewHeader' {...styling('previewHeader')}>
+    <div {...styling('tabSelector')}>
+      {tabs.map(tab =>
+        <div onClick={() => onSelectTab(tab.name)}
+             key={tab.name}
+          {...styling([
+            'selectorButton',
+            tab.name === tabName && 'selectorButtonSelected'
+          ], tab.name === tabName)}>
+          {tab.name}
         </div>
-        <div {...styling('inspectedPath')}>
-          {inspectedPath.length ?
-            <span {...styling('inspectedPathKey')}>
-              <a onClick={() => onInspectPath([])}
-                {...styling('inspectedPathKeyLink')}>
-                {tab}
-              </a>
-            </span> : tab
-          }
-          {inspectedPath.map((key, idx) =>
-            idx === inspectedPath.length - 1 ? key :
-              <span key={key}
-                {...styling('inspectedPathKey')}>
-              <a onClick={() => onInspectPath(inspectedPath.slice(0, idx + 1))}
-                {...styling('inspectedPathKeyLink')}>
-                {key}
-              </a>
-            </span>
-          )}
-        </div>
-      </div>
-    );
-  }
-}
+      )}
+    </div>
+    <div {...styling('inspectedPath')}>
+      {inspectedPath.length ?
+        <span {...styling('inspectedPathKey')}>
+          <a onClick={() => onInspectPath([])}
+            {...styling('inspectedPathKeyLink')}>
+            {tabName}
+          </a>
+        </span> : tabName
+      }
+      {inspectedPath.map((key, idx) =>
+        idx === inspectedPath.length - 1 ? key :
+          <span key={key}
+            {...styling('inspectedPathKey')}>
+          <a onClick={() => onInspectPath(inspectedPath.slice(0, idx + 1))}
+            {...styling('inspectedPathKeyLink')}>
+            {key}
+          </a>
+        </span>
+      )}
+    </div>
+  </div>;
 
 export default ActionPreviewHeader;

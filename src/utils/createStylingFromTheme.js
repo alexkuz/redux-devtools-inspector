@@ -3,7 +3,7 @@ import jssVendorPrefixer from 'jss-vendor-prefixer';
 import jssNested from 'jss-nested';
 import { createStyling } from 'react-base16-styling';
 import rgba from 'hex-rgba';
-import inspector from './themes/inspector';
+import inspector from '../themes/inspector';
 
 jss.use(jssVendorPrefixer());
 jss.use(jssNested());

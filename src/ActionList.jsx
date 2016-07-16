@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react/lib/ReactDOM';
 import ActionListRow from './ActionListRow';
 import ActionListHeader from './ActionListHeader';
+import shouldPureComponentUpdate from 'react-pure-render/function';
 
 function getTimestamps(actions, actionIds, actionId) {
   const idx = actionIds.indexOf(actionId);
@@ -14,6 +15,8 @@ function getTimestamps(actions, actionIds, actionId) {
 }
 
 export default class ActionList extends Component {
+  shouldComponentUpdate = shouldPureComponentUpdate;
+
   componentDidUpdate(prevProps) {
     if (this.props.lastActionId !== prevProps.lastActionId) {
       this.scrollToBottom();
@@ -28,7 +31,8 @@ export default class ActionList extends Component {
 
   render() {
     const { styling, actions, actionIds, isWideLayout, onToggleAction, skippedActionIds,
-            selectedActionId, startActionId, onSelect, onSearch, searchValue, onCommit, onSweep } = this.props;
+            selectedActionId, startActionId, onSelect, onSearch, searchValue,
+            onCommit, onSweep } = this.props;
     const lowerSearchValue = searchValue && searchValue.toLowerCase();
     const filteredActionIds = searchValue ? actionIds.filter(
       id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1

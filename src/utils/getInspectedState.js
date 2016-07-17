@@ -36,7 +36,9 @@ export default function getInspectedState(state, path, convertImmutable) {
     } : state;
 
   if (convertImmutable) {
-    state = fromJS(state).toJS();
+    try {
+      state = fromJS(state).toJS();
+    } catch(e) {}
   }
 
   return state;

@@ -8,7 +8,11 @@ function isImmutable(value) {
   return Iterable.isKeyed(value) || Iterable.isIndexed(value) || Iterable.isIterable(value);
 }
 
-function getShortTypeString(val) {
+function getShortTypeString(val, diff) {
+  if (diff && Array.isArray(val)) {
+    val = val[val.length === 2 ? 1 : 0];
+  }
+
   if (isIterable(val) && !isImmutable(val)) {
     return '(…)';
   } else if (Array.isArray(val)) {
@@ -30,12 +34,12 @@ function getShortTypeString(val) {
   }
 }
 
-function getText(type, data) {
+function getText(type, data, diff) {
   if (type === 'Object') {
     const keys = Object.keys(data);
     const str = keys
       .slice(0, 2)
-      .map(key => `${key}: ${getShortTypeString(data[key])}`)
+      .map(key => `${key}: ${getShortTypeString(data[key], diff)}`)
       .concat(keys.length > 2 ? ['…'] : [])
       .join(', ');
 
@@ -43,7 +47,7 @@ function getText(type, data) {
   } else if (type === 'Array') {
     const str = data
       .slice(0, 2)
-      .map(getShortTypeString)
+      .map(val => getShortTypeString(val, diff))
       .concat(data.length > 2 ? ['…'] : []).join(', ');
 
     return `[${str}]`;
@@ -52,10 +56,10 @@ function getText(type, data) {
   }
 }
 
-const getItemString = (createTheme, type, data) =>
-  <span {...createTheme('treeItemHint')}>
+const getItemString = (styling, type, data, diff) =>
+  <span {...styling('treeItemHint')}>
     {data[IS_IMMUTABLE_KEY] ? 'Immutable' : ''}
-    {getText(type, data)}
+    {getText(type, data, diff)}
   </span>;
 
 export default getItemString;

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import JSONTree from 'react-json-tree';
 import stringify from 'javascript-stringify';
+import getItemString from './getItemString';
+import getJsonTreeTheme from './getJsonTreeTheme';
 
 function stringifyAndShrink(val) {
   const str = stringify(val);
@@ -10,7 +12,6 @@ function stringifyAndShrink(val) {
   return str.length > 22 ? `${str.substr(0, 15)}…${str.substr(-5)}` : str;
 }
 
-const returnEmptyString = () => '';
 const expandFirstLevel = (keyName, data, level) => level <= 1;
 
 function prepareDelta(value) {
@@ -67,9 +68,9 @@ export default class JSONDiff extends Component {
 
     return (
       <JSONTree {...props}
-                theme={base16Theme}
+                theme={getJsonTreeTheme(base16Theme)}
                 data={this.state.data}
-                getItemString={returnEmptyString}
+                getItemString={(type, data) => getItemString(styling, type, data, true)}
                 valueRenderer={this.valueRenderer}
                 postprocessValue={prepareDelta}
                 isCustomNode={Array.isArray}

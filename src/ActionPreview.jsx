@@ -20,7 +20,7 @@ class ActionPreview extends Component {
     const {
       styling, delta, error, nextState, onInspectPath, inspectedPath, tabName,
       onSelectTab, action, actions, selectedActionId, startActionId,
-      computedStates, base16Theme, isLightTheme, tabs
+      computedStates, base16Theme, invertTheme, tabs
     } = this.props;
 
     const renderedTabs = (typeof tabs === 'function') ?
@@ -36,21 +36,23 @@ class ActionPreview extends Component {
           {...{ styling, inspectedPath, onInspectPath, tabName, onSelectTab }}
         />
         {!error &&
-          <TabComponent
-            labelRenderer={this.labelRenderer}
-            {...{
-              styling,
-              computedStates,
-              actions,
-              selectedActionId,
-              startActionId,
-              base16Theme,
-              isLightTheme,
-              delta,
-              action,
-              nextState
-            }}
-          />
+          <div key='actionPreviewContent' {...styling('actionPreviewContent')}>
+            <TabComponent
+              labelRenderer={this.labelRenderer}
+              {...{
+                styling,
+                computedStates,
+                actions,
+                selectedActionId,
+                startActionId,
+                base16Theme,
+                invertTheme,
+                delta,
+                action,
+                nextState
+              }}
+            />
+          </div>
         }
         {error &&
           <div {...styling('stateError')}>{error}</div>
@@ -59,7 +61,7 @@ class ActionPreview extends Component {
     );
   }
 
-  labelRenderer = (key, ...rest) => {
+  labelRenderer = ([key, ...rest], nodeType, expanded) => {
     const { styling, onInspectPath, inspectedPath } = this.props;
 
     return (
@@ -74,6 +76,7 @@ class ActionPreview extends Component {
               ])}>
           {'(pin)'}
         </span>
+        {!expanded && ': '}
       </span>
     );
   }

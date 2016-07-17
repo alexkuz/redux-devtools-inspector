@@ -31,7 +31,7 @@ const getDevTools = options =>
                  changePositionKey='ctrl-q'
                  changeMonitorKey='ctrl-m'>
       <DevtoolsInspector theme={options.theme}
-                         isLightTheme={!options.dark}
+                         invertTheme={!options.dark}
                          supportImmutable={options.supportImmutable}
                          tabs={defaultTabs => [{
                            name: 'Custom Tab',

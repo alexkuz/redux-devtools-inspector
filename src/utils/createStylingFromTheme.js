@@ -4,6 +4,8 @@ import jssNested from 'jss-nested';
 import { createStyling } from 'react-base16-styling';
 import rgba from 'hex-rgba';
 import inspector from '../themes/inspector';
+import * as reduxThemes from 'redux-devtools-themes';
+import * as inspectorThemes from '../themes';
 
 jss.use(jssVendorPrefixer());
 jss.use(jssNested());
@@ -373,7 +375,9 @@ const getDefaultThemeStyling = theme => {
   return themeSheet.classes;
 };
 
-export const createStylingFromTheme = createStyling({
-  getStylingFromBase16: getDefaultThemeStyling,
-  defaultBase16: inspector
+export const base16Themes = { ...reduxThemes, ...inspectorThemes };
+
+export const createStylingFromTheme = createStyling(getDefaultThemeStyling, {
+  defaultBase16: inspector,
+  base16Themes
 });

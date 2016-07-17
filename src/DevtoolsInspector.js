@@ -1,13 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { createStylingFromTheme } from './utils/createStylingFromTheme';
+import { createStylingFromTheme, base16Themes } from './utils/createStylingFromTheme';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import ActionList from './ActionList';
 import ActionPreview from './ActionPreview';
 import getInspectedState from './utils/getInspectedState';
 import DiffPatcher from './DiffPatcher';
 import { getBase16Theme } from 'react-base16-styling';
-import * as base16Themes from 'redux-devtools-themes';
-import * as inspectorThemes from './themes';
 import { reducer, updateMonitorState } from './redux';
 import { ActionCreators } from 'redux-devtools';
 
@@ -64,9 +62,8 @@ function createMonitorState(props, monitorState) {
 }
 
 function createThemeState(props) {
-  const themes = { ...base16Themes, ...inspectorThemes };
-  const base16Theme = getBase16Theme(props.theme, themes);
-  const styling = createStylingFromTheme(props.theme, themes, props.isLightTheme);
+  const base16Theme = getBase16Theme(props.theme, base16Themes);
+  const styling = createStylingFromTheme(props.theme, props.invertTheme);
 
   return { base16Theme, styling };
 }
@@ -114,7 +111,7 @@ export default class DevtoolsInspector extends Component {
     select: (state) => state,
     supportImmutable: false,
     theme: 'inspector',
-    isLightTheme: true,
+    invertTheme: true,
     shouldPersistState: true
   };
 
@@ -173,14 +170,14 @@ export default class DevtoolsInspector extends Component {
     }
 
     if (this.props.theme !== nextProps.theme ||
-        this.props.isLightTheme !== nextProps.isLightTheme) {
+        this.props.invertTheme !== nextProps.invertTheme) {
       this.setState({ themeState: createThemeState(nextProps) });
     }
   }
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
-      tabs, isLightTheme, skippedActionIds } = this.props;
+      tabs, invertTheme, skippedActionIds } = this.props;
     const { monitorState } = this.state;
     const { isWideLayout, selectedActionId, startActionId, nextState, action,
             searchValue, tabName, delta, error } = monitorState;
@@ -203,7 +200,7 @@ export default class DevtoolsInspector extends Component {
                     skippedActionIds={skippedActionIds}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
-          base16Theme, isLightTheme, tabs, tabName, delta, error, nextState,
+          base16Theme, invertTheme, tabs, tabName, delta, error, nextState,
           computedStates, action, actions, selectedActionId, startActionId
         }}
                        styling={styling}

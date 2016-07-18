@@ -46,6 +46,7 @@ You may pin a certain part of the state to only track its changes.
 Name               | Type             | Description
 ------------------ | ---------------- | -------------
 `theme`            | Object or string | Contains either [base16](https://github.com/chriskempson/base16) theme name or object, that can be `base16` colors map or object containing classnames or styles.
+`invertTheme`      | Boolean          | Inverts theme color luminance, making light theme out of dark theme and vice versa.
 `supportImmutable` | Boolean          | Better `Immutable` rendering in `Diff` (can affect performance if state has huge objects/arrays). `false` by default.
 `tabs`             | Array or function | Overrides list of tabs (see below)
 

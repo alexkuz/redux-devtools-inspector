@@ -56,7 +56,8 @@ export default class ActionListRow extends Component {
         <div {...styling('actionListItemButtons')}>
           <RightSlider styling={styling} shown={!showButtons} rotate>
             <div {...styling('actionListItemTime')}>
-              {dateformat(timeDelta, timestamps.previous ? '+MM:ss.L' : 'h:MM:ss.L')}
+              {timeDelta === 0 ? '+00:00:00' :
+                dateformat(timeDelta, timestamps.previous ? '+MM:ss.L' : 'h:MM:ss.L')}
             </div>
           </RightSlider>
           <RightSlider styling={styling} shown={showButtons} rotate>

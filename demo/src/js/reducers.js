@@ -91,5 +91,7 @@ export default {
   addFunction: (state=null, action) => action.type === 'ADD_FUNCTION' ?
     { f: FUNC } : state,
   addSymbol: (state=null, action) => action.type === 'ADD_SYMBOL' ?
-    { s: Symbol('symbol') } : state
+    { s: Symbol('symbol') } : state,
+  addError: (state=null, action) => action.type === 'ADD_ERROR' ?
+    Error() : state
 };

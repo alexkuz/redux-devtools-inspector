@@ -145,6 +145,9 @@ class DemoApp extends React.Component {
             <Button onClick={this.props.addSymbol} style={styles.button}>
               Add Symbol
             </Button>
+            <Button onClick={this.props.addError} style={styles.button}>
+              Add Error
+            </Button>
           </div>
         </div>
         <div style={styles.links}>
@@ -204,6 +207,7 @@ export default connect(
     }),
     addFunction: () => ({ type: 'ADD_FUNCTION' }),
     addSymbol: () => ({ type: 'ADD_SYMBOL' }),
+    addError: () => ({ type: 'ADD_ERROR' }),
     pushRoute
   }
 )(DemoApp);

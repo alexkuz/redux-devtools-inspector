@@ -5,10 +5,8 @@ import getItemString from './getItemString';
 import getJsonTreeTheme from './getJsonTreeTheme';
 
 function stringifyAndShrink(val) {
+  if (val instanceof Error) { return `${val.toString()}()`; }
   const str = stringify(val);
-  if (val === null) { return 'null'; }
-  else if (typeof val === 'undefined') { return 'undefined'; }
-
   return str.length > 22 ? `${str.substr(0, 15)}…${str.substr(-5)}` : str;
 }
 

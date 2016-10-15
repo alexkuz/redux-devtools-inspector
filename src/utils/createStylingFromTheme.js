@@ -180,8 +180,10 @@ const getSheetFromColorMap = map => ({
   },
 
   actionPreview: {
+    display: 'flex',
+    'flex-direction': 'column',
     'flex-grow': 1,
-    'overflow-y': 'auto',
+    'overflow-y': 'hidden',
 
     '& pre': {
       border: 'inherit',
@@ -191,6 +193,11 @@ const getSheetFromColorMap = map => ({
     },
 
     'background-color': map.BACKGROUND_COLOR,
+  },
+
+  actionPreviewContent: {
+    flex: 1,
+    'overflow-y': 'auto'
   },
 
   stateDiff: {
@@ -249,11 +256,11 @@ const getSheetFromColorMap = map => ({
   },
 
   previewHeader: {
+    flex: '0 0 30px',
     padding: '5px 10px',
     'align-items': 'center',
     'border-bottom-width': '1px',
     'border-bottom-style': 'solid',
-    'min-height': '30px',
 
     'background-color': map.HEADER_BACKGROUND_COLOR,
     'border-bottom-color': map.HEADER_BORDER_COLOR
@@ -263,8 +270,7 @@ const getSheetFromColorMap = map => ({
     position: 'relative',
     'z-index': 1,
     display: 'inline-flex',
-    float: 'right',
-    'margin-bottom': '5px'
+    float: 'right'
   },
 
   selectorButton: {

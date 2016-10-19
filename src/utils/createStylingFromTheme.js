@@ -180,6 +180,7 @@ const getSheetFromColorMap = map => ({
   },
 
   actionPreview: {
+    flex: 1,
     display: 'flex',
     'flex-direction': 'column',
     'flex-grow': 1,

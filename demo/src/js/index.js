@@ -19,6 +19,7 @@ const CustomComponent = () =>
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    height: '100%',
     minHeight: '20rem'
   }}>
     <div>Custom Tab Content</div>

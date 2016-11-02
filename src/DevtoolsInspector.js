@@ -16,8 +16,8 @@ function getLastActionId(props) {
 }
 
 function getCurrentActionId(props, monitorState) {
-  const lastActionId = getLastActionId(props);
-  return monitorState.selectedActionId === null ? lastActionId : monitorState.selectedActionId;
+  return monitorState.selectedActionId === null ?
+    getLastActionId(props) : monitorState.selectedActionId;
 }
 
 function getFromState(actionIndex, stagedActionIds, computedStates, monitorState) {
@@ -68,21 +68,11 @@ function createThemeState(props) {
   return { base16Theme, styling };
 }
 
-const DEFAULT_MONITOR_STATE = {
-  isWideLayout: false,
-  tabName: 'Diff',
-  inspectedStatePath: [],
-  inspectedActionPath: [],
-  startActionId: null,
-  selectedActionId: null
-};
-
 export default class DevtoolsInspector extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      themeState: createThemeState(props),
-      monitorState: createMonitorState(props, DEFAULT_MONITOR_STATE)
+      themeState: createThemeState(props)
     };
   }
 
@@ -111,8 +101,7 @@ export default class DevtoolsInspector extends Component {
     select: (state) => state,
     supportImmutable: false,
     theme: 'inspector',
-    invertTheme: true,
-    shouldPersistState: true
+    invertTheme: true
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
@@ -127,34 +116,20 @@ export default class DevtoolsInspector extends Component {
   }
 
   updateMonitorState(monitorState) {
-    this.setState({ monitorState: { ...this.state.monitorState, ...monitorState } }, () => {
-      if (this.props.shouldPersistState) {
-        this.props.dispatch(updateMonitorState(monitorState));
-      }
-    });
+    this.props.dispatch(updateMonitorState(monitorState));
   }
 
   updateSizeMode() {
     const isWideLayout = this.refs.inspector.offsetWidth > 500;
-    const { monitorState } = this.state;
 
-    if (isWideLayout !== monitorState.isWideLayout) {
+    if (isWideLayout !== this.props.monitorState.isWideLayout) {
       this.updateMonitorState({ isWideLayout });
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const nextMonitorState = nextProps.monitorState;
+    let nextMonitorState = nextProps.monitorState;
     const monitorState = this.props.monitorState;
-
-    if (monitorState !== nextMonitorState) {
-      this.setState({ monitorState: { ...this.state.monitorState, ...nextMonitorState } });
-    }
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    let nextMonitorState = nextState.monitorState;
-    const monitorState = this.state.monitorState;
 
     if (
       getCurrentActionId(this.props, monitorState) !==
@@ -177,8 +152,7 @@ export default class DevtoolsInspector extends Component {
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
-      tabs, invertTheme, skippedActionIds } = this.props;
-    const { monitorState } = this.state;
+      tabs, invertTheme, skippedActionIds, monitorState } = this.props;
     const { isWideLayout, selectedActionId, startActionId, nextState, action,
             searchValue, tabName, delta, error } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
@@ -228,7 +202,7 @@ export default class DevtoolsInspector extends Component {
   };
 
   handleSelectAction = (e, actionId) => {
-    const { monitorState } = this.state;
+    const { monitorState } = this.props;
     let startActionId;
     let selectedActionId;
 

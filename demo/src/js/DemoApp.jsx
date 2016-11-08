@@ -3,7 +3,12 @@ import PageHeader from 'react-bootstrap/lib/PageHeader';
 import { connect } from 'react-redux';
 import pkg from '../../../package.json';
 import Button from 'react-bootstrap/lib/Button';
-import Input from 'react-bootstrap/lib/Input';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import Form from 'react-bootstrap/lib/Form';
+import Col from 'react-bootstrap/lib/Col';
+import InputGroup from 'react-bootstrap/lib/InputGroup';
 import Combobox from 'react-input-enhancements/lib/Combobox';
 import * as base16 from 'base16';
 import * as inspectorThemes from '../../../src/themes';
@@ -84,21 +89,29 @@ class DemoApp extends React.Component {
         <h5>{pkg.description || <span style={styles.muted}>Package Description</span>}</h5>
         <div style={styles.links}>
           <div style={styles.input}>
-            <Input ref='theme'
-                   label='Theme:'
-                   addonAfter={
-                    <a onClick={this.toggleTheme}
-                       style={styles.link}>
-                      {options.dark ? 'Light theme' : 'Dark theme'}
-                    </a>
-                   }>
-              <Combobox options={themeOptions}
-                        defaultValue={options.theme}
-                        onValueChange={value => this.setTheme(options, value)}
-                        optionFilters={[]}>
-                {props => <input {...props} type='text' className='form-control' />}
-              </Combobox>
-            </Input>
+            <Form horizontal>
+              <FormGroup>
+                <Col componentClass={ControlLabel} sm={3}>
+                  Theme:
+                </Col>
+                <Col sm={9}>
+                  <InputGroup>
+                    <Combobox options={themeOptions}
+                              value={options.theme}
+                              onValueChange={value => this.setTheme(options, value)}
+                              optionFilters={[]}>
+                      {props => <FormControl {...props} type='text' />}
+                    </Combobox>
+                    <InputGroup.Addon>
+                      <a onClick={this.toggleTheme}
+                         style={styles.link}>
+                        {options.dark ? 'Light theme' : 'Dark theme'}
+                      </a>
+                    </InputGroup.Addon>
+                  </InputGroup>
+                </Col>
+              </FormGroup>
+            </Form>
           </div>
         </div>
         <div style={styles.content}>

@@ -35,9 +35,9 @@ const getDevTools = options =>
                  toggleVisibilityKey='ctrl-h'
                  changePositionKey='ctrl-q'
                  changeMonitorKey='ctrl-m'>
-      <DevtoolsInspector theme='nicinabox'
+      <DevtoolsInspector theme={options.theme}
                          shouldPersistState={true}
-                         isLightTheme={false}
+                         invertTheme={!options.dark}
                          supportImmutable={options.supportImmutable}
                          tabs={defaultTabs => [{
                            name: 'Custom Tab',

@@ -30,7 +30,7 @@ function getFromState(actionIndex, stagedActionIds, computedStates, monitorState
   return computedStates[fromStateIdx];
 }
 
-function createMonitorState(props, monitorState) {
+function createIntermediateState(props, monitorState) {
   const { supportImmutable, computedStates, stagedActionIds,
           actionsById: actions } = props;
   const { inspectedStatePath, inspectedActionPath } = monitorState;
@@ -52,9 +52,7 @@ function createMonitorState(props, monitorState) {
   );
 
   return {
-    ...monitorState,
     delta,
-    currentActionId,
     nextState: toState && getInspectedState(toState.state, inspectedStatePath, false),
     action: getInspectedState(currentAction, inspectedActionPath, false),
     error
@@ -72,6 +70,8 @@ export default class DevtoolsInspector extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      ...createIntermediateState(props, props.monitorState),
+      isWideLayout: false,
       themeState: createThemeState(props)
     };
   }
@@ -122,12 +122,12 @@ export default class DevtoolsInspector extends Component {
   updateSizeMode() {
     const isWideLayout = this.refs.inspector.offsetWidth > 500;
 
-    if (isWideLayout !== this.props.monitorState.isWideLayout) {
-      this.updateMonitorState({ isWideLayout });
+    if (isWideLayout !== this.state.isWideLayout) {
+      this.setState({ isWideLayout });
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextState) {
     let nextMonitorState = nextProps.monitorState;
     const monitorState = this.props.monitorState;
 
@@ -135,13 +135,10 @@ export default class DevtoolsInspector extends Component {
       getCurrentActionId(this.props, monitorState) !==
       getCurrentActionId(nextProps, nextMonitorState) ||
       monitorState.startActionId !== nextMonitorState.startActionId ||
-      monitorState.inspectedStatePath !== nextMonitorState.inspectedStatePath ||
-      monitorState.inspectedActionPath !== nextMonitorState.inspectedActionPath
+      this.state.inspectedStatePath !== nextState.inspectedStatePath ||
+      this.state.inspectedActionPath !== nextState.inspectedActionPath
     ) {
-
-      nextMonitorState = createMonitorState(nextProps, nextMonitorState);
-
-      this.updateMonitorState(nextMonitorState);
+      this.setState(createIntermediateState(nextProps, nextMonitorState));
     }
 
     if (this.props.theme !== nextProps.theme ||
@@ -153,10 +150,10 @@ export default class DevtoolsInspector extends Component {
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
       tabs, invertTheme, skippedActionIds, monitorState } = this.props;
-    const { isWideLayout, selectedActionId, startActionId, nextState, action,
-            searchValue, tabName, delta, error } = monitorState;
+    const { selectedActionId, startActionId, searchValue, tabName } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
-    const { base16Theme, styling } = this.state.themeState;
+    const { themeState, isWideLayout, action, nextState, delta, error } = this.state;
+    const { base16Theme, styling } = themeState;
 
     return (
       <div key='inspector'

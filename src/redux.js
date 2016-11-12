@@ -1,14 +1,11 @@
 const UPDATE_MONITOR_STATE = '@@redux-devtools-inspector/UPDATE_MONITOR_STATE';
 
 const DEFAULT_STATE = {
-  isWideLayout: false,
   selectedActionId: null,
   startActionId: null,
   inspectedActionPath: [],
   inspectedStatePath: [],
-  tabName: 'Diff',
-  invertTheme: true,
-  styling: () => ({})
+  tabName: 'Diff'
 };
 
 export function updateMonitorState(monitorState) {

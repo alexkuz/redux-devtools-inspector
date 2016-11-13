@@ -25,7 +25,7 @@ const ActionPreviewHeader =
         </span> : tabName
       }
       {inspectedPath.map((key, idx) =>
-        idx === inspectedPath.length - 1 ? key :
+        idx === inspectedPath.length - 1 ? <span>{key}</span> :
           <span key={key}
             {...styling('inspectedPathKey')}>
           <a onClick={() => onInspectPath(inspectedPath.slice(0, idx + 1))}

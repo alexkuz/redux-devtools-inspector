@@ -34,21 +34,25 @@ function getShortTypeString(val, diff) {
   }
 }
 
-function getText(type, data, diff) {
+function getText(type, data, isWideLayout, isDiff) {
   if (type === 'Object') {
     const keys = Object.keys(data);
+    if (!isWideLayout) return keys.length ? '{…}' : '{}';
+
     const str = keys
       .slice(0, 2)
-      .map(key => `${key}: ${getShortTypeString(data[key], diff)}`)
       .concat(keys.length > 2 ? ['…'] : [])
+      .map(key => `${key}: ${getShortTypeString(data[key], isDiff)}`)
       .join(', ');
 
     return `{ ${str} }`;
   } else if (type === 'Array') {
+    if (!isWideLayout) return data.length ? '[…]' : '[]';
+
     const str = data
       .slice(0, 2)
-      .map(val => getShortTypeString(val, diff))
       .concat(data.length > 2 ? ['…'] : []).join(', ');
+      .map(val => getShortTypeString(val, isDiff))
 
     return `[${str}]`;
   } else {
@@ -56,10 +60,10 @@ function getText(type, data, diff) {
   }
 }
 
-const getItemString = (styling, type, data, diff) =>
+const getItemString = (styling, type, data, isWideLayout, isDiff) =>
   <span {...styling('treeItemHint')}>
     {data[IS_IMMUTABLE_KEY] ? 'Immutable' : ''}
-    {getText(type, data, diff)}
+    {getText(type, data, isWideLayout, isDiff)}
   </span>;
 
 export default getItemString;

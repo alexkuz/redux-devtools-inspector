@@ -16,8 +16,8 @@ function getLastActionId(props) {
 }
 
 function getCurrentActionId(props, monitorState) {
-  const lastActionId = getLastActionId(props);
-  return monitorState.selectedActionId === null ? lastActionId : monitorState.selectedActionId;
+  return monitorState.selectedActionId === null ?
+    getLastActionId(props) : monitorState.selectedActionId;
 }
 
 function getFromState(actionIndex, stagedActionIds, computedStates, monitorState) {
@@ -30,7 +30,7 @@ function getFromState(actionIndex, stagedActionIds, computedStates, monitorState
   return computedStates[fromStateIdx];
 }
 
-function createMonitorState(props, monitorState) {
+function createIntermediateState(props, monitorState) {
   const { supportImmutable, computedStates, stagedActionIds,
           actionsById: actions } = props;
   const { inspectedStatePath, inspectedActionPath } = monitorState;
@@ -52,9 +52,7 @@ function createMonitorState(props, monitorState) {
   );
 
   return {
-    ...monitorState,
     delta,
-    currentActionId,
     nextState: toState && getInspectedState(toState.state, inspectedStatePath, false),
     action: getInspectedState(currentAction, inspectedActionPath, false),
     error
@@ -68,21 +66,13 @@ function createThemeState(props) {
   return { base16Theme, styling };
 }
 
-const DEFAULT_MONITOR_STATE = {
-  isWideLayout: false,
-  tabName: 'Diff',
-  inspectedStatePath: [],
-  inspectedActionPath: [],
-  startActionId: null,
-  selectedActionId: null
-};
-
 export default class DevtoolsInspector extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      themeState: createThemeState(props),
-      monitorState: createMonitorState(props, DEFAULT_MONITOR_STATE)
+      ...createIntermediateState(props, props.monitorState),
+      isWideLayout: false,
+      themeState: createThemeState(props)
     };
   }
 
@@ -111,8 +101,7 @@ export default class DevtoolsInspector extends Component {
     select: (state) => state,
     supportImmutable: false,
     theme: 'inspector',
-    invertTheme: true,
-    shouldPersistState: true
+    invertTheme: true
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
@@ -127,46 +116,29 @@ export default class DevtoolsInspector extends Component {
   }
 
   updateMonitorState(monitorState) {
-    this.setState({ monitorState: { ...this.state.monitorState, ...monitorState } }, () => {
-      if (this.props.shouldPersistState) {
-        this.props.dispatch(updateMonitorState(monitorState));
-      }
-    });
+    this.props.dispatch(updateMonitorState(monitorState));
   }
 
   updateSizeMode() {
     const isWideLayout = this.refs.inspector.offsetWidth > 500;
-    const { monitorState } = this.state;
 
-    if (isWideLayout !== monitorState.isWideLayout) {
-      this.updateMonitorState({ isWideLayout });
+    if (isWideLayout !== this.state.isWideLayout) {
+      this.setState({ isWideLayout });
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const nextMonitorState = nextProps.monitorState;
+  componentWillReceiveProps(nextProps, nextState) {
+    let nextMonitorState = nextProps.monitorState;
     const monitorState = this.props.monitorState;
-
-    if (monitorState !== nextMonitorState) {
-      this.setState({ monitorState: { ...this.state.monitorState, ...nextMonitorState } });
-    }
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    let nextMonitorState = nextState.monitorState;
-    const monitorState = this.state.monitorState;
 
     if (
       getCurrentActionId(this.props, monitorState) !==
       getCurrentActionId(nextProps, nextMonitorState) ||
       monitorState.startActionId !== nextMonitorState.startActionId ||
-      monitorState.inspectedStatePath !== nextMonitorState.inspectedStatePath ||
-      monitorState.inspectedActionPath !== nextMonitorState.inspectedActionPath
+      this.state.inspectedStatePath !== nextState.inspectedStatePath ||
+      this.state.inspectedActionPath !== nextState.inspectedActionPath
     ) {
-
-      nextMonitorState = createMonitorState(nextProps, nextMonitorState);
-
-      this.updateMonitorState(nextMonitorState);
+      this.setState(createIntermediateState(nextProps, nextMonitorState));
     }
 
     if (this.props.theme !== nextProps.theme ||
@@ -177,12 +149,11 @@ export default class DevtoolsInspector extends Component {
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
-      tabs, invertTheme, skippedActionIds } = this.props;
-    const { monitorState } = this.state;
-    const { isWideLayout, selectedActionId, startActionId, nextState, action,
-            searchValue, tabName, delta, error } = monitorState;
+      tabs, invertTheme, skippedActionIds, monitorState } = this.props;
+    const { selectedActionId, startActionId, searchValue, tabName } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
-    const { base16Theme, styling } = this.state.themeState;
+    const { themeState, isWideLayout, action, nextState, delta, error } = this.state;
+    const { base16Theme, styling } = themeState;
 
     return (
       <div key='inspector'
@@ -228,7 +199,7 @@ export default class DevtoolsInspector extends Component {
   };
 
   handleSelectAction = (e, actionId) => {
-    const { monitorState } = this.state;
+    const { monitorState } = this.props;
     let startActionId;
     let selectedActionId;
 

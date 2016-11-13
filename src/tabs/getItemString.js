@@ -40,9 +40,9 @@ function getText(type, data, isWideLayout, isDiff) {
     if (!isWideLayout) return keys.length ? '{…}' : '{}';
 
     const str = keys
-      .slice(0, 2)
-      .concat(keys.length > 2 ? ['…'] : [])
+      .slice(0, 3)
       .map(key => `${key}: ${getShortTypeString(data[key], isDiff)}`)
+      .concat(keys.length > 3 ? ['…'] : [])
       .join(', ');
 
     return `{ ${str} }`;
@@ -50,9 +50,9 @@ function getText(type, data, isWideLayout, isDiff) {
     if (!isWideLayout) return data.length ? '[…]' : '[]';
 
     const str = data
-      .slice(0, 2)
-      .concat(data.length > 2 ? ['…'] : []).join(', ');
+      .slice(0, 4)
       .map(val => getShortTypeString(val, isDiff))
+      .concat(data.length > 4 ? ['…'] : []).join(', ');
 
     return `[${str}]`;
   } else {

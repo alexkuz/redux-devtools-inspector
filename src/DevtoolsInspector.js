@@ -127,7 +127,7 @@ export default class DevtoolsInspector extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
+  componentWillReceiveProps(nextProps) {
     let nextMonitorState = nextProps.monitorState;
     const monitorState = this.props.monitorState;
 
@@ -135,8 +135,8 @@ export default class DevtoolsInspector extends Component {
       getCurrentActionId(this.props, monitorState) !==
       getCurrentActionId(nextProps, nextMonitorState) ||
       monitorState.startActionId !== nextMonitorState.startActionId ||
-      this.state.inspectedStatePath !== nextState.inspectedStatePath ||
-      this.state.inspectedActionPath !== nextState.inspectedActionPath
+      monitorState.inspectedStatePath !== nextMonitorState.inspectedStatePath ||
+      monitorState.inspectedActionPath !== nextMonitorState.inspectedActionPath
     ) {
       this.setState(createIntermediateState(nextProps, nextMonitorState));
     }

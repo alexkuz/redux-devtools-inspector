@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react/lib/ReactDOM';
+import ReactDOM from 'react-dom';
 import ActionListRow from './ActionListRow';
 import ActionListHeader from './ActionListHeader';
 import shouldPureComponentUpdate from 'react-pure-render/function';

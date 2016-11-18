@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ActionPreviewHeader from './ActionPreviewHeader';
+import ActionPreviewSubHeader from './ActionPreviewSubHeader';
 import DiffTab from './tabs/DiffTab';
 import StateTab from './tabs/StateTab';
 import ActionTab from './tabs/ActionTab';
@@ -12,14 +13,19 @@ const DEFAULT_TABS = [{
   component: DiffTab
 }, {
   name: 'State',
-  component: StateTab
-}]
+  components: [
+    {
+      name: 'Tree',
+      component: StateTab
+    }
+  ]
+}];
 
 class ActionPreview extends Component {
   render() {
     const {
       styling, delta, error, nextState, onInspectPath, inspectedPath, tabName,
-      onSelectTab, action, actions, selectedActionId, startActionId,
+      subTabName, onSelectTab, onSelectSubTab, action, actions, selectedActionId, startActionId,
       computedStates, base16Theme, invertTheme, tabs
     } = this.props;
 
@@ -27,7 +33,46 @@ class ActionPreview extends Component {
       tabs(DEFAULT_TABS) :
       (tabs ? tabs : DEFAULT_TABS);
 
-    const { component: TabComponent } = renderedTabs.find(tab => tab.name === tabName);
+    const { component: TabComponent, components } = renderedTabs.find(tab => tab.name === tabName);
+
+    const tabProps = {
+      labelRenderer: this.labelRenderer,
+      styling,
+      computedStates,
+      actions,
+      selectedActionId,
+      startActionId,
+      base16Theme,
+      invertTheme,
+      delta,
+      action,
+      nextState
+    };
+
+    let actionPreviewContent;
+    if (!error) {
+      if (components) {
+        let SubTabComponent = components[0].component;
+        const subTabs = components.map(c => {
+          if (c.name === subTabName) SubTabComponent = c.component;
+          return c.name;
+        });
+        actionPreviewContent = [
+          <ActionPreviewSubHeader
+            key='actionPreviewSubHeader'
+            tabs={subTabs}
+            {...{ styling, tabName: subTabName, onSelectTab: onSelectSubTab }}
+          />,
+          <div key='actionPreviewContent' {...styling('actionPreviewContent')}>
+            <SubTabComponent {...tabProps} />
+          </div>
+        ];
+      } else {
+        actionPreviewContent = <TabComponent {...tabProps} />;
+      }
+    } else {
+      actionPreviewContent = <div {...styling('stateError')}>{error}</div>;
+    }
 
     return (
       <div key='actionPreview' {...styling('actionPreview')}>
@@ -35,28 +80,7 @@ class ActionPreview extends Component {
           tabs={renderedTabs}
           {...{ styling, inspectedPath, onInspectPath, tabName, onSelectTab }}
         />
-        {!error &&
-          <div key='actionPreviewContent' {...styling('actionPreviewContent')}>
-            <TabComponent
-              labelRenderer={this.labelRenderer}
-              {...{
-                styling,
-                computedStates,
-                actions,
-                selectedActionId,
-                startActionId,
-                base16Theme,
-                invertTheme,
-                delta,
-                action,
-                nextState
-              }}
-            />
-          </div>
-        }
-        {error &&
-          <div {...styling('stateError')}>{error}</div>
-        }
+        {actionPreviewContent}
       </div>
     );
   }

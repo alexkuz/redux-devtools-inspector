@@ -19,12 +19,12 @@ module.exports = {
       './demo/src/js/index'
     ],
   output: {
-    path: __dirname,
-    filename: 'demo/dist/js/bundle.js',
+    path: path.join(__dirname, 'demo/dist'),
+    filename: 'js/bundle.js',
     hash: true
   },
   plugins: [
-    new CleanWebpackPlugin(isProduction ? ['index.html', 'demo/dist', 'lib'] : []),
+    new CleanWebpackPlugin(isProduction ? ['demo/dist'] : []),
     new HtmlWebpackPlugin({
       inject: true,
       template: 'demo/src/index.html',

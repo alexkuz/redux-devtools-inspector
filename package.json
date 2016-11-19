@@ -12,7 +12,7 @@
     "version": "npm run build:demo && git add -A .",
     "postversion": "git push",
     "prepublish": "npm run build:lib",
-    "gh": "git subtree push --prefix build origin gh-pages"
+    "gh": "git subtree push --prefix demo/dist origin gh-pages"
   },
   "main": "lib/index.js",
   "repository": {

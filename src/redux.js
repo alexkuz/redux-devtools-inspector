@@ -6,7 +6,7 @@ const DEFAULT_STATE = {
   inspectedActionPath: [],
   inspectedStatePath: [],
   tabName: 'Diff',
-  subTabName: 'Tree'
+  subTabName: null
 };
 
 export function updateMonitorState(monitorState) {

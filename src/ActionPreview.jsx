@@ -13,12 +13,7 @@ const DEFAULT_TABS = [{
   component: DiffTab
 }, {
   name: 'State',
-  components: [
-    {
-      name: 'Tree',
-      component: StateTab
-    }
-  ]
+  component: StateTab
 }];
 
 class ActionPreview extends Component {

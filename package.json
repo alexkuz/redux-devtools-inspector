@@ -11,7 +11,8 @@
     "preversion": "npm run lint",
     "version": "npm run build:demo && git add -A .",
     "postversion": "git push",
-    "prepublish": "npm run build:lib"
+    "prepublish": "npm run build:lib",
+    "gh": "git subtree push --prefix build origin gh-pages"
   },
   "main": "lib/index.js",
   "repository": {

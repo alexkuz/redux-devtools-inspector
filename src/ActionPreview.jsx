@@ -19,7 +19,7 @@ class ActionPreview extends Component {
   render() {
     const {
       styling, delta, error, nextState, onInspectPath, inspectedPath, tabName,
-      onSelectTab, action, actions, selectedActionId, startActionId,
+      isWideLayout, onSelectTab, action, actions, selectedActionId, startActionId,
       computedStates, base16Theme, invertTheme, tabs
     } = this.props;
 
@@ -47,6 +47,7 @@ class ActionPreview extends Component {
                 startActionId,
                 base16Theme,
                 invertTheme,
+                isWideLayout,
                 delta,
                 action,
                 nextState

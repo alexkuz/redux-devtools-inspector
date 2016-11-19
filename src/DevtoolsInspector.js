@@ -171,7 +171,7 @@ export default class DevtoolsInspector extends Component {
                     skippedActionIds={skippedActionIds}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
-          base16Theme, invertTheme, tabs, tabName, delta, error, nextState,
+          base16Theme, invertTheme, isWideLayout, tabs, tabName, delta, error, nextState,
           computedStates, action, actions, selectedActionId, startActionId
         }}
                        styling={styling}

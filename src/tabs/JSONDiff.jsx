@@ -4,11 +4,12 @@ import stringify from 'javascript-stringify';
 import getItemString from './getItemString';
 import getJsonTreeTheme from './getJsonTreeTheme';
 
-function stringifyAndShrink(val) {
+function stringifyAndShrink(val, isWideLayout) {
   const str = stringify(val);
   if (val === null) { return 'null'; }
   else if (typeof val === 'undefined') { return 'undefined'; }
 
+  if (isWideLayout) return str.length > 42 ? str.substr(0, 30) + '…' + str.substr(-10) : str;
   return str.length > 22 ? `${str.substr(0, 15)}…${str.substr(-5)}` : str;
 }
 
@@ -56,7 +57,7 @@ export default class JSONDiff extends Component {
   }
 
   render() {
-    const { styling, base16Theme, ...props } = this.props;
+    const { styling, base16Theme, isWideLayout, ...props } = this.props;
 
     if (!this.state.data) {
       return (
@@ -70,7 +71,9 @@ export default class JSONDiff extends Component {
       <JSONTree {...props}
                 theme={getJsonTreeTheme(base16Theme)}
                 data={this.state.data}
-                getItemString={(type, data) => getItemString(styling, type, data, true)}
+                getItemString={
+                  (type, data) => getItemString(styling, type, data, isWideLayout, true)
+                }
                 valueRenderer={this.valueRenderer}
                 postprocessValue={prepareDelta}
                 isCustomNode={Array.isArray}
@@ -80,7 +83,7 @@ export default class JSONDiff extends Component {
   }
 
   valueRenderer = (raw, value) => {
-    const { styling } = this.props;
+    const { styling, isWideLayout } = this.props;
 
     function renderSpan(name, body) {
       return (
@@ -93,15 +96,15 @@ export default class JSONDiff extends Component {
       case 1:
         return (
           <span {...styling('diffWrap')}>
-            {renderSpan('diffAdd', stringifyAndShrink(value[0]))}
+            {renderSpan('diffAdd', stringifyAndShrink(value[0], isWideLayout))}
           </span>
         );
       case 2:
         return (
           <span {...styling('diffWrap')}>
-            {renderSpan('diffUpdateFrom', stringifyAndShrink(value[0]))}
+            {renderSpan('diffUpdateFrom', stringifyAndShrink(value[0], isWideLayout))}
             {renderSpan('diffUpdateArrow', ' => ')}
-            {renderSpan('diffUpdateTo', stringifyAndShrink(value[1]))}
+            {renderSpan('diffUpdateTo', stringifyAndShrink(value[1], isWideLayout))}
           </span>
         );
       case 3:

@@ -3,12 +3,12 @@ import JSONTree from 'react-json-tree';
 import getItemString from './getItemString';
 import getJsonTreeTheme from './getJsonTreeTheme';
 
-const StateTab = ({ nextState, styling, base16Theme, invertTheme, labelRenderer }) =>
+const StateTab = ({ nextState, styling, base16Theme, invertTheme, labelRenderer, isWideLayout }) =>
   <JSONTree
     labelRenderer={labelRenderer}
     theme={getJsonTreeTheme(base16Theme)}
     data={nextState}
-    getItemString={(type, data) => getItemString(styling, type, data)}
+    getItemString={(type, data) => getItemString(styling, type, data, isWideLayout)}
     invertTheme={invertTheme}
     hideRoot
   />;

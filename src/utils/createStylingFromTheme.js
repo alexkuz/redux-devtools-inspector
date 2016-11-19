@@ -18,6 +18,7 @@ const colorMap = theme => ({
   SELECTED_BACKGROUND_COLOR: rgba(theme.base03, 20),
   SKIPPED_BACKGROUND_COLOR: rgba(theme.base03, 10),
   HEADER_BACKGROUND_COLOR: rgba(theme.base03, 30),
+  SUBHEADER_BACKGROUND_COLOR: rgba(theme.base03, 15),
   HEADER_BORDER_COLOR: rgba(theme.base03, 20),
   BORDER_COLOR: rgba(theme.base03, 50),
   LIST_BORDER_COLOR: rgba(theme.base03, 50),
@@ -267,11 +268,28 @@ const getSheetFromColorMap = map => ({
     'border-bottom-color': map.HEADER_BORDER_COLOR
   },
 
+  previewSubHeader: {
+    flex: '0 0 30px',
+    padding: '5px 10px',
+    'align-items': 'center',
+    'border-bottom-width': '1px',
+    'border-bottom-style': 'solid',
+
+    'background-color': map.SUBHEADER_BACKGROUND_COLOR,
+    'border-bottom-color': map.HEADER_BORDER_COLOR
+  },
+
   tabSelector: {
     position: 'relative',
     'z-index': 1,
     display: 'inline-flex',
     float: 'right'
+  },
+
+  subTabSelector: {
+    position: 'relative',
+    'z-index': 1,
+    display: 'inline-flex',
   },
 
   selectorButton: {

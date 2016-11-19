@@ -150,7 +150,7 @@ export default class DevtoolsInspector extends Component {
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
       tabs, invertTheme, skippedActionIds, monitorState } = this.props;
-    const { selectedActionId, startActionId, searchValue, tabName } = monitorState;
+    const { selectedActionId, startActionId, searchValue, tabName, subTabName } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
     const { themeState, isWideLayout, action, nextState, delta, error } = this.state;
     const { base16Theme, styling } = themeState;
@@ -171,13 +171,14 @@ export default class DevtoolsInspector extends Component {
                     skippedActionIds={skippedActionIds}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
-          base16Theme, invertTheme, tabs, tabName, delta, error, nextState,
+          base16Theme, invertTheme, tabs, subTabName, tabName, delta, error, nextState,
           computedStates, action, actions, selectedActionId, startActionId
         }}
                        styling={styling}
                        onInspectPath={this.handleInspectPath.bind(this, inspectedPathType)}
                        inspectedPath={monitorState[inspectedPathType]}
-                       onSelectTab={this.handleSelectTab} />
+                       onSelectTab={this.handleSelectTab}
+                       onSelectSubTab={this.handleSelectSubTab}/>
       </div>
     );
   }
@@ -234,5 +235,9 @@ export default class DevtoolsInspector extends Component {
 
   handleSelectTab = tabName => {
     this.updateMonitorState({ tabName });
+  };
+
+  handleSelectSubTab = subTabName => {
+    this.updateMonitorState({ subTabName });
   };
 }

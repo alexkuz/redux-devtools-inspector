@@ -39,7 +39,7 @@ RECURSIVE.obj = RECURSIVE;
 
 function createIterator() {
   const iterable = {};
-  iterable[Symbol.iterator] = function *iterator() {
+  iterable[window.Symbol.iterator] = function *iterator() {
     for (var i = 0; i < 333; i++) {
       yield 'item ' + i;
     }
@@ -49,6 +49,8 @@ function createIterator() {
 }
 
 export default {
+  timeoutUpdateEnabled: (state=false, action) => action.type === 'TOGGLE_TIMEOUT_UPDATE' ?
+    action.timeoutUpdateEnabled : state,
   store: (state=0, action) => action.type === 'INCREMENT' ? state + 1 : state,
   undefined: (state={ val: undefined }) => state,
   null: (state=null) => state,
@@ -91,5 +93,5 @@ export default {
   addFunction: (state=null, action) => action.type === 'ADD_FUNCTION' ?
     { f: FUNC } : state,
   addSymbol: (state=null, action) => action.type === 'ADD_SYMBOL' ?
-    { s: Symbol('symbol') } : state
+    { s: window.Symbol('symbol') } : state
 };

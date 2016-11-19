@@ -158,6 +158,9 @@ class DemoApp extends React.Component {
             <Button onClick={this.props.addSymbol} style={styles.button}>
               Add Symbol
             </Button>
+            <Button onClick={this.toggleTimeoutUpdate} style={styles.button}>
+              Timeout Update {this.props.timeoutUpdateEnabled ? 'On' : 'Off'}
+            </Button>
           </div>
         </div>
         <div style={styles.links}>
@@ -195,11 +198,26 @@ class DemoApp extends React.Component {
   setTheme = (options, theme) => {
     this.props.pushRoute(buildUrl({ ...options, theme }));
   };
+
+  toggleTimeoutUpdate = () => {
+    const enabled = !this.props.timeoutUpdateEnabled;
+    this.props.toggleTimeoutUpdate(enabled);
+
+    if (enabled) {
+      this.timeout = setInterval(this.props.timeoutUpdate, 1000);
+    } else {
+      clearTimeout(this.timeout);
+    }
+  }
 }
 
 export default connect(
   state => state,
   {
+    toggleTimeoutUpdate: timeoutUpdateEnabled => ({
+      type: 'TOGGLE_TIMEOUT_UPDATE', timeoutUpdateEnabled
+    }),
+    timeoutUpdate: () => ({ type: 'TIMEOUT_UPDATE' }),
     increment: () => ({ type: 'INCREMENT' }),
     push: () => ({ type: 'PUSH' }),
     pop: () => ({ type: 'POP' }),

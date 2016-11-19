@@ -18,16 +18,19 @@ function getDebugSessionKey() {
   return (matches && matches.length > 0)? matches[1] : null;
 }
 
-const CustomComponent = () =>
+const CustomComponent = ({ data }) =>
   <div style={{
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     width: '100%',
     height: '100%',
     minHeight: '20rem'
   }}>
-    <div>Custom Tab Content</div>
+    <pre style={{
+      flexGrow: '1',
+      margin: '0'
+    }}>
+      {JSON.stringify(data, null, '\t')}
+    </pre>
   </div>;
 
 const getDevTools = options =>
@@ -42,7 +45,19 @@ const getDevTools = options =>
                          supportImmutable={options.supportImmutable}
                          tabs={defaultTabs => [{
                            name: 'Custom Tab',
-                           component: CustomComponent
+                           // component: CustomComponent
+                           components: [
+                             {
+                               name: 'Action as JSON',
+                               component: CustomComponent,
+                               selector: ({ action }) => ({ data: action })
+                             },
+                             {
+                               name: 'State as JSON',
+                               component: CustomComponent,
+                               selector: ({ nextState }) => ({ data: nextState })
+                             }
+                           ]
                          }, ...defaultTabs]} />
     </DockMonitor>
   );

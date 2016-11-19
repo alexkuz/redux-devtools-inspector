@@ -52,11 +52,12 @@ class ActionPreview extends Component {
     let actionPreviewContent;
     if (!error) {
       if (components) {
-        let SubTabComponent = components[0].component;
+        let component;
         const subTabs = components.map(c => {
-          if (c.name === subTabName) SubTabComponent = c.component;
+          if (c.name === subTabName) component = c;
           return c.name;
         });
+        const { component: SubTabComponent, selector } = component || components[0];
         actionPreviewContent = [
           <ActionPreviewSubHeader
             key='actionPreviewSubHeader'
@@ -64,7 +65,7 @@ class ActionPreview extends Component {
             {...{ styling, tabName: subTabName, onSelectTab: onSelectSubTab }}
           />,
           <div key='actionPreviewContent' {...styling('actionPreviewContent')}>
-            <SubTabComponent {...tabProps} />
+            <SubTabComponent {...(selector ? selector(tabProps) : tabProps)} />
           </div>
         ];
       } else {

@@ -17,16 +17,22 @@ function getTimestamps(actions, actionIds, actionId) {
 export default class ActionList extends Component {
   shouldComponentUpdate = shouldPureComponentUpdate;
 
+  componentDidMount() {
+    this.scrollToBottom(true);
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.lastActionId !== prevProps.lastActionId) {
       this.scrollToBottom();
     }
   }
 
-  scrollToBottom() {
+  scrollToBottom(force) {
     const el = ReactDOM.findDOMNode(this.refs.rows);
-
-    el.scrollTop = el.scrollHeight;
+    const scrollHeight = el.scrollHeight;
+    if (force || Math.abs(scrollHeight - (el.scrollTop + el.offsetHeight)) < 50) {
+      el.scrollTop = scrollHeight;
+    }
   }
 
   render() {

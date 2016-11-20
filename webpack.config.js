@@ -44,7 +44,7 @@ module.exports = {
       output: { comments: false }
     })
   ] : [
-    new ExportFilesWebpackPlugin('index.html'),
+    new ExportFilesWebpackPlugin('demo/dist/index.html'),
     new webpack.HotModuleReplacementPlugin()
   ]),
   resolve: {

@@ -98,7 +98,7 @@ class DemoApp extends React.Component {
                   <InputGroup>
                     <Combobox options={themeOptions}
                               value={options.theme}
-                              onValueChange={value => this.setTheme(options, value)}
+                              onSelect={value => this.setTheme(options, value)}
                               optionFilters={[]}>
                       {props => <FormControl {...props} type='text' />}
                     </Combobox>

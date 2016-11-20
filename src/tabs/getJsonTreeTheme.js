@@ -4,7 +4,7 @@ export default function getJsonTreeTheme(base16Theme) {
     nestedNode: ({ style }, keyPath, nodeType, expanded) => ({
       style: {
         ...style,
-        'white-space': expanded ? 'inherit' : 'nowrap'
+        'whiteSpace': expanded ? 'inherit' : 'nowrap'
       }
     }),
     nestedNodeItemString: ({ style }, keyPath, nodeType, expanded) => ({

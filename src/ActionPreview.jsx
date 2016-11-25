@@ -16,6 +16,10 @@ const DEFAULT_TABS = [{
 }]
 
 class ActionPreview extends Component {
+  static defaultProps = {
+    tabName: 'Diff'
+  }
+
   render() {
     const {
       styling, delta, error, nextState, onInspectPath, inspectedPath, tabName,

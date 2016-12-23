@@ -9,7 +9,7 @@ import { getBase16Theme } from 'react-base16-styling';
 import { reducer, updateMonitorState } from './redux';
 import { ActionCreators } from 'redux-devtools';
 
-const { commit, sweep, toggleAction, jumpToState } = ActionCreators;
+const { commit, sweep, toggleAction, jumpToAction, jumpToState } = ActionCreators;
 
 function getLastActionId(props) {
   return props.stagedActionIds[props.stagedActionIds.length - 1];
@@ -191,8 +191,12 @@ export default class DevtoolsInspector extends Component {
   };
 
   handleJumpToState = actionId => {
-    const index = this.props.stagedActionIds.indexOf(actionId);
-    if (index > 0) this.props.dispatch(jumpToState(index));
+    if (jumpToAction) {
+      this.props.dispatch(jumpToAction(actionId));
+    } else { // Fallback for redux-devtools-instrument < 1.5
+      const index = this.props.stagedActionIds.indexOf(actionId);
+      if (index !== -1) this.props.dispatch(jumpToState(index));
+    }
   };
 
   handleCommit = () => {

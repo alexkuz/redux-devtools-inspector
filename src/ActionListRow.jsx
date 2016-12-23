@@ -12,6 +12,7 @@ export default class ActionListRow extends Component {
     styling: PropTypes.func.isRequired,
     isSelected: PropTypes.bool.isRequired,
     action: PropTypes.shape({ type: PropTypes.string.isRequired }).isRequired,
+    isInFuture: PropTypes.bool.isRequired,
     isInitAction: PropTypes.bool.isRequired,
     onSelect: PropTypes.func.isRequired,
     timestamps: PropTypes.shape({
@@ -33,7 +34,7 @@ export default class ActionListRow extends Component {
 
   render() {
     const { styling, isSelected, action, isInitAction, onSelect,
-            timestamps, isSkipped } = this.props;
+            timestamps, isSkipped, isInFuture } = this.props;
     const { hover } = this.state;
     const timeDelta = timestamps.current - timestamps.previous;
     const showButtons = hover && !isInitAction || isSkipped;
@@ -48,7 +49,8 @@ export default class ActionListRow extends Component {
            {...styling([
              'actionListItem',
              isSelected && 'actionListItemSelected',
-             isSkipped && 'actionListItemSkipped'
+             isSkipped && 'actionListItemSkipped',
+             isInFuture && 'actionListFromFuture'
            ], isSelected, action)}>
         <div {...styling(['actionListItemName', isSkipped && 'actionListItemNameSkipped'])}>
           {action.type}

@@ -37,7 +37,7 @@ export default class ActionList extends Component {
 
   render() {
     const { styling, actions, actionIds, isWideLayout, onToggleAction, skippedActionIds,
-            selectedActionId, startActionId, onSelect, onSearch, searchValue,
+            selectedActionId, startActionId, onSelect, onSearch, searchValue, currentActionId,
             onCommit, onSweep } = this.props;
     const lowerSearchValue = searchValue && searchValue.toLowerCase();
     const filteredActionIds = searchValue ? actionIds.filter(
@@ -63,6 +63,7 @@ export default class ActionList extends Component {
                             actionId >= startActionId && actionId <= selectedActionId ||
                             actionId === selectedActionId
                            }
+                           isInFuture={actionId > currentActionId}
                            onSelect={(e) => onSelect(e, actionId)}
                            timestamps={getTimestamps(actions, actionIds, actionId)}
                            action={actions[actionId].action}

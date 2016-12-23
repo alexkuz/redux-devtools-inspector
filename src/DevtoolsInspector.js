@@ -17,7 +17,7 @@ function getLastActionId(props) {
 
 function getCurrentActionId(props, monitorState) {
   return monitorState.selectedActionId === null ?
-    getLastActionId(props) : monitorState.selectedActionId;
+    props.stagedActionIds[props.currentStateIndex] : monitorState.selectedActionId;
 }
 
 function getFromState(actionIndex, stagedActionIds, computedStates, monitorState) {
@@ -149,10 +149,12 @@ export default class DevtoolsInspector extends Component {
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
-      tabs, invertTheme, skippedActionIds, monitorState } = this.props;
+      tabs, invertTheme, skippedActionIds, currentStateIndex, monitorState } = this.props;
     const { selectedActionId, startActionId, searchValue, tabName } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
-    const { themeState, isWideLayout, action, nextState, delta, error } = this.state;
+    const {
+      themeState, isWideLayout, action, nextState, delta, error
+    } = this.state;
     const { base16Theme, styling } = themeState;
 
     return (
@@ -169,6 +171,7 @@ export default class DevtoolsInspector extends Component {
                     onCommit={this.handleCommit}
                     onSweep={this.handleSweep}
                     skippedActionIds={skippedActionIds}
+                    currentActionId={actionIds[currentStateIndex]}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
           base16Theme, invertTheme, isWideLayout, tabs, tabName, delta, error, nextState,

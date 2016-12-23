@@ -4,6 +4,7 @@ import dateformat from 'dateformat';
 import RightSlider from './RightSlider';
 
 const BUTTON_SKIP = 'Skip';
+const BUTTON_JUMP = 'Jump';
 
 export default class ActionListRow extends Component {
   state = { hover: false };
@@ -64,7 +65,7 @@ export default class ActionListRow extends Component {
           </RightSlider>
           <RightSlider styling={styling} shown={showButtons} rotate>
             <div {...styling('actionListItemSelector')}>
-              {[BUTTON_SKIP].map(btn => (!isInitAction || btn !== BUTTON_SKIP) &&
+              {[BUTTON_JUMP, BUTTON_SKIP].map(btn => (!isInitAction || btn !== BUTTON_SKIP) &&
                 <div key={btn}
                      onClick={this.handleButtonClick.bind(this, btn)}
                      {...styling([
@@ -86,7 +87,10 @@ export default class ActionListRow extends Component {
 
     switch(btn) {
     case BUTTON_SKIP:
-      this.props.onViewClick();
+      this.props.onToggleClick();
+      break;
+    case BUTTON_JUMP:
+      this.props.onJumpClick();
       break;
     }
   }

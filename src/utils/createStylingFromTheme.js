@@ -144,7 +144,7 @@ const getSheetFromColorMap = map => ({
   },
 
   actionListItemName: {
-    overflow: 'auto',
+    overflow: 'hidden',
     'text-overflow': 'ellipsis',
     'line-height': '20px'
   },

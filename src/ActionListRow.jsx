@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import dateformat from 'dateformat';
+import debounce from 'lodash.debounce';
 import RightSlider from './RightSlider';
 
 const BUTTON_SKIP = 'Skip';
@@ -89,11 +90,12 @@ export default class ActionListRow extends Component {
     }
   }
 
-  handleMouseEnter = () => {
+  handleMouseEnter = debounce(() => {
     this.setState({ hover: true });
-  }
+  }, 150)
 
   handleMouseLeave = () => {
-    this.setState({ hover: false });
+    this.handleMouseEnter.cancel();
+    if (this.state.hover) this.setState({ hover: false });
   }
 }

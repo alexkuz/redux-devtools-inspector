@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import dateformat from 'dateformat';
+import debounce from 'lodash.debounce';
 import RightSlider from './RightSlider';
 
 const BUTTON_SKIP = 'Skip';
@@ -23,14 +24,6 @@ export default class ActionListRow extends Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate
 
-  componentDidMount() {
-    document.addEventListener('mouseleave', this.handleMouseLeave);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('mouseleave', this.handleMouseLeave);
-  }
-
   render() {
     const { styling, isSelected, action, isInitAction, onSelect,
             timestamps, isSkipped } = this.props;
@@ -45,6 +38,7 @@ export default class ActionListRow extends Component {
       <div onClick={onSelect}
            onMouseEnter={this.handleMouseEnter}
            onMouseLeave={this.handleMouseLeave}
+           onMouseDown={this.handleMouseDown}
            {...styling([
              'actionListItem',
              isSelected && 'actionListItemSelected',
@@ -89,11 +83,24 @@ export default class ActionListRow extends Component {
     }
   }
 
-  handleMouseEnter = () => {
-    this.setState({ hover: true });
+  handleMouseEnter = e => {
+    if (this.hover) return;
+    this.handleMouseEnterDebounced(e.buttons);
   }
 
+  handleMouseEnterDebounced = debounce((buttons) => {
+    if (buttons) return;
+    this.setState({ hover: true });
+  }, 300)
+
   handleMouseLeave = () => {
-    this.setState({ hover: false });
+    this.handleMouseEnterDebounced.cancel();
+    if (this.state.hover) this.setState({ hover: false });
+  }
+
+  handleMouseDown = e => {
+    if (e.target.className.indexOf('selectorButton') === 0) return;
+    if (this.handleMouseEnterDebounced) this.handleMouseEnterDebounced.cancel();
+    if (this.state.hover) this.setState({ hover: false });
   }
 }

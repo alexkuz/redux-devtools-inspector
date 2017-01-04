@@ -81,7 +81,24 @@ const getSheetFromColorMap = map => ({
   },
 
   actionListRows: {
-    overflow: 'auto'
+    overflow: 'auto',
+
+    '& div.gu-transit': {
+      opacity: '0.3'
+    },
+
+    '& div.gu-mirror': {
+      position: 'fixed',
+      opacity: '0.8',
+      height: 'auto !important',
+      'border-width': '1px',
+      'border-style': 'solid',
+      'border-color': map.LIST_BORDER_COLOR
+    },
+
+    '& div.gu-hide': {
+      display: 'none'
+    }
   },
 
   actionListHeaderSelector: {

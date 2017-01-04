@@ -37,8 +37,8 @@ export default class ActionList extends Component {
 
   render() {
     const { styling, actions, actionIds, isWideLayout, onToggleAction, skippedActionIds,
-            selectedActionId, startActionId, onSelect, onSearch, searchValue,
-            onCommit, onSweep } = this.props;
+            selectedActionId, startActionId, onSelect, onSearch, searchValue, currentActionId,
+            onCommit, onSweep, onJumpToState } = this.props;
     const lowerSearchValue = searchValue && searchValue.toLowerCase();
     const filteredActionIds = searchValue ? actionIds.filter(
       id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1
@@ -63,10 +63,12 @@ export default class ActionList extends Component {
                             actionId >= startActionId && actionId <= selectedActionId ||
                             actionId === selectedActionId
                            }
+                           isInFuture={actionId > currentActionId}
                            onSelect={(e) => onSelect(e, actionId)}
                            timestamps={getTimestamps(actions, actionIds, actionId)}
                            action={actions[actionId].action}
-                           onViewClick={() => onToggleAction(actionId)}
+                           onToggleClick={() => onToggleAction(actionId)}
+                           onJumpClick={() => onJumpToState(actionId)}
                            onCommitClick={() => onCommit(actionId)}
                            isSkipped={skippedActionIds.indexOf(actionId) !== -1} />
           )}

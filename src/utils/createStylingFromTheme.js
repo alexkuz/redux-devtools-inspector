@@ -120,6 +120,10 @@ const getSheetFromColorMap = map => ({
     'background-color': map.SKIPPED_BACKGROUND_COLOR
   },
 
+  actionListFromFuture: {
+    opacity: '0.6'
+  },
+
   actionListItemButtons: {
     position: 'relative',
     height: '20px',

@@ -5,6 +5,7 @@ import debounce from 'lodash.debounce';
 import RightSlider from './RightSlider';
 
 const BUTTON_SKIP = 'Skip';
+const BUTTON_JUMP = 'Jump';
 
 export default class ActionListRow extends Component {
   state = { hover: false };
@@ -13,6 +14,7 @@ export default class ActionListRow extends Component {
     styling: PropTypes.func.isRequired,
     isSelected: PropTypes.bool.isRequired,
     action: PropTypes.shape({ type: PropTypes.string.isRequired }).isRequired,
+    isInFuture: PropTypes.bool.isRequired,
     isInitAction: PropTypes.bool.isRequired,
     onSelect: PropTypes.func.isRequired,
     timestamps: PropTypes.shape({
@@ -26,7 +28,7 @@ export default class ActionListRow extends Component {
 
   render() {
     const { styling, isSelected, action, isInitAction, onSelect,
-            timestamps, isSkipped } = this.props;
+            timestamps, isSkipped, isInFuture } = this.props;
     const { hover } = this.state;
     const timeDelta = timestamps.current - timestamps.previous;
     const showButtons = hover && !isInitAction || isSkipped;
@@ -42,7 +44,8 @@ export default class ActionListRow extends Component {
            {...styling([
              'actionListItem',
              isSelected && 'actionListItemSelected',
-             isSkipped && 'actionListItemSkipped'
+             isSkipped && 'actionListItemSkipped',
+             isInFuture && 'actionListFromFuture'
            ], isSelected, action)}>
         <div {...styling(['actionListItemName', isSkipped && 'actionListItemNameSkipped'])}>
           {action.type}
@@ -56,7 +59,7 @@ export default class ActionListRow extends Component {
           </RightSlider>
           <RightSlider styling={styling} shown={showButtons} rotate>
             <div {...styling('actionListItemSelector')}>
-              {[BUTTON_SKIP].map(btn => (!isInitAction || btn !== BUTTON_SKIP) &&
+              {[BUTTON_JUMP, BUTTON_SKIP].map(btn => (!isInitAction || btn !== BUTTON_SKIP) &&
                 <div key={btn}
                      onClick={this.handleButtonClick.bind(this, btn)}
                      {...styling([
@@ -78,7 +81,10 @@ export default class ActionListRow extends Component {
 
     switch(btn) {
     case BUTTON_SKIP:
-      this.props.onViewClick();
+      this.props.onToggleClick();
+      break;
+    case BUTTON_JUMP:
+      this.props.onJumpClick();
       break;
     }
   }

@@ -9,7 +9,7 @@ import { getBase16Theme } from 'react-base16-styling';
 import { reducer, updateMonitorState } from './redux';
 import { ActionCreators } from 'redux-devtools';
 
-const { commit, sweep, toggleAction } = ActionCreators;
+const { commit, sweep, toggleAction, jumpToAction, jumpToState } = ActionCreators;
 
 function getLastActionId(props) {
   return props.stagedActionIds[props.stagedActionIds.length - 1];
@@ -17,7 +17,7 @@ function getLastActionId(props) {
 
 function getCurrentActionId(props, monitorState) {
   return monitorState.selectedActionId === null ?
-    getLastActionId(props) : monitorState.selectedActionId;
+    props.stagedActionIds[props.currentStateIndex] : monitorState.selectedActionId;
 }
 
 function getFromState(actionIndex, stagedActionIds, computedStates, monitorState) {
@@ -149,10 +149,12 @@ export default class DevtoolsInspector extends Component {
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
-      tabs, invertTheme, skippedActionIds, monitorState } = this.props;
+      tabs, invertTheme, skippedActionIds, currentStateIndex, monitorState } = this.props;
     const { selectedActionId, startActionId, searchValue, tabName } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
-    const { themeState, isWideLayout, action, nextState, delta, error } = this.state;
+    const {
+      themeState, isWideLayout, action, nextState, delta, error
+    } = this.state;
     const { base16Theme, styling } = themeState;
 
     return (
@@ -166,9 +168,11 @@ export default class DevtoolsInspector extends Component {
                     onSearch={this.handleSearch}
                     onSelect={this.handleSelectAction}
                     onToggleAction={this.handleToggleAction}
+                    onJumpToState={this.handleJumpToState}
                     onCommit={this.handleCommit}
                     onSweep={this.handleSweep}
                     skippedActionIds={skippedActionIds}
+                    currentActionId={actionIds[currentStateIndex]}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
           base16Theme, invertTheme, isWideLayout, tabs, tabName, delta, error, nextState,
@@ -184,6 +188,15 @@ export default class DevtoolsInspector extends Component {
 
   handleToggleAction = actionId => {
     this.props.dispatch(toggleAction(actionId));
+  };
+
+  handleJumpToState = actionId => {
+    if (jumpToAction) {
+      this.props.dispatch(jumpToAction(actionId));
+    } else { // Fallback for redux-devtools-instrument < 1.5
+      const index = this.props.stagedActionIds.indexOf(actionId);
+      if (index !== -1) this.props.dispatch(jumpToState(index));
+    }
   };
 
   handleCommit = () => {

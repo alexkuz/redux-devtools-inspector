@@ -92,6 +92,6 @@ export default {
     ) : state,
   addFunction: (state=null, action) => action.type === 'ADD_FUNCTION' ?
     { f: FUNC } : state,
-  addSymbol: (state=null, action) => action.type === 'ADD_SYMBOL' ?
+  addSymbol: (state=null, action) => action.type === Symbol('ADD_SYMBOL') ?
     { s: window.Symbol('symbol') } : state
 };

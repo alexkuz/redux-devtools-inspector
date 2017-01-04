@@ -46,6 +46,7 @@ export default class ActionListRow extends Component {
       <div onClick={onSelect}
            onMouseEnter={this.handleMouseEnter}
            onMouseLeave={this.handleMouseLeave}
+           onMouseDown={this.handleMouseDown}
            {...styling([
              'actionListItem',
              isSelected && 'actionListItemSelected',
@@ -90,12 +91,24 @@ export default class ActionListRow extends Component {
     }
   }
 
-  handleMouseEnter = debounce(() => {
+  handleMouseEnter = e => {
+    if (this.hover) return;
+    this.handleMouseEnterDebounced(e.buttons);
+  }
+
+  handleMouseEnterDebounced = debounce((buttons) => {
+    if (buttons) return;
     this.setState({ hover: true });
-  }, 150)
+  }, 300)
 
   handleMouseLeave = () => {
-    this.handleMouseEnter.cancel();
+    this.handleMouseEnterDebounced.cancel();
+    if (this.state.hover) this.setState({ hover: false });
+  }
+
+  handleMouseDown = e => {
+    if (e.target.className.indexOf('selectorButton') === 0) return;
+    if (this.handleMouseEnterDebounced) this.handleMouseEnterDebounced.cancel();
     if (this.state.hover) this.setState({ hover: false });
   }
 }

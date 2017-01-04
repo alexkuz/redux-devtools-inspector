@@ -24,14 +24,6 @@ export default class ActionListRow extends Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate
 
-  componentDidMount() {
-    document.addEventListener('mouseleave', this.handleMouseLeave);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('mouseleave', this.handleMouseLeave);
-  }
-
   render() {
     const { styling, isSelected, action, isInitAction, onSelect,
             timestamps, isSkipped } = this.props;

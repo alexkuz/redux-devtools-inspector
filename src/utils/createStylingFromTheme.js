@@ -120,10 +120,13 @@ const getSheetFromColorMap = map => ({
     'background-color': map.SKIPPED_BACKGROUND_COLOR
   },
 
+  actionListFromFuture: {
+    opacity: '0.6'
+  },
+
   actionListItemButtons: {
     position: 'relative',
     height: '20px',
-    'flex-basis': '25%',
     display: 'flex'
   },
 
@@ -144,7 +147,7 @@ const getSheetFromColorMap = map => ({
   },
 
   actionListItemName: {
-    overflow: 'auto',
+    overflow: 'hidden',
     'text-overflow': 'ellipsis',
     'line-height': '20px'
   },
@@ -347,6 +350,7 @@ const getSheetFromColorMap = map => ({
   },
 
   rightSlider: {
+    'font-smoothing': 'subpixel-antialiased', // http://stackoverflow.com/a/21136111/4218591
     position: 'absolute',
     right: 0,
     transform: 'translateX(150%)',
@@ -359,6 +363,7 @@ const getSheetFromColorMap = map => ({
   },
 
   rightSliderShown: {
+    position: 'static',
     transform: 'translateX(0)',
   },
 

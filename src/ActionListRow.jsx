@@ -48,7 +48,9 @@ export default class ActionListRow extends Component {
              isInFuture && 'actionListFromFuture'
            ], isSelected, action)}>
         <div {...styling(['actionListItemName', isSkipped && 'actionListItemNameSkipped'])}>
-          {action.type !== null && action.type.toString()}
+          {action.type === null ?
+            '<NULL>' :
+            (action.type.toString() || '<EMPTY>')}
         </div>
         <div {...styling('actionListItemButtons')}>
           <RightSlider styling={styling} shown={!showButtons} rotate>

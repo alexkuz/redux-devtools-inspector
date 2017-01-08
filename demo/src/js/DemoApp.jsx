@@ -234,7 +234,7 @@ export default connect(
       payload: Array.from({ length: 10000 }).map((_, i) => i)
     }),
     addFunction: () => ({ type: 'ADD_FUNCTION' }),
-    addSymbol: () => ({ type: Symbol('ADD_SYMBOL') }),
+    addSymbol: () => ({ type: window.Symbol('ADD_SYMBOL') }),
     pushRoute
   }
 )(DemoApp);

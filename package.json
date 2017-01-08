@@ -12,7 +12,7 @@
     "version": "npm run build:demo && git add -A .",
     "postversion": "git push",
     "prepublish": "npm run build:lib",
-    "gh": "git subtree push --prefix demo/dist origin gh-pages"
+    "gh": "git-directory-deploy --directory demo/dist --branch gh-pages"
   },
   "main": "lib/index.js",
   "repository": {
@@ -41,6 +41,7 @@
     "eslint-plugin-babel": "^3.1.0",
     "eslint-plugin-react": "^6.6.0",
     "export-files-webpack-plugin": "0.0.1",
+    "git-directory-deploy": "^1.5.1",
     "html-webpack-plugin": "^2.8.1",
     "imports-loader": "^0.6.5",
     "json-loader": "^0.5.4",

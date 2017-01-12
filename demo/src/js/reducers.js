@@ -34,8 +34,11 @@ const HUGE_OBJECT = Array.from({ length: 5000 })
 
 const FUNC = function (a, b, c) { return a + b + c; };
 
-const RECURSIVE = {};
-RECURSIVE.obj = RECURSIVE;
+function addRecursive() {
+  const RECURSIVE = {};
+  RECURSIVE.obj = RECURSIVE;
+  return RECURSIVE;
+}
 
 function createIterator() {
   const iterable = {};
@@ -81,8 +84,8 @@ export default {
           }]
         }
       } : state,
-  recursive: (state=[], action) => action.type === 'ADD_RECURSIVE' ?
-    [...state, { ...RECURSIVE }] : state,
+  recursive: (state={}, action) => action.type === 'ADD_RECURSIVE' ?
+    {...state, a: addRecursive() } : state,
   immutables: (state=[], action) => action.type === 'ADD_IMMUTABLE_MAP' ?
     [...state, IMMUTABLE_MAP] : state,
   immutableNested: (state=IMMUTABLE_NESTED, action) => action.type === 'CHANGE_IMMUTABLE_NESTED' ?

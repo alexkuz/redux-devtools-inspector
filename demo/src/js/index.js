@@ -37,7 +37,7 @@ const getDevTools = options =>
                  changePositionKey='ctrl-q'
                  changeMonitorKey='ctrl-m'>
       <DevtoolsInspector theme={options.theme}
-                         shouldPersistState={true}
+                         shouldPersistState
                          invertTheme={!options.dark}
                          supportImmutable={options.supportImmutable}
                          tabs={defaultTabs => [{
@@ -56,9 +56,9 @@ const reduxRouterMiddleware = routerMiddleware(browserHistory);
 const enhancer = compose(
   applyMiddleware(createLogger(), reduxRouterMiddleware),
   (...args) => {
-    const useDevtoolsExtension = !!window.devToolsExtension && getOptions().useExtension;
+    const useDevtoolsExtension = !!window.__REDUX_DEVTOOLS_EXTENSION__ && getOptions().useExtension;
     const instrument = useDevtoolsExtension ?
-      window.devToolsExtension() : DevTools.instrument();
+      window.__REDUX_DEVTOOLS_EXTENSION__() : DevTools.instrument();
     return instrument(...args);
   },
   persistState(getDebugSessionKey())
@@ -84,7 +84,7 @@ const router = (
 
 const renderApp = options => {
   DevTools = getDevTools(options);
-  const useDevtoolsExtension = !!window.devToolsExtension && options.useExtension;
+  const useDevtoolsExtension = !!window.__REDUX_DEVTOOLS_EXTENSION__ && options.useExtension;
 
   return render(
     <Provider store={store}>

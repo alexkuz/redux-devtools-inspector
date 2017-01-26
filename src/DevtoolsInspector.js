@@ -4,7 +4,7 @@ import shouldPureComponentUpdate from 'react-pure-render/function';
 import ActionList from './ActionList';
 import ActionPreview from './ActionPreview';
 import getInspectedState from './utils/getInspectedState';
-import DiffPatcher from './DiffPatcher';
+import createDiffPatcher from './createDiffPatcher';
 import { getBase16Theme } from 'react-base16-styling';
 import { reducer, updateMonitorState } from './redux';
 import { ActionCreators } from 'redux-devtools';
@@ -32,7 +32,7 @@ function getFromState(actionIndex, stagedActionIds, computedStates, monitorState
 
 function createIntermediateState(props, monitorState) {
   const { supportImmutable, computedStates, stagedActionIds,
-          actionsById: actions } = props;
+          actionsById: actions, diffObjectHash, diffPropertyFilter } = props;
   const { inspectedStatePath, inspectedActionPath } = monitorState;
   const currentActionId = getCurrentActionId(props, monitorState);
   const currentAction = actions[currentActionId] && actions[currentActionId].action;
@@ -46,10 +46,11 @@ function createIntermediateState(props, monitorState) {
     getInspectedState(fromState.state, inspectedStatePath, supportImmutable);
   const toInspectedState =
     !error && toState && getInspectedState(toState.state, inspectedStatePath, supportImmutable);
-  const delta = !error && fromState && toState && DiffPatcher.diff(
-    fromInspectedState,
-    toInspectedState
-  );
+  const delta = !error && fromState && toState &&
+    createDiffPatcher(diffObjectHash, diffPropertyFilter).diff(
+      fromInspectedState,
+      toInspectedState
+    );
 
   return {
     delta,
@@ -92,7 +93,9 @@ export default class DevtoolsInspector extends Component {
       PropTypes.object,
       PropTypes.string
     ]),
-    supportImmutable: PropTypes.bool
+    supportImmutable: PropTypes.bool,
+    diffObjectHash: PropTypes.func,
+    diffPropertyFilter: PropTypes.func
   };
 
   static update = reducer;

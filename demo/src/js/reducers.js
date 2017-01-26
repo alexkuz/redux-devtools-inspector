@@ -1,4 +1,5 @@
 import Immutable from 'immutable';
+import shuffle from 'lodash.shuffle';
 
 const NESTED = {
   long: {
@@ -48,6 +49,8 @@ function createIterator() {
   return iterable;
 }
 
+const DEFAULT_SHUFFLE_ARRAY = [0, 1, null, { id: 1 }, { id: 2 }, 'string'];
+
 export default {
   timeoutUpdateEnabled: (state=false, action) => action.type === 'TOGGLE_TIMEOUT_UPDATE' ?
     action.timeoutUpdateEnabled : state,
@@ -93,5 +96,8 @@ export default {
   addFunction: (state=null, action) => action.type === 'ADD_FUNCTION' ?
     { f: FUNC } : state,
   addSymbol: (state=null, action) => action.type === 'ADD_SYMBOL' ?
-    { s: window.Symbol('symbol') } : state
+    { s: window.Symbol('symbol') } : state,
+  shuffleArray: (state=DEFAULT_SHUFFLE_ARRAY, action) =>
+    action.type === 'SHUFFLE_ARRAY' ?
+      shuffle(state) : state
 };

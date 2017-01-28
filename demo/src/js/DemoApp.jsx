@@ -161,6 +161,9 @@ class DemoApp extends React.Component {
             <Button onClick={this.toggleTimeoutUpdate} style={styles.button}>
               Timeout Update {this.props.timeoutUpdateEnabled ? 'On' : 'Off'}
             </Button>
+            <Button onClick={this.props.shuffleArray} style={styles.button}>
+              Shuffle Array
+            </Button>
           </div>
         </div>
         <div style={styles.links}>
@@ -234,7 +237,8 @@ export default connect(
       payload: Array.from({ length: 10000 }).map((_, i) => i)
     }),
     addFunction: () => ({ type: 'ADD_FUNCTION' }),
-    addSymbol: () => ({ type: window.Symbol('ADD_SYMBOL') }),
+    addSymbol: () => ({ type: 'ADD_SYMBOL' }),
+    shuffleArray: () => ({ type: 'SHUFFLE_ARRAY' }),
     pushRoute
   }
 )(DemoApp);

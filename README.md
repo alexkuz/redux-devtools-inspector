@@ -49,6 +49,9 @@ Name               | Type             | Description
 `invertTheme`      | Boolean          | Inverts theme color luminance, making light theme out of dark theme and vice versa.
 `supportImmutable` | Boolean          | Better `Immutable` rendering in `Diff` (can affect performance if state has huge objects/arrays). `false` by default.
 `tabs`             | Array or function | Overrides list of tabs (see below)
+`diffObjectHash`   | Function         | Optional callback for better array handling in diffs (see [jsondiffpatch docs](https://github.com/benjamine/jsondiffpatch/blob/master/docs/arrays.md))
+`diffPropertyFilter` | Function       | Optional callback for ignoring particular props in diff (see [jsondiffpatch docs](https://github.com/benjamine/jsondiffpatch#options))
+
 
 If `tabs` is a function, it receives a list of default tabs and should return updated list, for example:
 ```

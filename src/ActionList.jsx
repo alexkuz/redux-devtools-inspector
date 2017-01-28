@@ -31,7 +31,7 @@ export default class ActionList extends Component {
       ),
       moves: (el, source, handle) => (
         parseInt(el.getAttribute('data-id')) &&
-        handle.className.indexOf('selectorButton') !== 0
+        !/\bselectorButton\b/.test(handle.className)
       ),
     }).on('drop', (el, target, source, sibling) => {
       let beforeActionId = Infinity;

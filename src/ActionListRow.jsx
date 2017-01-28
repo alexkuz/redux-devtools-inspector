@@ -36,6 +36,11 @@ export default class ActionListRow extends Component {
     const isButtonSelected = btn =>
       btn === BUTTON_SKIP && isSkipped;
 
+    let actionType = action.type;
+    if (typeof actionType === 'undefined') actionType = '<UNDEFINED>';
+    else if (actionType === null) actionType = '<NULL>';
+    else actionType = actionType.toString() || '<EMPTY>';
+
     return (
       <div onClick={onSelect}
            onMouseEnter={this.handleMouseEnter}
@@ -48,9 +53,7 @@ export default class ActionListRow extends Component {
              isInFuture && 'actionListFromFuture'
            ], isSelected, action)}>
         <div {...styling(['actionListItemName', isSkipped && 'actionListItemNameSkipped'])}>
-          {action.type === null ?
-            '<NULL>' :
-            (action.type.toString() || '<EMPTY>')}
+          {actionType}
         </div>
         <div {...styling('actionListItemButtons')}>
           <RightSlider styling={styling} shown={!showButtons} rotate>

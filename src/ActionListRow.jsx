@@ -13,7 +13,7 @@ export default class ActionListRow extends Component {
   static propTypes = {
     styling: PropTypes.func.isRequired,
     isSelected: PropTypes.bool.isRequired,
-    action: PropTypes.shape({ type: PropTypes.string.isRequired }).isRequired,
+    action: PropTypes.object.isRequired,
     isInFuture: PropTypes.bool.isRequired,
     isInitAction: PropTypes.bool.isRequired,
     onSelect: PropTypes.func.isRequired,
@@ -36,6 +36,11 @@ export default class ActionListRow extends Component {
     const isButtonSelected = btn =>
       btn === BUTTON_SKIP && isSkipped;
 
+    let actionType = action.type;
+    if (typeof actionType === 'undefined') actionType = '<UNDEFINED>';
+    else if (actionType === null) actionType = '<NULL>';
+    else actionType = actionType.toString() || '<EMPTY>';
+
     return (
       <div onClick={onSelect}
            onMouseEnter={this.handleMouseEnter}
@@ -48,7 +53,7 @@ export default class ActionListRow extends Component {
              isInFuture && 'actionListFromFuture'
            ], isSelected, action)}>
         <div {...styling(['actionListItemName', isSkipped && 'actionListItemNameSkipped'])}>
-          {action.type}
+          {actionType}
         </div>
         <div {...styling('actionListItemButtons')}>
           <RightSlider styling={styling} shown={!showButtons} rotate>

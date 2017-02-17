@@ -55,6 +55,8 @@ export default class ActionList extends Component {
 
   scrollToBottom(force) {
     const el = ReactDOM.findDOMNode(this.refs.rows);
+    if (!el) return;
+
     const scrollHeight = el.scrollHeight;
     if (force || Math.abs(scrollHeight - (el.scrollTop + el.offsetHeight)) < 50) {
       el.scrollTop = scrollHeight;

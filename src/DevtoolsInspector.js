@@ -122,7 +122,9 @@ export default class DevtoolsInspector extends Component {
   }
 
   updateSizeMode() {
-    const isWideLayout = this.refs.inspector.offsetWidth > 500;
+    const node = this.refs.inspector;
+    if (!node) return;
+    const isWideLayout = node.offsetWidth > 500;
 
     if (isWideLayout !== this.state.isWideLayout) {
       this.setState({ isWideLayout });

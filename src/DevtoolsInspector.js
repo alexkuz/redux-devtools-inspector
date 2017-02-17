@@ -9,7 +9,7 @@ import { getBase16Theme } from 'react-base16-styling';
 import { reducer, updateMonitorState } from './redux';
 import { ActionCreators } from 'redux-devtools';
 
-const { commit, sweep, toggleAction, jumpToAction, jumpToState } = ActionCreators;
+const { commit, sweep, toggleAction, jumpToAction, jumpToState, reorderAction } = ActionCreators;
 
 function getLastActionId(props) {
   return props.stagedActionIds[props.stagedActionIds.length - 1];
@@ -87,6 +87,7 @@ export default class DevtoolsInspector extends Component {
       initialScrollTop: PropTypes.number
     }),
     preserveScrollTop: PropTypes.bool,
+    draggableActions: PropTypes.bool,
     stagedActions: PropTypes.array,
     select: PropTypes.func.isRequired,
     theme: PropTypes.oneOfType([
@@ -103,6 +104,7 @@ export default class DevtoolsInspector extends Component {
   static defaultProps = {
     select: (state) => state,
     supportImmutable: false,
+    draggableActions: true,
     theme: 'inspector',
     invertTheme: true
   };
@@ -123,7 +125,9 @@ export default class DevtoolsInspector extends Component {
   }
 
   updateSizeMode() {
-    const isWideLayout = this.refs.inspector.offsetWidth > 500;
+    const node = this.refs.inspector;
+    if (!node) return;
+    const isWideLayout = node.offsetWidth > 500;
 
     if (isWideLayout !== this.state.isWideLayout) {
       this.setState({ isWideLayout });
@@ -139,7 +143,9 @@ export default class DevtoolsInspector extends Component {
       getCurrentActionId(nextProps, nextMonitorState) ||
       monitorState.startActionId !== nextMonitorState.startActionId ||
       monitorState.inspectedStatePath !== nextMonitorState.inspectedStatePath ||
-      monitorState.inspectedActionPath !== nextMonitorState.inspectedActionPath
+      monitorState.inspectedActionPath !== nextMonitorState.inspectedActionPath ||
+      this.props.computedStates !== nextProps.computedStates ||
+      this.props.stagedActionIds !== nextProps.stagedActionIds
     ) {
       this.setState(createIntermediateState(nextProps, nextMonitorState));
     }
@@ -151,7 +157,7 @@ export default class DevtoolsInspector extends Component {
   }
 
   render() {
-    const { stagedActionIds: actionIds, actionsById: actions, computedStates,
+    const { stagedActionIds: actionIds, actionsById: actions, computedStates, draggableActions,
       tabs, invertTheme, skippedActionIds, currentStateIndex, monitorState } = this.props;
     const { selectedActionId, startActionId, searchValue, tabName } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
@@ -165,16 +171,16 @@ export default class DevtoolsInspector extends Component {
            ref='inspector'
            {...styling(['inspector', isWideLayout && 'inspectorWide'], isWideLayout)}>
         <ActionList {...{
-          actions, actionIds, isWideLayout, searchValue, selectedActionId, startActionId
+          actions, actionIds, isWideLayout, searchValue, selectedActionId, startActionId,
+          skippedActionIds, draggableActions, styling
         }}
-                    styling={styling}
                     onSearch={this.handleSearch}
                     onSelect={this.handleSelectAction}
                     onToggleAction={this.handleToggleAction}
                     onJumpToState={this.handleJumpToState}
                     onCommit={this.handleCommit}
                     onSweep={this.handleSweep}
-                    skippedActionIds={skippedActionIds}
+                    onReorderAction={this.handleReorderAction}
                     currentActionId={actionIds[currentStateIndex]}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
@@ -200,6 +206,10 @@ export default class DevtoolsInspector extends Component {
       const index = this.props.stagedActionIds.indexOf(actionId);
       if (index !== -1) this.props.dispatch(jumpToState(index));
     }
+  };
+
+  handleReorderAction = (actionId, beforeActionId) => {
+    if (reorderAction) this.props.dispatch(reorderAction(actionId, beforeActionId));
   };
 
   handleCommit = () => {

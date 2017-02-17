@@ -27,7 +27,7 @@ export default class ActionListRow extends Component {
   shouldComponentUpdate = shouldPureComponentUpdate
 
   render() {
-    const { styling, isSelected, action, isInitAction, onSelect,
+    const { styling, isSelected, action, actionId, isInitAction, onSelect,
             timestamps, isSkipped, isInFuture } = this.props;
     const { hover } = this.state;
     const timeDelta = timestamps.current - timestamps.previous;
@@ -46,6 +46,8 @@ export default class ActionListRow extends Component {
            onMouseEnter={this.handleMouseEnter}
            onMouseLeave={this.handleMouseLeave}
            onMouseDown={this.handleMouseDown}
+           onMouseUp={this.handleMouseEnter}
+           data-id={actionId}
            {...styling([
              'actionListItem',
              isSelected && 'actionListItemSelected',
@@ -96,22 +98,22 @@ export default class ActionListRow extends Component {
 
   handleMouseEnter = e => {
     if (this.hover) return;
+    this.handleMouseLeave.cancel();
     this.handleMouseEnterDebounced(e.buttons);
   }
 
   handleMouseEnterDebounced = debounce((buttons) => {
     if (buttons) return;
     this.setState({ hover: true });
-  }, 300)
+  }, 150)
 
-  handleMouseLeave = () => {
+  handleMouseLeave = debounce(() => {
     this.handleMouseEnterDebounced.cancel();
     if (this.state.hover) this.setState({ hover: false });
-  }
+  }, 100)
 
   handleMouseDown = e => {
     if (e.target.className.indexOf('selectorButton') === 0) return;
-    if (this.handleMouseEnterDebounced) this.handleMouseEnterDebounced.cancel();
-    if (this.state.hover) this.setState({ hover: false });
+    this.handleMouseLeave();
   }
 }

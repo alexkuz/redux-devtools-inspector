@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import dragula from 'react-dragula';
 import ActionListRow from './ActionListRow';
 import ActionListHeader from './ActionListHeader';
 import shouldPureComponentUpdate from 'react-pure-render/function';
@@ -19,6 +20,31 @@ export default class ActionList extends Component {
 
   componentDidMount() {
     this.scrollToBottom(true);
+    if (!this.props.draggableActions) return;
+    const container = ReactDOM.findDOMNode(this.refs.rows);
+    this.drake = dragula([container], {
+      copy: false,
+      copySortSource: false,
+      mirrorContainer: container,
+      accepts: (el, target, source, sibling) => (
+        !sibling || parseInt(sibling.getAttribute('data-id'))
+      ),
+      moves: (el, source, handle) => (
+        parseInt(el.getAttribute('data-id')) &&
+        !/\bselectorButton\b/.test(handle.className)
+      ),
+    }).on('drop', (el, target, source, sibling) => {
+      let beforeActionId = Infinity;
+      if (sibling && sibling.className.indexOf('gu-mirror') === -1) {
+        beforeActionId = parseInt(sibling.getAttribute('data-id'));
+      }
+      const actionId = parseInt(el.getAttribute('data-id'));
+      this.props.onReorderAction(actionId, beforeActionId)
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.drake) this.drake.destroy();
   }
 
   componentDidUpdate(prevProps) {
@@ -29,6 +55,8 @@ export default class ActionList extends Component {
 
   scrollToBottom(force) {
     const el = ReactDOM.findDOMNode(this.refs.rows);
+    if (!el) return;
+
     const scrollHeight = el.scrollHeight;
     if (force || Math.abs(scrollHeight - (el.scrollTop + el.offsetHeight)) < 50) {
       el.scrollTop = scrollHeight;
@@ -57,13 +85,16 @@ export default class ActionList extends Component {
           {filteredActionIds.map(actionId =>
             <ActionListRow key={actionId}
                            styling={styling}
+                           actionId={actionId}
                            isInitAction={!actionId}
                            isSelected={
                             startActionId !== null &&
                             actionId >= startActionId && actionId <= selectedActionId ||
                             actionId === selectedActionId
                            }
-                           isInFuture={actionId > currentActionId}
+                           isInFuture={
+                             actionIds.indexOf(actionId) > actionIds.indexOf(currentActionId)
+                           }
                            onSelect={(e) => onSelect(e, actionId)}
                            timestamps={getTimestamps(actions, actionIds, actionId)}
                            action={actions[actionId].action}

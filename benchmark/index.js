@@ -31,10 +31,20 @@ function addNewAction() {
   state.nextActionId++;
 }
 
+function removeFirstAction() {
+  delete state.actionsById[state.stagedActionIds[0]];
+  state.stagedActionIds = state.stagedActionIds.slice(1);
+}
+
 const instance = render(createElement(Component, state));
 
 const suite = new Benchmark.Suite;
-suite.add(function() {
+suite.add('Insert', function() {
+  addNewAction();
+  instance.update(createElement(Component, state));
+})
+.add('Update', function() {
+  removeFirstAction()
   addNewAction();
   instance.update(createElement(Component, state));
 })

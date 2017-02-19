@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import JSONTree from 'react-json-tree';
 import stringify from 'javascript-stringify';
 import getItemString from './getItemString';
@@ -35,31 +35,26 @@ function prepareDelta(value) {
   return value;
 }
 
-export default class JSONDiff extends Component {
-  state = { data: {} }
+const getStateFromProps = props => ({
+  theme: getJsonTreeTheme(props.base16Theme)
+});
 
-  componentDidMount() {
-    this.updateData();
+export default class JSONDiff extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = getStateFromProps(props);
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.delta !== this.props.delta) {
-      this.updateData();
+  componentWillReceiveProps(nextProps) {
+    if (['base16Theme', 'styling', 'isWideLayout'].find(k => nextProps[k] !== this.props[k])) {
+      this.setState(getStateFromProps(nextProps))
     }
   }
 
-  updateData() {
-    // this magically fixes weird React error, where it can't find a node in tree
-    // if we set `delta` as JSONTree data right away
-    // https://github.com/alexkuz/redux-devtools-inspector/issues/17
-
-    this.setState({ data: this.props.delta });
-  }
-
   render() {
-    const { styling, base16Theme, isWideLayout, ...props } = this.props;
+    const { styling, labelRenderer, invertTheme, isWideLayout, delta } = this.props;
 
-    if (!this.state.data) {
+    if (!delta) {
       return (
         <div {...styling('stateDiffEmpty')}>
           (states are equal)
@@ -68,17 +63,20 @@ export default class JSONDiff extends Component {
     }
 
     return (
-      <JSONTree {...props}
-                theme={getJsonTreeTheme(base16Theme)}
-                data={this.state.data}
-                getItemString={
-                  (type, data) => getItemString(styling, type, data, isWideLayout, true)
-                }
-                valueRenderer={this.valueRenderer}
-                postprocessValue={prepareDelta}
-                isCustomNode={Array.isArray}
-                shouldExpandNode={expandFirstLevel}
-                hideRoot />
+      <JSONTree
+        labelRenderer={labelRenderer}
+        invertTheme={invertTheme}
+        theme={this.state.theme}
+        data={delta}
+        getItemString={
+          (type, data) => getItemString(styling, type, data, isWideLayout, true)
+        }
+        valueRenderer={this.valueRenderer}
+        postprocessValue={prepareDelta}
+        isCustomNode={Array.isArray}
+        shouldExpandNode={expandFirstLevel}
+        hideRoot
+      />
     );
   }
 

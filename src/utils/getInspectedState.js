@@ -18,25 +18,24 @@ function iterateToKey(obj, key) { // maybe there's a better way, dunno
 export default function getInspectedState(
   state: Object, path: ?string[], convertImmutable: boolean
 ): Object {
-  state = path && path.length ?
-    {
-      [path[path.length - 1]]: path.reduce(
-        (s, key) => {
-          if (!s) {
-            return s;
-          }
+  state = path && path.length ? {
+    [path[path.length - 1]]: path.reduce(
+      (s, key) => {
+        if (!s) {
+          return s;
+        }
 
-          if (Iterable.isAssociative(s)) {
-            return s.get(key);
-          } else if (isIterable(s)) {
-            return iterateToKey(s, parseInt(key, 10));
-          }
+        if (Iterable.isAssociative(s)) {
+          return s.get(key);
+        } else if (isIterable(s)) {
+          return iterateToKey(s, parseInt(key, 10));
+        }
 
-          return s[key];
-        },
-        state
-      )
-    } : state;
+        return s[key];
+      },
+      state
+    )
+  } : state;
 
   if (convertImmutable) {
     try {

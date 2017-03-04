@@ -6,6 +6,7 @@ esproposal.export_star_as=enable
 
 [ignore]
 .*/node_modules/fbjs/.*
+.*/node_modules/jss/.*
 .*/build/.*
 
 [libs]

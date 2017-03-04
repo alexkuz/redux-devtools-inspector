@@ -1,17 +1,23 @@
-import React, { PropTypes } from 'react';
+// @flow
+import React from 'react';
 
-const RightSlider = ({ styling, shown, children, rotate }) =>
+import type { StylingFunction } from 'react-base16-styling';
+
+type Props = {
+  styling: StylingFunction,
+  shown: boolean,
+  children?: any,
+  rotate?: boolean
+};
+
+const RightSlider = ({ styling, shown, children, rotate }: Props) =>
   <div {...styling([
     'rightSlider',
-    shown && 'rightSliderShown',
-    rotate && 'rightSliderRotate',
-    rotate && shown && 'rightSliderRotateShown'
+    shown ? 'rightSliderShown' : null,
+    rotate ? 'rightSliderRotate' : null,
+    rotate && shown ? 'rightSliderRotateShown' : null
   ])}>
     {children}
   </div>;
-
-RightSlider.propTypes = {
-  shown: PropTypes.bool
-};
 
 export default RightSlider;

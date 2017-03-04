@@ -3,3 +3,4 @@ npm-debug.log
 .DS_Store
 lib
 yarn.lock
+demo/dist

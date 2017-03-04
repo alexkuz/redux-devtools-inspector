@@ -1,6 +1,14 @@
+// @flow
+import { ReduxState, MonitorState } from './types';
+
+type Action = {
+  type: string,
+  [key: string]: any
+};
+
 const UPDATE_MONITOR_STATE = '@@redux-devtools-inspector/UPDATE_MONITOR_STATE';
 
-const DEFAULT_STATE = {
+const DEFAULT_STATE: ReduxState = {
   selectedActionId: null,
   startActionId: null,
   inspectedActionPath: [],
@@ -8,7 +16,7 @@ const DEFAULT_STATE = {
   tabName: 'Diff'
 };
 
-export function updateMonitorState(monitorState) {
+export function updateMonitorState(monitorState: MonitorState) {
   return { type: UPDATE_MONITOR_STATE, monitorState };
 }
 
@@ -19,7 +27,7 @@ function reduceUpdateState(state, action) {
   } : state;
 }
 
-export function reducer(props, state=DEFAULT_STATE, action) {
+export function reducer(props: Object, state: ReduxState=DEFAULT_STATE, action: Action) {
   return {
     ...reduceUpdateState(state, action)
   };

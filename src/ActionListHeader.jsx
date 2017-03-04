@@ -1,13 +1,25 @@
+// @flow
 import React from 'react';
 import RightSlider from './RightSlider';
 
-const getActiveButtons = (hasSkippedActions) => [
-  hasSkippedActions && 'Sweep',
+import type { StylingFunction } from 'react-base16-styling';
+
+type Props = {
+  styling: StylingFunction,
+  onSearch: (searchStr: string) => void,
+  onCommit: () => void,
+  onSweep: () => void,
+  hasSkippedActions: boolean,
+  hasStagedActions: boolean
+};
+
+const getActiveButtons = (hasSkippedActions): Array<'Sweep' | 'Commit'> => [
+  hasSkippedActions ? 'Sweep' : null,
   'Commit'
-].filter(a => a);
+].filter(Boolean);
 
 const ActionListHeader =
-  ({ styling, onSearch, hasSkippedActions, hasStagedActions, onCommit, onSweep }) =>
+  ({ styling, onSearch, hasSkippedActions, hasStagedActions, onCommit, onSweep }: Props) =>
   <div {...styling('actionListHeader')}>
     <input
       {...styling('actionListHeaderSearch')}

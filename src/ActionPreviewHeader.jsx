@@ -1,7 +1,20 @@
+// @flow
 import React from 'react';
 
+import type { StylingFunction } from 'react-base16-styling';
+import type { Tab, TabName } from './types';
+
+type Props = {
+  styling: StylingFunction,
+  inspectedPath: string[],
+  onInspectPath: (path: string[]) => void,
+  tabName: TabName,
+  onSelectTab: (tabName: TabName) => void,
+  tabs: Tab[]
+};
+
 const ActionPreviewHeader =
-  ({ styling, inspectedPath, onInspectPath, tabName, onSelectTab, tabs }) =>
+  ({ styling, inspectedPath, onInspectPath, tabName, onSelectTab, tabs }: Props) =>
   <div key='previewHeader' {...styling('previewHeader')}>
     <div {...styling('tabSelector')}>
       {tabs.map(tab =>
@@ -9,7 +22,7 @@ const ActionPreviewHeader =
              key={tab.name}
           {...styling([
             'selectorButton',
-            tab.name === tabName && 'selectorButtonSelected'
+            tab.name === tabName ? 'selectorButtonSelected' : null
           ], tab.name === tabName)}>
           {tab.name}
         </div>

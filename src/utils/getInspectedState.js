@@ -1,3 +1,4 @@
+// @flow
 import { Iterable, fromJS } from 'immutable';
 import isIterable from './isIterable';
 
@@ -14,7 +15,9 @@ function iterateToKey(obj, key) { // maybe there's a better way, dunno
   }
 }
 
-export default function getInspectedState(state, path, convertImmutable) {
+export default function getInspectedState(
+  state: Object, path: ?string[], convertImmutable: boolean
+): Object {
   state = path && path.length ?
     {
       [path[path.length - 1]]: path.reduce(
@@ -26,7 +29,7 @@ export default function getInspectedState(state, path, convertImmutable) {
           if (Iterable.isAssociative(s)) {
             return s.get(key);
           } else if (isIterable(s)) {
-            return iterateToKey(s, key);
+            return iterateToKey(s, parseInt(key, 10));
           }
 
           return s[key];

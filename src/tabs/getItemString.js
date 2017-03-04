@@ -1,14 +1,17 @@
+// @flow
 import React from 'react';
 import { Iterable } from 'immutable';
 import isIterable from '../utils/isIterable';
 
+import type { StylingFunction } from 'react-base16-styling';
+
 const IS_IMMUTABLE_KEY = '@@__IS_IMMUTABLE__@@';
 
-function isImmutable(value) {
+function isImmutable(value): boolean {
   return Iterable.isKeyed(value) || Iterable.isIndexed(value) || Iterable.isIterable(value);
 }
 
-function getShortTypeString(val, diff) {
+function getShortTypeString(val, diff): string {
   if (diff && Array.isArray(val)) {
     val = val[val.length === 2 ? 1 : 0];
   }
@@ -27,14 +30,14 @@ function getShortTypeString(val, diff) {
     return 'fn';
   } else if (typeof val === 'string') {
     return `"${val.substr(0, 10) + (val.length > 10 ? '…' : '')}"`
-  } else if (typeof val === 'symbol') {
-    return 'symbol'
+  } else if ((typeof val: any) === 'symbol') {
+    return 'symbol';
   } else {
     return val;
   }
 }
 
-function getText(type, data, isWideLayout, isDiff) {
+function getText(type, data, isWideLayout, isDiff): string {
   if (type === 'Object') {
     const keys = Object.keys(data);
     if (!isWideLayout) return keys.length ? '{…}' : '{}';
@@ -60,7 +63,13 @@ function getText(type, data, isWideLayout, isDiff) {
   }
 }
 
-const getItemString = (styling, type, data, isWideLayout, isDiff) =>
+const getItemString = (
+  styling: StylingFunction,
+  type: string,
+  data: Object,
+  isWideLayout: boolean,
+  isDiff: boolean = false
+): React$Element<*> =>
   <span {...styling('treeItemHint')}>
     {data[IS_IMMUTABLE_KEY] ? 'Immutable' : ''}
     {getText(type, data, isWideLayout, isDiff)}

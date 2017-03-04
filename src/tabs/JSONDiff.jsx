@@ -1,10 +1,28 @@
+// @flow
 import React, { PureComponent } from 'react';
 import JSONTree from 'react-json-tree';
 import stringify from 'javascript-stringify';
 import getItemString from './getItemString';
 import getJsonTreeTheme from './getJsonTreeTheme';
 
-function stringifyAndShrink(val, isWideLayout) {
+import type { LabelRenderer } from 'react-json-tree';
+import type { Delta, ArrayDelta } from 'jsondiffpatch';
+import type { StylingFunction, Base16Theme, StylingConfig } from 'react-base16-styling';
+
+type Props = {
+  delta: Delta,
+  styling: StylingFunction,
+  base16Theme: Base16Theme,
+  invertTheme: boolean,
+  labelRenderer: LabelRenderer,
+  isWideLayout: boolean
+};
+
+type State = {
+  theme: StylingConfig
+};
+
+function stringifyAndShrink(val: any, isWideLayout: boolean): string {
   const str = stringify(val);
   if (val === null) { return 'null'; }
   else if (typeof val === 'undefined') { return 'undefined'; }
@@ -13,19 +31,20 @@ function stringifyAndShrink(val, isWideLayout) {
   return str.length > 22 ? `${str.substr(0, 15)}…${str.substr(-5)}` : str;
 }
 
-const expandFirstLevel = (keyName, data, level) => level <= 1;
+const expandFirstLevel = (keyName: string, data: Object, level: number): boolean => level <= 1;
 
-function prepareDelta(value) {
+function prepareDelta(value: Delta): Delta {
   if (value && value._t === 'a') {
+    const arrayDelta: ArrayDelta = (value: any);
     const res = {};
-    for (let key in value) {
+    for (let key in arrayDelta) {
       if (key !== '_t') {
-        if (key[0] === '_' && !value[key.substr(1)]) {
-          res[key.substr(1)] = value[key];
-        } else if (value['_' + key]) {
-          res[key] = [value['_' + key][0], value[key][0]];
-        } else if (!value['_' + key] && key[0] !== '_') {
-          res[key] = value[key];
+        if (key[0] === '_' && !arrayDelta[key.substr(1)]) {
+          res[key.substr(1)] = arrayDelta[key];
+        } else if (arrayDelta['_' + key]) {
+          res[key] = [arrayDelta['_' + key][0], arrayDelta[key][0]];
+        } else if (!arrayDelta['_' + key] && key[0] !== '_') {
+          res[key] = arrayDelta[key];
         }
       }
     }
@@ -39,20 +58,22 @@ const getStateFromProps = props => ({
   theme: getJsonTreeTheme(props.base16Theme)
 });
 
-export default class JSONDiff extends PureComponent {
-  constructor(props) {
+export default class JSONDiff extends PureComponent<void, Props, State> {
+  state: State;
+
+  constructor(props: Props) {
     super(props);
     this.state = getStateFromProps(props);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (['base16Theme', 'styling', 'isWideLayout'].find(k => nextProps[k] !== this.props[k])) {
+  componentWillReceiveProps(nextProps: Props) {
+    if (nextProps.base16Theme !== this.props.base16Theme) {
       this.setState(getStateFromProps(nextProps))
     }
   }
 
   render() {
-    const { styling, labelRenderer, invertTheme, isWideLayout, delta } = this.props;
+    const { styling, labelRenderer, invertTheme, delta } = this.props;
 
     if (!delta) {
       return (
@@ -68,9 +89,7 @@ export default class JSONDiff extends PureComponent {
         invertTheme={invertTheme}
         theme={this.state.theme}
         data={delta}
-        getItemString={
-          (type, data) => getItemString(styling, type, data, isWideLayout, true)
-        }
+        getItemString={this.getItemString}
         valueRenderer={this.valueRenderer}
         postprocessValue={prepareDelta}
         isCustomNode={Array.isArray}
@@ -80,7 +99,7 @@ export default class JSONDiff extends PureComponent {
     );
   }
 
-  valueRenderer = (raw, value) => {
+  valueRenderer = (raw: React$Element<*>, value: any): React$Element<*> => {
     const { styling, isWideLayout } = this.props;
 
     function renderSpan(name, body) {
@@ -108,7 +127,7 @@ export default class JSONDiff extends PureComponent {
       case 3:
         return (
           <span {...styling('diffWrap')}>
-            {renderSpan('diffRemove', stringifyAndShrink(value[0]))}
+            {renderSpan('diffRemove', stringifyAndShrink(value[0], isWideLayout))}
           </span>
         );
       }
@@ -116,4 +135,8 @@ export default class JSONDiff extends PureComponent {
 
     return raw;
   }
+
+  getItemString = (type: string, data: any) => {
+    return getItemString(this.props.styling, type, data, this.props.isWideLayout, true);
+  };
 }

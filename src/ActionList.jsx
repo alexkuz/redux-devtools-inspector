@@ -1,8 +1,32 @@
-import React, { Component } from 'react';
+// @flow
+import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import ActionListRow from './ActionListRow';
 import ActionListHeader from './ActionListHeader';
-import shouldPureComponentUpdate from 'react-pure-render/function';
+
+import type { StylingFunction } from 'react-base16-styling';
+import type { Action } from './types';
+
+type Props = {
+  styling: StylingFunction,
+  actions: {
+    [id: number]: Action
+  },
+  actionIds: number[],
+  lastActionId: number,
+  isWideLayout: boolean,
+  onToggleAction: (actionId: number) => void;
+  skippedActionIds: number[],
+  selectedActionId: number,
+  startActionId: null | number,
+  onSelect: (e: SyntheticMouseEvent, actionId: number) => void,
+  onSearch: (searchStr: string) => void,
+  searchValue: string,
+  currentActionId: number,
+  onCommit: () => void,
+  onSweep: () => void,
+  onJumpToState: (actionId: number) => void
+};
 
 function getTimestamps(actions, actionIds, actionId) {
   const idx = actionIds.indexOf(actionId);
@@ -14,20 +38,18 @@ function getTimestamps(actions, actionIds, actionId) {
   };
 }
 
-export default class ActionList extends Component {
-  shouldComponentUpdate = shouldPureComponentUpdate;
-
+export default class ActionList extends PureComponent<void, Props, void> {
   componentDidMount() {
     this.scrollToBottom(true);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (this.props.lastActionId !== prevProps.lastActionId) {
       this.scrollToBottom();
     }
   }
 
-  scrollToBottom(force) {
+  scrollToBottom(force?: boolean) {
     const el = ReactDOM.findDOMNode(this.refs.rows);
     const scrollHeight = el.scrollHeight;
     if (force || Math.abs(scrollHeight - (el.scrollTop + el.offsetHeight)) < 50) {
@@ -45,8 +67,12 @@ export default class ActionList extends Component {
     ) : actionIds;
 
     return (
-      <div key='actionList'
-           {...styling(['actionList', isWideLayout && 'actionListWide'], isWideLayout)}>
+      <div
+        key='actionList'
+        {...styling(
+          ['actionList', isWideLayout ? 'actionListWide' : null], isWideLayout
+        )}
+      >
         <ActionListHeader styling={styling}
                           onSearch={onSearch}
                           onCommit={onCommit}

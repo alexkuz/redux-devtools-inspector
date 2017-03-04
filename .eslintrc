@@ -42,9 +42,13 @@
     "babel/object-curly-spacing": ["warn", "always"],
     "babel/object-shorthand": "warn"
   },
+  "extends": [
+    "plugin:flowtype/recommended"
+  ],
   "plugins": [
     "react",
-    "babel"
+    "babel",
+    "flowtype"
   ],
   "settings": {
     "ecmascript": 6,

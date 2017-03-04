@@ -1,6 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+// @flow
+import React, { PureComponent } from 'react';
 import { createStylingFromTheme, base16Themes } from './utils/createStylingFromTheme';
-import shouldPureComponentUpdate from 'react-pure-render/function';
 import ActionList from './ActionList';
 import ActionPreview from './ActionPreview';
 import getInspectedState from './utils/getInspectedState';
@@ -8,6 +8,47 @@ import createDiffPatcher from './createDiffPatcher';
 import { getBase16Theme } from 'react-base16-styling';
 import { reducer, updateMonitorState } from './redux';
 import { ActionCreators } from 'redux-devtools';
+
+import type { Base16Theme, StylingFunction, Theme } from 'react-base16-styling';
+import type { Dispatch } from 'redux';
+import type { Action, MonitorState, TabName } from './types';
+import type { ObjectHash, PropertyFilter, Delta } from 'jsondiffpatch';
+
+type DefaultProps = {
+  supportImmutable: boolean,
+  theme: Theme,
+  invertTheme: boolean
+};
+
+type AppState = Object;
+
+type Props = DefaultProps & {
+  dispatch: Dispatch<*>,
+  computedStates: AppState[],
+  stagedActionIds: number[],
+  actionsById: {
+    [id: number]: Action
+  },
+  currentStateIndex: number,
+  monitorState: MonitorState,
+  preserveScrollTop: boolean,
+  stagedActions: number[],
+//  select: PropTypes.func.isRequired,
+  diffObjectHash: ObjectHash,
+  diffPropertyFilter: PropertyFilter
+};
+
+type State = {
+  isWideLayout: boolean,
+  themeState: {
+    base16Theme: Base16Theme,
+    styling: StylingFunction
+  },
+  action: Action,
+  nextState: Object,
+  delta: ?Delta,
+  error: ?string
+};
 
 const { commit, sweep, toggleAction, jumpToAction, jumpToState } = ActionCreators;
 
@@ -40,17 +81,17 @@ function createIntermediateState(props, monitorState) {
   const actionIndex = stagedActionIds.indexOf(currentActionId);
   const fromState = getFromState(actionIndex, stagedActionIds, computedStates, monitorState);
   const toState = computedStates[actionIndex];
-  const error = toState && toState.error;
+  const error = toState ? toState.error : null;
 
-  const fromInspectedState = !error && fromState &&
-    getInspectedState(fromState.state, inspectedStatePath, supportImmutable);
-  const toInspectedState =
-    !error && toState && getInspectedState(toState.state, inspectedStatePath, supportImmutable);
-  const delta = !error && fromState && toState &&
+  const fromInspectedState = !error && fromState ?
+    getInspectedState(fromState.state, inspectedStatePath, supportImmutable) : null;
+  const toInspectedState = !error && toState ?
+    getInspectedState(toState.state, inspectedStatePath, supportImmutable) : null;
+  const delta = fromInspectedState && toInspectedState ?
     createDiffPatcher(diffObjectHash, diffPropertyFilter).diff(
       fromInspectedState,
       toInspectedState
-    );
+    ) : null;
 
   return {
     delta,
@@ -67,8 +108,11 @@ function createThemeState(props) {
   return { base16Theme, styling };
 }
 
-export default class DevtoolsInspector extends Component {
-  constructor(props) {
+export default class DevtoolsInspector extends PureComponent<DefaultProps, Props, State> {
+  state: State;
+  updateSizeTimeout: ?number;
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       ...createIntermediateState(props, props.monitorState),
@@ -76,27 +120,6 @@ export default class DevtoolsInspector extends Component {
       themeState: createThemeState(props)
     };
   }
-
-  static propTypes = {
-    dispatch: PropTypes.func,
-    computedStates: PropTypes.array,
-    stagedActionIds: PropTypes.array,
-    actionsById: PropTypes.object,
-    currentStateIndex: PropTypes.number,
-    monitorState: PropTypes.shape({
-      initialScrollTop: PropTypes.number
-    }),
-    preserveScrollTop: PropTypes.bool,
-    stagedActions: PropTypes.array,
-    select: PropTypes.func.isRequired,
-    theme: PropTypes.oneOfType([
-      PropTypes.object,
-      PropTypes.string
-    ]),
-    supportImmutable: PropTypes.bool,
-    diffObjectHash: PropTypes.func,
-    diffPropertyFilter: PropTypes.func
-  };
 
   static update = reducer;
 
@@ -107,8 +130,6 @@ export default class DevtoolsInspector extends Component {
     invertTheme: true
   };
 
-  shouldComponentUpdate = shouldPureComponentUpdate;
-
   componentDidMount() {
     this.updateSizeMode();
     this.updateSizeTimeout = window.setInterval(this.updateSizeMode.bind(this), 150);
@@ -118,7 +139,7 @@ export default class DevtoolsInspector extends Component {
     window.clearTimeout(this.updateSizeTimeout);
   }
 
-  updateMonitorState(monitorState) {
+  updateMonitorState(monitorState: MonitorState) {
     this.props.dispatch(updateMonitorState(monitorState));
   }
 
@@ -130,7 +151,7 @@ export default class DevtoolsInspector extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     let nextMonitorState = nextProps.monitorState;
     const monitorState = this.props.monitorState;
 
@@ -163,7 +184,7 @@ export default class DevtoolsInspector extends Component {
     return (
       <div key='inspector'
            ref='inspector'
-           {...styling(['inspector', isWideLayout && 'inspectorWide'], isWideLayout)}>
+           {...styling(['inspector', isWideLayout ? 'inspectorWide' : null], isWideLayout)}>
         <ActionList {...{
           actions, actionIds, isWideLayout, searchValue, selectedActionId, startActionId
         }}
@@ -189,11 +210,11 @@ export default class DevtoolsInspector extends Component {
     );
   }
 
-  handleToggleAction = actionId => {
+  handleToggleAction = (actionId: number) => {
     this.props.dispatch(toggleAction(actionId));
   };
 
-  handleJumpToState = actionId => {
+  handleJumpToState = (actionId: number) => {
     if (jumpToAction) {
       this.props.dispatch(jumpToAction(actionId));
     } else { // Fallback for redux-devtools-instrument < 1.5
@@ -210,11 +231,11 @@ export default class DevtoolsInspector extends Component {
     this.props.dispatch(sweep());
   };
 
-  handleSearch = val => {
+  handleSearch = (val: string) => {
     this.updateMonitorState({ searchValue: val });
   };
 
-  handleSelectAction = (e, actionId) => {
+  handleSelectAction = (e: SyntheticMouseEvent, actionId: number) => {
     const { monitorState } = this.props;
     let startActionId;
     let selectedActionId;
@@ -244,11 +265,11 @@ export default class DevtoolsInspector extends Component {
     this.updateMonitorState({ startActionId, selectedActionId });
   };
 
-  handleInspectPath = (pathType, path) => {
+  handleInspectPath = (pathType: string, path: string[]) => {
     this.updateMonitorState({ [pathType]: path });
   };
 
-  handleSelectTab = tabName => {
+  handleSelectTab = (tabName: TabName) => {
     this.updateMonitorState({ tabName });
   };
 }

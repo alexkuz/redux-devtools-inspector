@@ -1,3 +1,4 @@
+// @flow
 import jss from 'jss';
 import jssVendorPrefixer from 'jss-vendor-prefixer';
 import jssNested from 'jss-nested';

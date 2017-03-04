@@ -1,1 +1,2 @@
-export default from './DevtoolsInspector';
+// @flow
+export { default } from './DevtoolsInspector';

@@ -20,8 +20,7 @@ module.exports = {
     ],
   output: {
     path: path.join(__dirname, 'demo/dist'),
-    filename: 'js/bundle.js',
-    hash: true
+    filename: 'js/bundle.js'
   },
   plugins: [
     new CleanWebpackPlugin(isProduction ? ['demo/dist'] : []),
@@ -36,7 +35,7 @@ module.exports = {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       },
     }),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new NyanProgressWebpackPlugin()
   ].concat(isProduction ? [
     new webpack.optimize.UglifyJsPlugin({
@@ -48,19 +47,20 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin()
   ]),
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['.js', '.jsx']
   },
   module: {
+    exprContextCritical: false,
     loaders: [{
       test: /\.jsx?$/,
-      loaders: ['babel'],
+      loaders: ['babel-loader'],
       include: [
         path.join(__dirname, 'src'),
         path.join(__dirname, 'demo/src/js')
       ]
     }, {
       test: /\.json$/,
-      loader: 'json'
+      loader: 'json-loader'
     }]
   },
   devServer: isProduction ? null : {

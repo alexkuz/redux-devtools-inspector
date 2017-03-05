@@ -8,13 +8,13 @@
     "stats": "webpack --profile --json > stats.json",
     "start": "webpack-dev-server",
     "lint": "eslint --ext .jsx,.js --max-warnings 0 src",
-    "preversion": "npm run lint & npm run flow",
-    "version": "npm run build:demo && git add -A .",
+    "preversion": "npm -s run lint & npm -s run flow",
+    "version": "npm -s run build:demo && git add -A .",
     "postversion": "git push",
     "prepublish": "npm run build:lib",
     "gh": "git-directory-deploy --directory demo/dist --branch gh-pages",
     "flow": "flow",
-    "test": "npm run lint && npm run flow"
+    "test": "npm -s run lint && npm -s run flow"
   },
   "main": "lib/index.js",
   "repository": {
@@ -90,7 +90,7 @@
     "jss-vendor-prefixer": "^4.0.0",
     "lodash.debounce": "^4.0.3",
     "react-base16-styling": "^0.4.1",
-    "react-json-tree": "^0.10.0",
+    "react-json-tree": "^0.10.5",
     "redux-devtools-themes": "^1.0.0"
   },
   "pre-commit": [

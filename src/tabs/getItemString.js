@@ -1,64 +1,126 @@
 // @flow
 import React from 'react';
-import { Iterable } from 'immutable';
-import isIterable from '../utils/isIterable';
+import getType from '../utils/getType';
 
 import type { StylingFunction } from 'react-base16-styling';
 
-const IS_IMMUTABLE_KEY = '@@__IS_IMMUTABLE__@@';
+function getShortTypeString(val: any, diff?: boolean): string {
+  const type = getType(val);
 
-function isImmutable(value): boolean {
-  return Iterable.isKeyed(value) || Iterable.isIndexed(value) || Iterable.isIterable(value);
-}
-
-function getShortTypeString(val, diff): string {
   if (diff && Array.isArray(val)) {
     val = val[val.length === 2 ? 1 : 0];
   }
 
-  if (isIterable(val) && !isImmutable(val)) {
+  switch (type) {
+  case 'Immutable List':
+  case 'Immutable Stack':
+  case 'Immutable Seq':
+    return '<I>' + val.size ? '[…]' : '[]';
+  case 'Map':
+    return val.size ? '{…}' : '{}';
+  case 'WeakMap':
+    return '{…}';
+  case 'Set':
+    return val.size ? '(…)' : '()';
+  case 'WeakSet':
     return '(…)';
-  } else if (Array.isArray(val)) {
+  case 'Immutable Map':
+  case 'Immutable OrderedMap':
+    return '<I>' + val.size ? '{…}' : '{}';
+  case 'Immutable Set':
+  case 'Immutable OrderedSet':
+    return '<I>' + val.size ? '(…)' : '()';
+  case 'Iterable':
+    return '(…)';
+  case 'Array':
     return val.length > 0 ? '[…]' : '[]';
-  } else if (val === null) {
+  case 'Null':
     return 'null';
-  } else if (val === undefined) {
+  case 'Undefined':
     return 'undef';
-  } else if (typeof val === 'object') {
+  case 'Error':
+    return `Error(${getShortTypeString(val.message)}`;
+  case 'Object':
     return Object.keys(val).length > 0 ? '{…}' : '{}';
-  } else if (typeof val === 'function') {
+  case 'Function':
     return 'fn';
-  } else if (typeof val === 'string') {
+  case 'String':
     return `"${val.substr(0, 10) + (val.length > 10 ? '…' : '')}"`
-  } else if ((typeof val: any) === 'symbol') {
+  case 'Symbol':
     return 'symbol';
-  } else {
-    return val;
+  default:
+    return val.toString();
   }
 }
 
+function getFirstEntries(data, limit, getEntryString): string {
+  let idx = 0, arr = [];
+
+  for (let entry of data) {
+    if (idx === 3) {
+      arr.push('…');
+      break;
+    };
+    arr.push(getEntryString(entry));
+    idx++;
+  }
+
+  return arr.join(', ');
+}
+
 function getText(type, data, isWideLayout, isDiff): string {
-  if (type === 'Object') {
+  let str;
+  type = getType(data);
+
+  switch(type) {
+  case 'Immutable List':
+  case 'Immutable Stack':
+  case 'Immutable Seq':
+    str = getFirstEntries(data, 3, entry => getShortTypeString(entry));
+    return `<I>[ ${str} ]`;
+  case 'Map':
+    str = getFirstEntries(data, 3, entry =>
+      `${getShortTypeString(entry[0])} => ${getShortTypeString(entry[1])}`
+    );
+    return `{ ${str} }`;
+  case 'WeakMap':
+    return '{…}';
+  case 'Set':
+    str = getFirstEntries(data, 3, entry => getShortTypeString(entry));
+    return `( ${str} )`;
+  case 'WeakSet':
+    return '(…)';
+  case 'Immutable Map':
+  case 'Immutable OrderedMap':
+    str = getFirstEntries(data, 3, entry =>
+      `${getShortTypeString(entry[0])} => ${getShortTypeString(entry[1])}`
+    );
+    return `<I>{ ${str} }`;
+  case 'Immutable Set':
+  case 'Immutable OrderedSet':
+    str = getFirstEntries(data, 3, entry => getShortTypeString(entry));
+    return `<I>( ${str} )`;
+  case 'Object':
     const keys = Object.keys(data);
     if (!isWideLayout) return keys.length ? '{…}' : '{}';
 
-    const str = keys
+    str = keys
       .slice(0, 3)
       .map(key => `${key}: ${getShortTypeString(data[key], isDiff)}`)
       .concat(keys.length > 3 ? ['…'] : [])
       .join(', ');
 
     return `{ ${str} }`;
-  } else if (type === 'Array') {
+  case 'Array':
     if (!isWideLayout) return data.length ? '[…]' : '[]';
 
-    const str = data
+    str = data
       .slice(0, 4)
       .map(val => getShortTypeString(val, isDiff))
       .concat(data.length > 4 ? ['…'] : []).join(', ');
 
     return `[${str}]`;
-  } else {
+  default:
     return type;
   }
 }
@@ -71,7 +133,6 @@ const getItemString = (
   isDiff: boolean = false
 ): React$Element<*> =>
   <span {...styling('treeItemHint')}>
-    {data[IS_IMMUTABLE_KEY] ? 'Immutable' : ''}
     {getText(type, data, isWideLayout, isDiff)}
   </span>;
 

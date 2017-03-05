@@ -23,9 +23,10 @@ type State = {
 };
 
 function stringifyAndShrink(val: any, isWideLayout: boolean): string {
-  const str = stringify(val);
   if (val === null) { return 'null'; }
-  else if (typeof val === 'undefined') { return 'undefined'; }
+
+  const str = stringify(val);
+  if (typeof str === 'undefined') { return 'undefined'; }
 
   if (isWideLayout) return str.length > 42 ? str.substr(0, 30) + '…' + str.substr(-10) : str;
   return str.length > 22 ? `${str.substr(0, 15)}…${str.substr(-5)}` : str;

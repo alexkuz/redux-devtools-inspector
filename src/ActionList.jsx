@@ -60,7 +60,7 @@ export default class ActionList extends PureComponent<void, Props, void> {
   render() {
     const { styling, actions, actionIds, isWideLayout, onToggleAction, skippedActionIds,
             selectedActionId, startActionId, onSelect, onSearch, searchValue, currentActionId,
-            onCommit, onSweep, onJumpToState } = this.props;
+            hideMainButtons, hideActionButtons, onCommit, onSweep, onJumpToState } = this.props;
     const lowerSearchValue = searchValue && searchValue.toLowerCase();
     const filteredActionIds = searchValue ? actionIds.filter(
       id => actions[id].action.type.toLowerCase().indexOf(lowerSearchValue) !== -1
@@ -77,6 +77,7 @@ export default class ActionList extends PureComponent<void, Props, void> {
                           onSearch={onSearch}
                           onCommit={onCommit}
                           onSweep={onSweep}
+                          hideMainButtons={hideMainButtons}
                           hasSkippedActions={skippedActionIds.length > 0}
                           hasStagedActions={actionIds.length > 1} />
         <div {...styling('actionListRows')} ref='rows'>
@@ -96,6 +97,7 @@ export default class ActionList extends PureComponent<void, Props, void> {
                            onToggleClick={() => onToggleAction(actionId)}
                            onJumpClick={() => onJumpToState(actionId)}
                            onCommitClick={() => onCommit(actionId)}
+                           hideActionButtons={hideActionButtons}
                            isSkipped={skippedActionIds.indexOf(actionId) !== -1} />
           )}
         </div>

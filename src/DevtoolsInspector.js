@@ -17,7 +17,9 @@ import type { ObjectHash, PropertyFilter, Delta } from 'jsondiffpatch';
 type DefaultProps = {
   supportImmutable: boolean,
   theme: Theme,
-  invertTheme: boolean
+  invertTheme: boolean,
+  hideMainButtons: boolean,
+  hideActionButtons: boolean
 };
 
 type AppState = Object;
@@ -127,7 +129,9 @@ export default class DevtoolsInspector extends PureComponent<DefaultProps, Props
     select: (state) => state,
     supportImmutable: false,
     theme: 'inspector',
-    invertTheme: true
+    invertTheme: true,
+    hideMainButtons: false,
+    hideActionButtons: false
   };
 
   componentDidMount() {
@@ -173,7 +177,8 @@ export default class DevtoolsInspector extends PureComponent<DefaultProps, Props
 
   render() {
     const { stagedActionIds: actionIds, actionsById: actions, computedStates,
-      tabs, invertTheme, skippedActionIds, currentStateIndex, monitorState } = this.props;
+      tabs, invertTheme, skippedActionIds, currentStateIndex, monitorState,
+      hideMainButtons, hideActionButtons } = this.props;
     const { selectedActionId, startActionId, searchValue, tabName } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
     const {
@@ -186,7 +191,8 @@ export default class DevtoolsInspector extends PureComponent<DefaultProps, Props
            ref='inspector'
            {...styling(['inspector', isWideLayout ? 'inspectorWide' : null], isWideLayout)}>
         <ActionList {...{
-          actions, actionIds, isWideLayout, searchValue, selectedActionId, startActionId
+          actions, actionIds, isWideLayout, searchValue, selectedActionId, startActionId,
+          hideMainButtons, hideActionButtons
         }}
                     styling={styling}
                     onSearch={this.handleSearch}

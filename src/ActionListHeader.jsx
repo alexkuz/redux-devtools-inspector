@@ -19,13 +19,16 @@ const getActiveButtons = (hasSkippedActions): Array<'Sweep' | 'Commit'> => [
 ].filter(Boolean);
 
 const ActionListHeader =
-  ({ styling, onSearch, hasSkippedActions, hasStagedActions, onCommit, onSweep }: Props) =>
+  ({
+     styling, onSearch, hasSkippedActions, hasStagedActions, onCommit, onSweep, hideMainButtons
+  }: Props) =>
   <div {...styling('actionListHeader')}>
     <input
       {...styling('actionListHeaderSearch')}
       onChange={e => onSearch(e.target.value)}
       placeholder='filter...'
     />
+    {!hideMainButtons &&
     <div {...styling('actionListHeaderWrapper')}>
       <RightSlider shown={hasStagedActions} styling={styling}>
         <div {...styling('actionListHeaderSelector')}>
@@ -46,6 +49,7 @@ const ActionListHeader =
         </div>
       </RightSlider>
     </div>
+    }
   </div>;
 
 export default ActionListHeader;

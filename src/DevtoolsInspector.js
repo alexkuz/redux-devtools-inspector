@@ -139,9 +139,9 @@ export default class DevtoolsInspector extends PureComponent<DefaultProps, Props
     clearTimeout(this.updateSizeTimeout);
   }
 
-  updateMonitorState(monitorState: MonitorState) {
+  updateMonitorState = (monitorState: MonitorState) => {
     this.props.dispatch(updateMonitorState(monitorState));
-  }
+  };
 
   updateSizeMode() {
     const isWideLayout = this.refs.inspector.offsetWidth > 500;
@@ -200,8 +200,9 @@ export default class DevtoolsInspector extends PureComponent<DefaultProps, Props
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
           base16Theme, invertTheme, isWideLayout, tabs, tabName, delta, error, nextState,
-          computedStates, action, actions, selectedActionId, startActionId
+          computedStates, action, actions, selectedActionId, startActionId, monitorState
         }}
+                       updateMonitorState={this.updateMonitorState}
                        styling={styling}
                        onInspectPath={this.handleInspectPath.bind(this, inspectedPathType)}
                        inspectedPath={monitorState[inspectedPathType]}

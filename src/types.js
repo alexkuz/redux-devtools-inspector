@@ -1,3 +1,5 @@
+// @noflow
+
 export type Action = {
   timestamp: Date,
   error: ?string

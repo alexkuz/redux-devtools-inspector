@@ -5,11 +5,12 @@ import getType from '../utils/getType';
 import type { StylingFunction } from 'react-base16-styling';
 
 function getShortTypeString(val: any, diff?: boolean): string {
-  const type = getType(val);
 
   if (diff && Array.isArray(val)) {
     val = val[val.length === 2 ? 1 : 0];
   }
+
+  const type = getType(val);
 
   switch (type) {
   case 'Immutable List':

@@ -48,6 +48,7 @@ const getSheetFromColorMap = map => ({
     'font-size': '12px',
     'font-smoothing': 'antialiased',
     'line-height': '1.5em',
+    'min-height': '0',
 
     'background-color': map.BACKGROUND_COLOR,
     color: map.TEXT_COLOR

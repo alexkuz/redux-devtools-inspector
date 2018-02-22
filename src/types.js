@@ -1,9 +1,11 @@
+/* @flow */
 export type Action = {
   timestamp: Date,
   error: ?string
 };
 
 export type TabName = 'Action' | 'Diff' | 'State';
+/* @noflow */
 export type Tab = {
   name: TabName,
   component: React$Component

@@ -5,7 +5,6 @@ export type Action = {
 };
 
 export type TabName = 'Action' | 'Diff' | 'State';
-/* @noflow */
 export type Tab = {
   name: TabName,
   component: React$Component

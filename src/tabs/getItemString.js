@@ -3,6 +3,7 @@ import React from 'react';
 import getType from '../utils/getType';
 
 import type { StylingFunction } from 'react-base16-styling';
+import type { FormatItemFunction } from '../types';
 
 function getShortTypeString(val: any, diff?: boolean): string {
   const type = getType(val);
@@ -130,10 +131,12 @@ const getItemString = (
   type: string,
   data: Object,
   isWideLayout: boolean,
-  isDiff: boolean = false
+  isDiff: boolean = false,
+  formatItem?: FormatItemFunction,
 ): React$Element<*> =>
   <span {...styling('treeItemHint')}>
-    {getText(type, data, isWideLayout, isDiff)}
+    {(formatItem && formatItem(type, data, isWideLayout, isDiff)) ||
+      getText(type, data, isWideLayout, isDiff)}
   </span>;
 
 export default getItemString;

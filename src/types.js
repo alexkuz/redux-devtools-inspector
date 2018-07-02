@@ -20,3 +20,5 @@ export type ReduxState = {
 export type MonitorState = {
   initialScrollTop: number
 };
+
+export type FormatItemFunction = () => string | null

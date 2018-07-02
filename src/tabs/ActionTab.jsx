@@ -5,7 +5,7 @@ import getItemString from './getItemString';
 import getJsonTreeTheme from './getJsonTreeTheme';
 
 import type { LabelRenderer } from 'react-json-tree';
-import type { Action } from '../types';
+import type { Action, FormatItemFunction } from '../types';
 import type { StylingFunction, Base16Theme, StylingConfig } from 'react-base16-styling';
 
 type Props = {
@@ -14,7 +14,8 @@ type Props = {
   base16Theme: Base16Theme,
   invertTheme: boolean,
   labelRenderer: LabelRenderer,
-  isWideLayout: boolean
+  isWideLayout: boolean,
+  formatItem: FormatItemFunction
 };
 
 type State = {
@@ -54,6 +55,7 @@ export default class ActionTab extends PureComponent<void, Props, State> {
   }
 
   getItemString = (type: string, data: any) => {
-    return getItemString(this.props.styling, type, data, this.props.isWideLayout);
+    const { styling, isWideLayout, formatItem } = this.props;
+    return getItemString(styling, type, data, isWideLayout, false, formatItem);
   };
 }

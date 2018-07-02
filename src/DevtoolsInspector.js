@@ -172,7 +172,7 @@ export default class DevtoolsInspector extends PureComponent<DefaultProps, Props
   }
 
   render() {
-    const { stagedActionIds: actionIds, actionsById: actions, computedStates,
+    const { stagedActionIds: actionIds, actionsById: actions, computedStates, formatItem,
       tabs, invertTheme, skippedActionIds, currentStateIndex, monitorState } = this.props;
     const { selectedActionId, startActionId, searchValue, tabName } = monitorState;
     const inspectedPathType = tabName === 'Action' ? 'inspectedActionPath' : 'inspectedStatePath';
@@ -199,8 +199,8 @@ export default class DevtoolsInspector extends PureComponent<DefaultProps, Props
                     currentActionId={actionIds[currentStateIndex]}
                     lastActionId={getLastActionId(this.props)} />
         <ActionPreview {...{
-          base16Theme, invertTheme, isWideLayout, tabs, tabName, delta, error, nextState,
-          computedStates, action, actions, selectedActionId, startActionId
+          base16Theme, invertTheme, isWideLayout, formatItem, tabs, tabName, delta, error,
+          nextState, computedStates, action, actions, selectedActionId, startActionId
         }}
                        styling={styling}
                        onInspectPath={this.handleInspectPath.bind(this, inspectedPathType)}

@@ -51,6 +51,7 @@ Name               | Type             | Description
 `tabs`             | Array or function | Overrides list of tabs (see below)
 `diffObjectHash`   | Function         | Optional callback for better array handling in diffs (see [jsondiffpatch docs](https://github.com/benjamine/jsondiffpatch/blob/master/docs/arrays.md))
 `diffPropertyFilter` | Function       | Optional callback for ignoring particular props in diff (see [jsondiffpatch docs](https://github.com/benjamine/jsondiffpatch#options))
+`formatItem` | Function |  Optional formatting function for JSON tree nodes. (see below)
 
 
 If `tabs` is a function, it receives a list of default tabs and should return updated list, for example:
@@ -58,6 +59,11 @@ If `tabs` is a function, it receives a list of default tabs and should return up
 defaultTabs => [...defaultTabs, { name: 'My Tab', component: MyTab }]
 ```
 If `tabs` is an array, only provided tabs are rendered.
+
+`formatItem` is used for formatting labels of generated JSON tree nodes (see [react-json-tree](https://github.com/alexkuz/react-json-tree#customize-labels-for-arrays-objects-and-iterables)). It takes the following arguments: `type`, `data`, `isWideLayout` (`true` if the width of the inspector is greater than 500 px, `false` otherwise), `isDiff` (whether Diff is the active tab). It must return a `string` or `null`, in the latter case default formatting will be used. The following example overrides label formatting for Arrays in Action and State tabs:
+```
+(type, data, isWideLayout, isDiff) => !isDiff && type === "Array" ? "// Array" : null
+```
 
 `component` is provided with `action` and other props, see [`ActionPreview.jsx`](src/ActionPreview.jsx#L42) for reference.
 

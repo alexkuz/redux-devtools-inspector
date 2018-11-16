@@ -95,6 +95,7 @@ export default class JSONDiff extends PureComponent<void, Props, State> {
         postprocessValue={prepareDelta}
         isCustomNode={Array.isArray}
         shouldExpandNode={expandFirstLevel}
+        sortObjectKeys={(str1, str2) => str1.localeCompare(str2)}
         hideRoot
       />
     );

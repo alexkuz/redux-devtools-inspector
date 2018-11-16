@@ -48,6 +48,7 @@ export default class ActionTab extends PureComponent<void, Props, State> {
         data={action}
         getItemString={this.getItemString}
         invertTheme={invertTheme}
+        sortObjectKeys={(str1, str2) => str1.localeCompare(str2)}
         hideRoot
       />
     );

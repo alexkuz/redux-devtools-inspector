@@ -47,6 +47,7 @@ export default class StateTab extends PureComponent<void, Props, State> {
         data={nextState}
         getItemString={this.getItemString}
         invertTheme={invertTheme}
+        sortObjectKeys={(str1, str2) => str1.localeCompare(str2)}
         hideRoot
       />
     );

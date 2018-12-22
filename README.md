@@ -2,6 +2,8 @@
 
 [![npm version](https://badge.fury.io/js/redux-devtools-inspector.svg)](https://badge.fury.io/js/redux-devtools-inspector)
 
+>This package was merged into [`redux-devtools` monorepo](https://github.com/reduxjs/redux-devtools). Please refer to that repository for the latest updates, issues and pull requests.
+
 A state monitor for [Redux DevTools](https://github.com/gaearon/redux-devtools) that provides a convenient way to inspect "real world" app states that could be complicated and deeply nested.
 
 ![](https://raw.githubusercontent.com/alexkuz/redux-devtools-inspector/master/demo.gif)

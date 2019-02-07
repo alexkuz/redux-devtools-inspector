@@ -6,6 +6,7 @@ import getJsonTreeTheme from './getJsonTreeTheme';
 
 import type { LabelRenderer } from 'react-json-tree';
 import type { StylingFunction, Base16Theme, StylingConfig } from 'react-base16-styling';
+import type { FormatItemFunction } from '../types';
 
 type Props = {
   styling: StylingFunction,
@@ -13,6 +14,7 @@ type Props = {
   invertTheme: boolean,
   labelRenderer: LabelRenderer,
   isWideLayout: boolean,
+  formatItem: FormatItemFunction,
   nextState: Object
 };
 
@@ -53,6 +55,7 @@ export default class StateTab extends PureComponent<void, Props, State> {
   }
 
   getItemString = (type: string, data: any) => {
-    return getItemString(this.props.styling, type, data, this.props.isWideLayout);
+    const { styling, isWideLayout, formatItem } = this.props;
+    return getItemString(styling, type, data, isWideLayout, false, formatItem);
   };
 }

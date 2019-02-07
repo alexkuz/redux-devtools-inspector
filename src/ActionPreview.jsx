@@ -6,14 +6,15 @@ import StateTab from './tabs/StateTab';
 import ActionTab from './tabs/ActionTab';
 
 import type { LabelRenderer } from 'react-json-tree';
-import type { Tab, TabName } from './types';
+import type { Tab, TabName, FormatItemFunction } from './types';
 
 type DefaultProps = {
   tabName: TabName
 };
 
 type Props = DefaultProps & {
-  tabs: ((defaultTabs: Tab[]) => Tab[]) | Tab[]
+  tabs: ((defaultTabs: Tab[]) => Tab[]) | Tab[],
+  formatItem: FormatItemFunction,
 };
 
 const DEFAULT_TABS: Tab[] = [{
@@ -36,7 +37,7 @@ class ActionPreview extends Component<DefaultProps, Props, void> {
     const {
       styling, delta, error, nextState, onInspectPath, inspectedPath, tabName,
       isWideLayout, onSelectTab, action, actions, selectedActionId, startActionId,
-      computedStates, base16Theme, invertTheme, tabs
+      computedStates, base16Theme, invertTheme, tabs, formatItem
     } = this.props;
 
     const renderedTabs = (typeof tabs === 'function') ?
@@ -70,6 +71,7 @@ class ActionPreview extends Component<DefaultProps, Props, void> {
                   base16Theme,
                   invertTheme,
                   isWideLayout,
+                  formatItem,
                   delta,
                   action,
                   nextState

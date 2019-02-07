@@ -8,6 +8,7 @@ import getJsonTreeTheme from './getJsonTreeTheme';
 import type { LabelRenderer } from 'react-json-tree';
 import type { Delta, ArrayDelta } from 'jsondiffpatch';
 import type { StylingFunction, Base16Theme, StylingConfig } from 'react-base16-styling';
+import type { FormatItemFunction } from '../types';
 
 type Props = {
   delta: Delta,
@@ -15,7 +16,8 @@ type Props = {
   base16Theme: Base16Theme,
   invertTheme: boolean,
   labelRenderer: LabelRenderer,
-  isWideLayout: boolean
+  isWideLayout: boolean,
+  formatItem: FormatItemFunction
 };
 
 type State = {
@@ -138,6 +140,7 @@ export default class JSONDiff extends PureComponent<void, Props, State> {
   }
 
   getItemString = (type: string, data: any) => {
-    return getItemString(this.props.styling, type, data, this.props.isWideLayout, true);
+    const { styling, isWideLayout, formatItem } = this.props;
+    return getItemString(styling, type, data, isWideLayout, true, formatItem);
   };
 }

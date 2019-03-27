@@ -37,7 +37,7 @@ export default class ActionListRow extends PureComponent<void, Props, State> {
 
   render() {
     const { styling, isSelected, action, isInitAction, onSelect,
-            timestamps, isSkipped, isInFuture } = this.props;
+            timestamps, isSkipped, isInFuture, hideActionButtons } = this.props;
     const { hover } = this.state;
     const timeDelta = timestamps.current - timestamps.previous;
     const showButtons = hover && !isInitAction || isSkipped;
@@ -53,9 +53,9 @@ export default class ActionListRow extends PureComponent<void, Props, State> {
     return (
       <div
         onClick={onSelect}
-        onMouseEnter={this.handleMouseEnter}
-        onMouseLeave={this.handleMouseLeave}
-        onMouseDown={this.handleMouseDown}
+        onMouseEnter={!hideActionButtons && this.handleMouseEnter}
+        onMouseLeave={!hideActionButtons && this.handleMouseLeave}
+        onMouseDown={!hideActionButtons && this.handleMouseDown}
         {...styling([
           'actionListItem',
           isSelected ? 'actionListItemSelected' : null,
@@ -70,31 +70,40 @@ export default class ActionListRow extends PureComponent<void, Props, State> {
         >
           {actionType}
         </div>
-        <div {...styling('actionListItemButtons')}>
-          <RightSlider styling={styling} shown={!showButtons} rotate>
+        {hideActionButtons ?
+          <RightSlider styling={styling} shown>
             <div {...styling('actionListItemTime')}>
               {timeDelta === 0 ? '+00:00:00' :
                 dateformat(timeDelta, timestamps.previous ? '+MM:ss.L' : 'h:MM:ss.L')}
             </div>
           </RightSlider>
-          <RightSlider styling={styling} shown={showButtons} rotate>
-            <div {...styling('actionListItemSelector')}>
-              {[BUTTON_JUMP, BUTTON_SKIP].map(btn => (!isInitAction || btn !== BUTTON_SKIP) &&
-                <div
-                  key={btn}
-                  onClick={this.handleButtonClick.bind(this, btn)}
-                  {...styling([
-                    'selectorButton',
-                    isButtonSelected(btn) ? 'selectorButtonSelected' : null,
-                    'selectorButtonSmall'
-                  ], isButtonSelected(btn), true)}
-                >
-                  {btn}
-                </div>
-              )}
-            </div>
-          </RightSlider>
-        </div>
+        :
+          <div {...styling('actionListItemButtons')}>
+            <RightSlider styling={styling} shown={!showButtons} rotate>
+              <div {...styling('actionListItemTime')}>
+                {timeDelta === 0 ? '+00:00:00' :
+                  dateformat(timeDelta, timestamps.previous ? '+MM:ss.L' : 'h:MM:ss.L')}
+              </div>
+            </RightSlider>
+            <RightSlider styling={styling} shown={showButtons} rotate>
+              <div {...styling('actionListItemSelector')}>
+                {[BUTTON_JUMP, BUTTON_SKIP].map(btn => (!isInitAction || btn !== BUTTON_SKIP) &&
+                  <div
+                    key={btn}
+                    onClick={this.handleButtonClick.bind(this, btn)}
+                    {...styling([
+                      'selectorButton',
+                      isButtonSelected(btn) ? 'selectorButtonSelected' : null,
+                      'selectorButtonSmall'
+                    ], isButtonSelected(btn), true)}
+                  >
+                    {btn}
+                  </div>
+                )}
+              </div>
+            </RightSlider>
+          </div>
+        }
       </div>
     );
   }
